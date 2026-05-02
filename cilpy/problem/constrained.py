@@ -82,6 +82,9 @@ class G01(Problem[List[float], float]):
 
     def is_multi_objective(self) -> bool:
         return False
+    
+    def get_fitness_bounds(self):
+        return (-15.0, 0.0)
 
 class G02(Problem[List[float], float]):
     """
@@ -129,6 +132,9 @@ class G02(Problem[List[float], float]):
         
     def is_multi_objective(self) -> bool:
         return False
+
+    def get_fitness_bounds(self):
+        return (-0.803619, 0.0)
     
 class G03(Problem[List[float], float]):
     """g03 from the CEC 2006 benchmark suite.
@@ -175,7 +181,9 @@ class G03(Problem[List[float], float]):
 
     def is_multi_objective(self) -> bool:
         return False
-
+    
+    def get_fitness_bounds(self):
+        return (-1.0, 0.0)
 
 class G04(Problem[List[float], float]):
     """g04 from the CEC 2006 benchmark suite.
@@ -226,6 +234,9 @@ class G04(Problem[List[float], float]):
 
     def is_multi_objective(self) -> bool:
         return False
+    
+    def get_fitness_bounds(self):
+        return (-30665.539, -20000.0)
 
 
 class G05(Problem[List[float], float]):
@@ -291,6 +302,9 @@ class G05(Problem[List[float], float]):
     def is_multi_objective(self) -> bool:
         return False
     
+    def get_fitness_bounds(self):
+        return (5126.498, 10000.0)
+    
 class G06(Problem[List[float], float]):
     """g06 from the CEC 2006 benchmark suite.
 
@@ -333,6 +347,9 @@ class G06(Problem[List[float], float]):
 
     def is_multi_objective(self) -> bool:
         return False
+
+    def get_fitness_bounds(self):
+        return (-6961.814, 0.0)
 # ==============================================================================
 #  These problems are drawn from Appendix A.6 of Computational Intelligence: An
 #  Introduction (second edition) by Andries P. Engelbrecht
