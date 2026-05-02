@@ -43,7 +43,7 @@ two PSOs for CCPSO) which manage the search process for their respective
 populations.
 """
 
-from typing import List, Tuple, Type
+from typing import List, Optional, Tuple, Type
 
 from cilpy.problem import Problem, Evaluation, SolutionType
 from cilpy.solver import Solver
@@ -66,7 +66,7 @@ class _LagrangianMinProblem(Problem):
             (lambda*) from the multiplier swarm, fixed for this evaluation.
     """
 
-    def __init__(self, original_problem: Problem, penalty_scale: float = 1.0):
+    def __init__(self, original_problem: Problem, penalty_rho: float = 0.0, penalty_rho_equality: float = 0.0):
         """Initializes the proxy problem for the objective space.
 
         Args:
@@ -77,7 +77,6 @@ class _LagrangianMinProblem(Problem):
             original_problem.dimension, original_problem.bounds, "LagrangianMinProblem"
         )
         self.original_problem = original_problem
-        self.penalty_scale = penalty_scale
         self.fixed_multipliers_inequality = [0.0] * len(
             self.original_problem.evaluate(
                 self.original_problem.bounds[0]
@@ -90,6 +89,9 @@ class _LagrangianMinProblem(Problem):
             ).constraints_equality
             or []
         )
+        self.penalty_rho = penalty_rho
+        self.penalty_rho_equality = penalty_rho_equality
+        
 
     def set_fixed_multipliers(self, inequality_multipliers, equality_multipliers):
         """Updates the fixed Lagrangian multipliers for the next generation.
@@ -123,18 +125,28 @@ class _LagrangianMinProblem(Problem):
         gx = original_eval.constraints_inequality or []
         hx = original_eval.constraints_equality or []
 
-        # Calculate L(x, mu*, lambda*), penalizing only violations.
+        # Calculate L(x, mu*, lambda*)
         lagrangian_value = fx
-        lagrangian_value += self.penalty_scale * sum(
-            mu * (max(0.0, g) ** 2)
-            for mu, g in zip(self.fixed_multipliers_inequality, gx)
+        lagrangian_value += sum(
+            mu * g for mu, g in zip(self.fixed_multipliers_inequality, gx)
         )
-        lagrangian_value += self.penalty_scale * sum(
+        lagrangian_value += sum(
             la * h for la, h in zip(self.fixed_multipliers_equality, hx)
         )
 
+        # Optional penalty term to reinforce feasibility.
+        if self.penalty_rho > 0.0 and gx:
+            lagrangian_value += self.penalty_rho * sum(max(0.0, g) for g in gx)
+
+        if self.penalty_rho_equality > 0.0 and hx:
+            lagrangian_value += self.penalty_rho_equality * sum(abs(h) for h in hx)
+
         # This problem is now unconstrained from the solver's perspective
-        return Evaluation(fitness=lagrangian_value)
+        return Evaluation(
+            fitness=lagrangian_value,
+            constraints_inequality=original_eval.constraints_inequality,
+            constraints_equality=original_eval.constraints_equality,
+        )
 
     def get_fitness_bounds(self) -> Tuple[float, float]:
         """Delegates to the original problem to satisfy the interface."""
@@ -179,8 +191,7 @@ class _LagrangianMaxProblem(Problem):
         self,
         original_problem: Problem[SolutionType, float],
         fixed_solution: SolutionType,
-        max_multiplier: float = 10000.0,
-        penalty_scale: float = 200.0,
+        max_multiplier: Optional[float] = None,
     ):
         """Initializes the proxy problem for the multiplier space.
 
@@ -199,10 +210,15 @@ class _LagrangianMaxProblem(Problem):
         dimension = num_inequality + num_equality
 
         # Multipliers for inequality constraints (mu) must be >= 0
-        # Multipliers for equality constraints (lambda) are unrestricted,
-        # but both are clamped to finite bounds for stable evolution.
-        lower_bounds = [0.0] * num_inequality + [-max_multiplier] * num_equality
-        upper_bounds = [max_multiplier] * (num_inequality + num_equality)
+        # Multipliers for equality constraints (lambda) are unrestricted
+        if max_multiplier is None:
+            lower_bounds = [0.0] * num_inequality + [-float("inf")] * num_equality
+            upper_bounds = [float("inf")] * (num_inequality + num_equality)
+        else:
+            lower_bounds = [0.0] * num_inequality + [
+                -max_multiplier
+            ] * num_equality
+            upper_bounds = [max_multiplier] * (num_inequality + num_equality)
 
         super().__init__(
             dimension, (lower_bounds, upper_bounds), "LagrangianMaxProblem"
@@ -210,7 +226,6 @@ class _LagrangianMaxProblem(Problem):
         self.original_problem = original_problem
         self.fixed_solution_eval = original_problem.evaluate(fixed_solution)
         self.num_inequality = num_inequality
-        self.penalty_scale = penalty_scale
 
     def set_fixed_solution(self, solution):
         """Updates the fixed solution 'x*' for the next generation.
@@ -244,14 +259,10 @@ class _LagrangianMaxProblem(Problem):
         gx = self.fixed_solution_eval.constraints_inequality or []
         hx = self.fixed_solution_eval.constraints_equality or []
 
-        # Calculate L(x*, mu, lambda), penalizing only violations.
+        # Calculate L(x*, mu, lambda)
         lagrangian_value = fx
-        lagrangian_value += self.penalty_scale * sum(
-            s * (max(0.0, g) ** 2) for s, g in zip(inequality_multipliers, gx)
-        )
-        lagrangian_value += self.penalty_scale * sum(
-            l * h for l, h in zip(equality_multipliers, hx)
-        )
+        lagrangian_value += sum(s * g for s, g in zip(inequality_multipliers, gx))
+        lagrangian_value += sum(l * h for l, h in zip(equality_multipliers, hx))
 
         # Return the negative value because we want to MAXIMIZE L
         return Evaluation(fitness=-lagrangian_value)
@@ -307,8 +318,6 @@ class CoevolutionaryLagrangianSolver(Solver):
         multiplier_solver_class: Type[Solver],
         objective_solver_params: dict,
         multiplier_solver_params: dict,
-        max_multiplier: float = 10000.0,
-        penalty_scale: float = 200.0,
         **kwargs,
     ):
         """Initializes the CoevolutionaryLagrangianSolver.
@@ -331,19 +340,29 @@ class CoevolutionaryLagrangianSolver(Solver):
         # 1. Create the proxy problems
         # We need an initial solution to dimension the multiplier problem
         initial_solution = [problem.bounds[0][i] for i in range(problem.dimension)]
+        penalty_rho = float(kwargs.get("penalty_rho", 0.0))
+        penalty_rho_equality = float(kwargs.get("penalty_rho_equality", penalty_rho))
+        max_multiplier = kwargs.get("max_multiplier")
+        if max_multiplier is not None:
+            max_multiplier = float(max_multiplier)
+            if max_multiplier <= 0.0:
+                max_multiplier = None
+
+        constraint_handler = kwargs.get("constraint_handler", None)
+
         self.min_problem = _LagrangianMinProblem(
-            problem, penalty_scale=penalty_scale
+            problem,
+            penalty_rho=penalty_rho,
+            penalty_rho_equality=penalty_rho_equality,
         )
         self.max_problem = _LagrangianMaxProblem(
-            problem,
-            initial_solution,
-            max_multiplier=max_multiplier,
-            penalty_scale=penalty_scale,
+            problem, initial_solution, max_multiplier=max_multiplier
         )
 
-        # 2. Instantiate the internal solvers
         self.objective_solver = objective_solver_class(
-            problem=self.min_problem, **objective_solver_params
+            problem=self.min_problem,
+            constraint_handler=constraint_handler,
+            **objective_solver_params
         )
         self.multiplier_solver = multiplier_solver_class(
             problem=self.max_problem, **multiplier_solver_params
