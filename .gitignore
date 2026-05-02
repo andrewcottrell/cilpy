@@ -11,3 +11,9 @@ cilpy.egg-info
 site/
 build/
 dist/
+
+docs/dev/ccga_benchmark_exa.md
+docs/dev/ccls_changes.md
+docs/dev/ccls.md
+
+*.csv
