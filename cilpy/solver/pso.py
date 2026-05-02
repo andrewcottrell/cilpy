@@ -2,10 +2,11 @@
 
 import copy
 import random
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from cilpy.problem import Problem, Evaluation
 from cilpy.solver import Solver
+from cilpy.solver.chm import ConstraintHandler
 
 
 class PSO(Solver[List[float], float]):
@@ -24,6 +25,7 @@ class PSO(Solver[List[float], float]):
         w: float,
         c1: float,
         c2: float,
+        constraint_handler: Optional[ConstraintHandler[float]] = None,
         **kwargs,
     ):
         """
@@ -41,7 +43,7 @@ class PSO(Solver[List[float], float]):
             **kwargs: Additional keyword arguments (not used in this canonical
                PSO).
         """
-        super().__init__(problem, name)
+        super().__init__(problem, name, constraint_handler=constraint_handler)
         self.swarm_size = swarm_size
         self.w = w
         self.c1 = c1
@@ -70,10 +72,13 @@ class PSO(Solver[List[float], float]):
         self.pbest_positions = copy.deepcopy(self.population)
         self.pbest_evaluations = copy.deepcopy(self.evaluations)
 
-        # Initialize global best
-        best_initial_idx = min(
-            range(self.swarm_size), key=lambda i: self.evaluations[i].fitness
-        )
+        # Initialize global best using comparator (respects constraints)
+        best_initial_idx = 0
+        for i in range(1, self.swarm_size):
+            if self.comparator.is_better(
+                self.evaluations[i], self.evaluations[best_initial_idx]
+            ):
+                best_initial_idx = i
         self.gbest_position = copy.deepcopy(self.population[best_initial_idx])
         self.gbest_evaluation = copy.deepcopy(self.evaluations[best_initial_idx])
 

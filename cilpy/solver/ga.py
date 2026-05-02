@@ -2,10 +2,11 @@
 import copy
 import random
 from functools import cmp_to_key
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from cilpy.problem import Problem, Evaluation
 from cilpy.solver import Solver
+from cilpy.solver.chm import ConstraintHandler
 
 
 class GA(Solver[List[float], float]):
@@ -27,6 +28,7 @@ class GA(Solver[List[float], float]):
         crossover_rate: float,
         mutation_rate: float,
         tournament_size: int = 2,
+        constraint_handler: Optional[ConstraintHandler[float]] = None,
         **kwargs,
     ):
         """
@@ -45,7 +47,7 @@ class GA(Solver[List[float], float]):
             **kwargs: Additional keyword arguments (not used in this canonical
                 GA).
         """
-        super().__init__(problem, name)
+        super().__init__(problem, name, constraint_handler=constraint_handler)
         self.population_size = population_size
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate

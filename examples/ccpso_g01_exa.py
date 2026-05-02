@@ -1,15 +1,15 @@
 from cilpy.runner import ExperimentRunner
-from cilpy.problem.constrained import G06
+from cilpy.problem.constrained import G01
 from cilpy.solver.pso import PSO
 from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
 
-problems = [G06()]
+problems = [G01()]
 
 solver_configs = [
     {
         "class": CoevolutionaryLagrangianSolver,
         "params": {
-            "name": "CCPSO_G06",
+            "name": "CCPSO_G01",
             "objective_solver_class": PSO,
             "multiplier_solver_class": PSO,
             "objective_solver_params": {
