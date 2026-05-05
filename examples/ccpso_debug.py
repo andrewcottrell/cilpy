@@ -5,7 +5,8 @@ from cilpy.solver.ccls import _LagrangianMinProblem, _LagrangianMaxProblem
 problem = G06()
 initial_solution = [problem.bounds[0][i] for i in range(problem.dimension)]
 
-min_prob = _LagrangianMinProblem(problem)
+# Use penalty terms to accelerate feasibility discovery
+min_prob = _LagrangianMinProblem(problem, penalty_rho=0.5, penalty_rho_equality=0.5)
 max_prob = _LagrangianMaxProblem(problem, initial_solution)
 #max_prob.bounds = ([0.0, 0.0], [0.01, 0.01])
 

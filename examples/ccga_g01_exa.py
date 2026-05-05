@@ -13,7 +13,8 @@ solver_configs = [
             "objective_solver_class": GA,
             "multiplier_solver_class": GA,
             "max_multiplier": 10000.0,
-            "penalty_scale": 200.0,
+            "penalty_rho": 0.5,
+            "penalty_rho_equality": 0.5,
             "objective_solver_params": {
                 "name": "obj_ga",
                 "population_size": 30,

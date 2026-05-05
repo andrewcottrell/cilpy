@@ -60,7 +60,7 @@ class PSO(Solver[List[float], float]):
                         -abs(upper_bounds[i] - lower_bounds[i]),
                         abs(upper_bounds[i] - lower_bounds[i]),
                     )
-                    * 0.1
+                    * 0.25
                 )
                 for i in range(self.problem.dimension)
             ]

@@ -66,31 +66,40 @@ class _LagrangianMinProblem(Problem):
             (lambda*) from the multiplier swarm, fixed for this evaluation.
     """
 
-    def __init__(self, original_problem: Problem, penalty_rho: float = 0.0, penalty_rho_equality: float = 0.0):
+    def __init__(self, original_problem: Problem, penalty_rho: float = 0.1, penalty_rho_equality: float = None):
         """Initializes the proxy problem for the objective space.
 
         Args:
             original_problem: The original constrained problem instance that
                 will be wrapped.
+            penalty_rho: Penalty coefficient for inequality constraint violations
+                (default 0.1). Helps accelerate feasibility discovery.
+            penalty_rho_equality: Penalty coefficient for equality constraints.
+                Defaults to penalty_rho if not specified.
         """
         super().__init__(
             original_problem.dimension, original_problem.bounds, "LagrangianMinProblem"
         )
         self.original_problem = original_problem
-        self.fixed_multipliers_inequality = [0.0] * len(
-            self.original_problem.evaluate(
-                self.original_problem.bounds[0]
-            ).constraints_inequality
-            or []
-        )
-        self.fixed_multipliers_equality = [0.0] * len(
-            self.original_problem.evaluate(
-                self.original_problem.bounds[0]
-            ).constraints_equality
-            or []
-        )
+
+        # Evaluate at lower bounds to initialize multipliers based on constraint violations
+        initial_point = [original_problem.bounds[0][i] for i in range(original_problem.dimension)]
+        initial_eval = original_problem.evaluate(initial_point)
+
+        # Initialize inequality multipliers based on initial violations
+        ineq_constraints = initial_eval.constraints_inequality or []
+        self.fixed_multipliers_inequality = [
+            max(0.0, min(g, 1.0)) for g in ineq_constraints
+        ]
+
+        # Initialize equality multipliers based on initial violations
+        eq_constraints = initial_eval.constraints_equality or []
+        self.fixed_multipliers_equality = [
+            min(abs(h), 1.0) for h in eq_constraints
+        ]
+
         self.penalty_rho = penalty_rho
-        self.penalty_rho_equality = penalty_rho_equality
+        self.penalty_rho_equality = penalty_rho_equality if penalty_rho_equality is not None else penalty_rho
         
 
     def set_fixed_multipliers(self, inequality_multipliers, equality_multipliers):

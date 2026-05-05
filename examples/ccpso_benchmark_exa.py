@@ -57,15 +57,16 @@ def run_experiment(problem, solver_config, num_runs, max_iterations):
 def main() -> None:
     g_problems = [G01(), G02(), G04(), G05(), G06()]  # Skip G03 for now
     cmpb_problems = [cmpb_sosc]  # Focus on SOSC for Phase 2
-    all_problems = g_problems + cmpb_problems
+    #all_problems = g_problems + cmpb_problems
+    all_problems = cmpb_problems
 
     if RUN_CCPSO:
         solver_config = {
             "class": CoevolutionaryLagrangianSolver,
             "params": {
                 "name": "CCPSO",
-                "penalty_rho": 10000.0,
-                "penalty_rho_equality": 1000000.0,
+                "penalty_rho": 0.5,
+                "penalty_rho_equality": 0.5,
                 "max_multiplier": 100.0,
                 "objective_solver_class": PSO,
                 "multiplier_solver_class": PSO,
@@ -83,10 +84,6 @@ def main() -> None:
                     "c1": 1.2,
                     "c2": 1.2,
                 },
-            },
-            "constraint_handler": {
-                "class": DebFeasibilityHandler,
-                "params": {}
             },
         }
 

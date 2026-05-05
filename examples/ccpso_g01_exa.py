@@ -26,6 +26,10 @@ solver_configs = [
                 "c1": 1.49618,
                 "c2": 1.49618,
             },
+            # Direct penalty terms accelerate feasibility discovery
+            # Balanced: 0.35 trades feasibility stability for better optimization
+            "penalty_rho": 0.35,
+            "penalty_rho_equality": 0.35,
         }
     }
 ]
@@ -34,6 +38,6 @@ runner = ExperimentRunner(
     problems=problems,
     solver_configurations=solver_configs,
     num_runs=30,
-    max_iterations=1000,
+    max_iterations=3000,
 )
 runner.run_experiments()

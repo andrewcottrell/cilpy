@@ -18,7 +18,7 @@ class DebFeasibilityHandler(ConstraintHandler[float]):
     def _is_feasible(self, ev: Evaluation[float]) -> bool:
         ineq = ev.constraints_inequality or []
         eq   = ev.constraints_equality   or []
-        return all(g <= 0 for g in ineq) and all(abs(h) <= 1e-6 for h in eq)
+        return all(g <= 0 for g in ineq) and all(abs(h) <= 1e-3 for h in eq)
 
     def _total_violation(self, ev: Evaluation[float]) -> float:
         ineq = sum(max(0.0, g) for g in (ev.constraints_inequality or []))
