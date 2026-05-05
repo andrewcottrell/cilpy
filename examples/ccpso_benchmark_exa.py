@@ -57,8 +57,8 @@ def run_experiment(problem, solver_config, num_runs, max_iterations):
 def main() -> None:
     g_problems = [G01(), G02(), G04(), G05(), G06()]  # Skip G03 for now
     cmpb_problems = [cmpb_sosc]  # Focus on SOSC for Phase 2
-    #all_problems = g_problems + cmpb_problems
-    all_problems = cmpb_problems
+    all_problems = g_problems + cmpb_problems
+    #all_problems = cmpb_problems
 
     if RUN_CCPSO:
         solver_config = {
@@ -72,14 +72,14 @@ def main() -> None:
                 "multiplier_solver_class": PSO,
                 "objective_solver_params": {
                     "name": "obj_pso",
-                    "swarm_size": 80,
+                    "swarm_size": 200,
                     "w": 0.72,
                     "c1": 1.49,
                     "c2": 1.49,
                 },
                 "multiplier_solver_params": {
                     "name": "mul_pso",
-                    "swarm_size": 40,
+                    "swarm_size": 200,
                     "w": 0.4,
                     "c1": 1.2,
                     "c2": 1.2,
