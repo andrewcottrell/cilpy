@@ -139,6 +139,23 @@ def analyze_feasibility_stats():
     return grouped
 
 
+
+def analyze_fitness_stats():
+    """Aggregate final fitness statistics by problem/solver."""
+    feas_df = analyze_feasibility()
+
+    if feas_df is None:
+        return None
+
+    grouped = feas_df.groupby(['Problem', 'Solver'])['Final_Fitness'].agg([
+        'mean', 'std', 'min', 'max', 'count'
+    ]).reset_index()
+
+    grouped.columns = ['Problem', 'Solver', 'Mean_Final_Fitness', 'Std_Final_Fitness',
+                       'Min_Final_Fitness', 'Max_Final_Fitness', 'Num_Runs']
+
+    return grouped
+
 def analyze_convergence_per_problem():
     """Track convergence over iterations (diversity, feasibility trend)."""
     detail_files = glob.glob("out/*.out.csv")
@@ -247,9 +264,27 @@ def print_report():
     else:
         print("No feasibility data available.")
     
+    # 2b. Fitness statistics
+    print("\n\n2b. FINAL FITNESS STATISTICS")
+    print("-" * 100)
+    fitness_stats = analyze_fitness_stats()
+    if fitness_stats is not None:
+        fitness_stats = fitness_stats.sort_values('Problem')
+        fitness_display = fitness_stats.copy()
+        for col in ['Mean_Final_Fitness', 'Std_Final_Fitness', 'Min_Final_Fitness', 'Max_Final_Fitness']:
+            fitness_display[col] = fitness_display[col].round(4)
+        print(fitness_display.to_string(index=False))
+    else:
+        print("No fitness data available.")
+
     # 3. Convergence analysis
     print("\n\n3. CONVERGENCE ANALYSIS - Improvement from early to final iterations")
     print("-" * 100)
+    fitness_stats = analyze_fitness_stats()
+    if fitness_stats is not None:
+        fitness_stats.to_csv("analysis_fitness_summary.csv", index=False)
+        print("Saved fitness summary to: analysis_fitness_summary.csv")
+
     conv_df = analyze_convergence_per_problem()
     if conv_df is not None:
         conv_summary = conv_df.groupby(['Problem', 'Solver']).agg({
@@ -305,6 +340,21 @@ def export_tables_for_report():
         table2.columns = ['Problem', 'Solver', 'Runs', 'Mean Feasibility ± Std', 'Min %', 'Max %']
         print(table2.to_string(index=False))
     
+    # Table 3: Fitness summary
+    print("\n\nTable 3: Final Fitness Summary")
+    print("-" * 100)
+    fitness_stats = analyze_fitness_stats()
+    if fitness_stats is not None:
+        fitness_stats = fitness_stats.sort_values('Problem')
+        fitness_stats['Mean±Std'] = (
+            fitness_stats['Mean_Final_Fitness'].round(4).astype(str) +
+            ' ± ' +
+            fitness_stats['Std_Final_Fitness'].round(4).astype(str)
+        )
+        table3 = fitness_stats[['Problem', 'Solver', 'Num_Runs', 'Mean±Std', 'Min_Final_Fitness', 'Max_Final_Fitness']]
+        table3.columns = ['Problem', 'Solver', 'Runs', 'Mean Fitness ± Std', 'Min', 'Max']
+        print(table3.to_string(index=False))
+
     print("\n" + "="*100)
 
 
@@ -329,6 +379,11 @@ if __name__ == "__main__":
         feas_stats.to_csv("analysis_feasibility_summary.csv", index=False)
         print("Saved feasibility summary to: analysis_feasibility_summary.csv")
     
+    fitness_stats = analyze_fitness_stats()
+    if fitness_stats is not None:
+        fitness_stats.to_csv("analysis_fitness_summary.csv", index=False)
+        print("Saved fitness summary to: analysis_fitness_summary.csv")
+
     conv_df = analyze_convergence_per_problem()
     if conv_df is not None:
         conv_df.to_csv("analysis_convergence_detail.csv", index=False)

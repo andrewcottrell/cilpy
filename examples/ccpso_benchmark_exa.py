@@ -1,4 +1,4 @@
-from cilpy.problem.constrained import G01, G02, G03, G04, G05, G06
+from cilpy.problem.constrained import G01, G02, G03, G04, G05, G06, C01
 from cilpy.problem.cmpb import ConstrainedMovingPeaksBenchmark
 from cilpy.problem.mpb import generate_mpb_configs
 from concurrent.futures import ThreadPoolExecutor
@@ -30,7 +30,7 @@ cmpb_sodc = ConstrainedMovingPeaksBenchmark(
 
 RUN_CCPSO = True
 RUN_DIRECT_PSO = False
-NUM_PARALLEL_THREADS = 4
+NUM_PARALLEL_THREADS = 6
 
 if RUN_CCPSO:
     from cilpy.runner import ExperimentRunner
@@ -56,17 +56,17 @@ def run_experiment(problem, solver_config, num_runs, max_iterations):
 
 def main() -> None:
     g_problems = [G01(), G02(), G04(), G05(), G06()]  # Skip G03 for now
-    cmpb_problems = [cmpb_sosc]  # Focus on SOSC for Phase 2
+    cmpb_problems = [cmpb_sosc, cmpb_dosc, cmpb_sodc]
     #all_problems = g_problems + cmpb_problems
-    #all_problems = cmpb_problems
-    all_problems = [G04()]
+    all_problems = [C01()]
+    
 
     if RUN_CCPSO:
         solver_config = {
             "class": CoevolutionaryLagrangianSolver,
             "params": {
                 "name": "CCPSO",
-                "penalty_rho": 10.0,
+                "penalty_rho": 0.5,
                 "penalty_rho_equality": 0.5,
                 "max_multiplier": 10000.0,
                 "objective_solver_class": PSO,
@@ -103,7 +103,7 @@ def main() -> None:
                     run_experiment,
                     problem,
                     solver_config,
-                    num_runs=1,
+                    num_runs=30,
                     max_iterations=1000,
                 )
                 futures.append(future)

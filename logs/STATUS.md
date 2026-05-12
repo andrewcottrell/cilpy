@@ -1,7 +1,7 @@
 # cilpy — Project Status
 
 > Honours Project Extension: Competitive Coevolutionary Framework for Constrained Optimisation  
-> Last updated: 2026-05-10
+> Last updated: 2026-05-11
 
 ---
 
@@ -19,12 +19,12 @@ The project explicitly **excludes** feasibility rules as a constraint-handling m
 
 | Phase | Problem Type | Objective | Constraint | Status |
 |-------|-------------|-----------|------------|--------|
-| **1 — SCSO** | Static obj, Static constraint | Single | Static | **In progress** |
+| **1 — SCSO** | Static obj, Static constraint | Single | Static | **Complete — 30-run results in report** |
 | **2 — DOSC** | Dynamic obj, Static constraint | Single | Static | Not started |
 | **3 — SODC** | Static obj, Dynamic constraint | Single | Dynamic | Not started |
 | **4 — MO** | Any | Multi | TBD | Deferred (multi-guide PSO) |
 
-**Current goal**: Validate CCLS on CEC2006 constrained benchmarks (G01–G06) and CMPB static-static configuration.
+**Current goal**: Report submission 15 May 2026. Phase 1 complete. Next: Demo 1 (late May), then Phase 2 (DOSC).
 
 ---
 
@@ -415,46 +415,61 @@ Optional top-level key in solver config dict:
 
 ## 9. Benchmarking Status
 
-All runs use: `num_runs=30`, `max_iterations=1000`, `swarm_size=200` for both sub-solvers.  
-Current config: `penalty_rho=0.5`, `penalty_rho_equality=0.5`, `max_multiplier=100.0`.
+### Production config (final)
+`num_runs=30`, `max_iterations=1000`, `swarm_size=200` both sub-solvers.  
+`penalty_rho=0.5`, `penalty_rho_equality=0.5`, `max_multiplier=10000.0`  
+Objective solver: `w=0.72, c1=1.49, c2=1.49` | Multiplier solver: `w=0.4, c1=1.2, c2=1.2`
 
-### Phase 1 — SCSO results (`out/`)
+### Phase 1 — Final 30-run results
 
-| Problem | Solver | Runs completed | P_RED (mean approx.) | Notes |
-|---------|--------|---------------|----------------------|-------|
-| G01 | CCPSO | 5/30 | ~0.63 | Incomplete run; older full run below |
-| G01 | CCPSO_G01 (old config) | 30/30 | ~1.1 | Older params, worse P_RED |
-| G01 | CCGA_G01 | 30/30 | — | Results present, need analysis |
-| G01 | PSO_G01 (direct, no CCLS) | 30/30 | N/A | No fitness bounds in PSO path |
-| G02 | CCPSO | 0/30 | — | Run failed / incomplete |
-| G04 | CCPSO | 0/30 | — | Run failed / incomplete |
-| G05 | CCPSO | 0/30 | — | Run failed / incomplete |
-| G06 | CCPSO | not run | — | Not yet included in benchmark script |
-| CMPB_SOSC | CCPSO | 30/30 | ~0.07 | Good results on static-static CMPB |
+| Problem | Mean Fitness | Std | Mean Feas% | Std Feas% | Mean P_RED | Known Opt |
+|---------|-------------|-----|------------|-----------|------------|-----------|
+| G01 | -5.8617 | 0.7575 | 99.97 | 0.18 | 0.6108 | -15.0 |
+| G02 | -0.0716 | 0.0107 | 33.35 | 38.81 | 0.9108 | -0.8036 |
+| G04 | -27888.15 | 4629.05 | 14.28 | 28.55 | 0.4479 | -30665.5 |
+| G05 | 506.65 | 277.97 | 0.00 | 0.00 | 0.9480 | 5126.5 |
+| G06 | 1241000.0 | 0.00 | 0.00 | 0.00 | 179.258 | -6961.8 |
+| CMPB_SOSC | -55.7979 | 3.0019 | 99.60 | 1.39 | 0.2049 | — |
+| CMPB_SODC | -68.1754 | 0.9370 | 100.00 | 0.00 | 0.0271 | — |
+| CMPB_DOSC | -38.5721 | 21.9889 | 96.33 | 17.65 | 0.3928 | — |
 
-> G02, G04, G05 summary files contain only the header row, indicating the runs produced no completed data. This likely reflects a crash or interrupt during the parallel benchmark run rather than a bug in the solver — they need to be re-run individually.
+G03 excluded — equality encoding interferes with multiplier dynamics.
 
-### Known result interpretation notes
+### Two failure modes identified
 
-- P_RED < 1.0 indicates convergence toward the optimum on average across iterations.
-- CMPB_SOSC P_RED (~0.07) is substantially better than G01 (~0.63). The CMPB_SOSC problem uses a static MPB for both landscapes, which may be easier to navigate than the high-dimensional G01.
-- The CCPSO_G01 old-config P_RED > 1.0 suggests the solver was diverging or stuck far from optimum with those hyperparameters.
+**1. Premature convergence** (G01, CMPB_SOSC): feasible but suboptimal; diversity collapses; same local basin every run.  
+**2. Multiplier cap saturation** (G05, G06): 0% feasibility; constraint magnitudes exceed max_multiplier=10000; G06 P_RED=179 confirms complete failure.  
+**Bimodal** (G02, G04): high std on feasibility; runs either find feasible region or fail entirely depending on initialisation.
+
+### analysis.py outputs
+- `analysis_fitness_summary.csv`
+- `analysis_feasibility_summary.csv`
+- `analysis_p_red_summary.csv`
+- `analysis_convergence_detail.csv`
 
 ---
 
 ## 10. Open Issues & Next Steps
 
-### Immediate (Phase 1 completion)
-- [ ] Re-run G02, G04, G05, G06 benchmarks individually to get valid 30-run results
-- [ ] Confirm G03 (equality-only constraint) is resolvable with current CCLS — the equality encoding uses `|h| − ε ≤ 0` which may affect multiplier dynamics
-- [ ] Tune hyperparameters: `penalty_rho`, `max_multiplier`, swarm sizes, PSO inertia for each problem class
-- [ ] Analyse existing CCGA vs CCPSO comparison on G01
+### Immediate (report submission 15 May)
+- [ ] Remove TODO comment line 290 in report.tex
+- [ ] Fix table environment: `\begin{table}[h]` → `\begin{table*}[t]`, `\end{table}` → `\end{table*}`
+- [ ] Fix `c1`, `c2` → `$c_1$`, `$c_2$` in Section III
+- [ ] Fix "observed on G01 and the CMPB problems" → "observed on G01 and CMPB\_SOSC"
+- [ ] Abstract tweak to reflect Phase 1 scope
 
-### Phase 2 prep (DOSC)
+### Phase 1 complete — findings
+- max_multiplier is problem-dependent; G05/G06 need values >> 10000
+- Premature convergence is dominant limitation; motivates inertia decay / restart mechanisms
+- Augmented Lagrangian extension (penalty_rho) justified and working
+- CMPB_SODC is strongest result: 100% feasibility, P_RED 0.027
+
+### Phase 2 prep (DOSC) — next after Demo 1
 - [ ] Implement dynamic change detection / response in `CoevolutionaryLagrangianSolver.step()`
 - [ ] Hook into `problem.begin_iteration()` to trigger landscape updates
 - [ ] Test CCLS on CMPB_DOSC (`f_params=mpb_configs["A2R"]`, `g_params=mpb_configs["STA"]`)
-- [ ] Consider QPSO as the objective solver for dynamic tracking
+- [ ] Consider QPSO as the objective solver for better dynamic tracking
+- [ ] Implement inertia decay schedule to address premature convergence finding
 
 ### Phase 3 prep (SODC)
 - [ ] Test CCLS on CMPB_SODC (`f_params=mpb_configs["STA"]`, `g_params=mpb_configs["A2R"]`)
@@ -462,7 +477,7 @@ Current config: `penalty_rho=0.5`, `penalty_rho_equality=0.5`, `max_multiplier=1
 
 ### Deferred
 - [ ] Multi-guide PSO with archive (for multi-objective; existing external code to integrate)
-- [ ] Report writing
+- [ ] Adaptive max_multiplier scheduling (addresses G05/G06 failure mode)
 
 ---
 
