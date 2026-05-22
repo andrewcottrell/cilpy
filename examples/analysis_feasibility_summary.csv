@@ -1,0 +1,11 @@
+Problem  , Solver   , Mean_Feasibility_Pct, Std_Feasibility_Pct , Min_Feasibility_Pct, Max_Feasibility_Pct, Num_Runs
+C01      , CCPSO.out,  100.0              ,  0.0                ,               100.0,               100.0,       30
+CMPB_DOSC, CCPSO.out,   96.33333333333333 , 17.653920797948256  ,                 3.0,               100.0,       30
+CMPB_SODC, CCPSO.out,  100.0              ,  0.0                ,               100.0,               100.0,       30
+CMPB_SOSC, CCPSO.out,   99.6              ,  1.3920959142540237 ,                92.5,               100.0,       30
+G01      , CCPSO.out,   99.96666666666667 ,  0.18257418583505555,                99.0,               100.0,       30
+G02      , CCPSO.out,   33.35             , 38.81191383032295   ,                 0.0,                99.5,       30
+G03      , CCPSO.out,    0.0              ,  0.0                ,                 0.0,                 0.0,        6
+G04      , CCPSO.out,   14.283333333333333, 28.547807251180863  ,                 0.0,                94.0,       30
+G05      , CCPSO.out,    0.0              ,  0.0                ,                 0.0,                 0.0,       30
+G06      , CCPSO.out,    0.0              ,  0.0                ,                 0.0,                 0.0,       30

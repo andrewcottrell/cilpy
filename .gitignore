@@ -2,7 +2,6 @@
 **/.mypy_cache
 **/.pytest_cache
 **/*.jpeg
-**/*.out.*
 **/*.tmp.*
 tmp.*
 clean_pc.sh
@@ -16,5 +15,4 @@ docs/dev/ccga_benchmark_exa.md
 docs/dev/ccls_changes.md
 docs/dev/ccls.md
 
-*.csv
 .claude
