@@ -35,6 +35,8 @@ Last updated: 2026-05-22
 
 ### 22 May 2026
 - audited git history and code state for progress consolidation
+- updated logs to note that current benchmark script options may not match prior runs
+- confirmed CMPB runs completed for SOSC, SODC, and DOSC even if current script settings differ
 
 ---
 
@@ -75,6 +77,8 @@ Last updated: 2026-05-22
 - penalty_rho=0.5, penalty_rho_equality=0.5, max_multiplier=10000
 - Objective solver PSO (w=0.72, c1=1.49, c2=1.49)
 - Multiplier solver PSO (w=0.4, c1=1.2, c2=1.2)
+- Note: current benchmark script options may not reflect historical runs (see examples/ccpso_benchmark_exa.py)
+- Historical runs include CMPB_SOSC, CMPB_SODC, and CMPB_DOSC
 
 ### Phase 1 results (final 30 runs)
 | Problem | Mean Fitness | Std | Mean Feas% | Std Feas% | Mean P_RED | Known Opt |

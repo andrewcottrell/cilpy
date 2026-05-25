@@ -47,6 +47,8 @@
 - CCPSO configured with penalty_rho=0.5, penalty_rho_equality=0.5, max_multiplier=10000.
 - Swarm size 200 for both sub-solvers.
 - Current script runs only C01 (other problems defined but not used).
+- Note: benchmark options in the script are not necessarily the settings used for prior runs/results.
+- Historical runs include CMPB_SOSC, CMPB_SODC, and CMPB_DOSC.
 
 ### Analysis tooling (examples/analysis.py)
 - Aggregates out/*.out.csv and out/*.summary.out.csv to produce P_RED, feasibility, fitness, and convergence summaries.
@@ -82,10 +84,7 @@
   - /home/acottrell/Documents/Honours/Project/cilpy/logs/devlog_status_combined.md
 
 ## Sources reviewed
-- /home/acottrell/Documents/Honours/Project/devlog.MD
-- /home/acottrell/Documents/Honours/Project/cilpy/logs/STATUS.md
-- /home/acottrell/Documents/Honours/Project/cilpy/logs/project_context.md
-- /home/acottrell/Documents/Honours/Project/cilpy/logs/addtoreport.txt
+- /home/acottrell/Documents/Honours/Project/cilpy/logs/devlog_status_combined.md
 - git history and diffs for cilpy repo
 - cilpy/solver/ccls.py, cilpy/solver/pso.py, cilpy/solver/ga.py
 - cilpy/solver/chm/deb_feasibility.py, cilpy/problem/constrained.py
