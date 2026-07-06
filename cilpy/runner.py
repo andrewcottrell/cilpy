@@ -251,28 +251,30 @@ class ExperimentRunner:
     _MO_MAIN_HEADER = [
         "run_id",
         "iteration",
-        "archive_size",
-        "igd",
-        "gd",
-        "hypervolume",
-        "spacing",
-        "spread",
-        "population_feasibility_pct",
-        "population_diversity",
-        "front",
+        "archive_size                 [non-dominated solutions currently in the archive]",
+        "igd                          [Inverted Generational Distance: convergence+coverage; 0=ideal; empty if no reference front]",
+        "gd                           [Generational Distance: convergence only; 0=ideal; blind to coverage gaps; empty if no reference front]",
+        "hypervolume                  [dominated area vs fixed reference point; larger=better convergence and spread]",
+        "spacing                      [std dev of nearest-neighbour distances in the front; 0=perfectly uniform]",
+        "spread                       [Deb Delta: extent+uniformity vs true front; 0=ideal; empty if no reference front]",
+        "population_feasibility_pct   [% of current population satisfying all constraints]",
+        "population_diversity         [mean distance of particles from swarm centroid]",
+        "front                        [full Pareto archive as list of objective vectors; useful for plotting]",
     ]
 
     _MO_SUMMARY_HEADER = [
         "problem_name",
         "solver_name",
         "run_id",
-        "final_archive_size",
-        "final_igd",
-        "final_gd",
-        "final_hypervolume",
-        "final_spacing",
-        "final_spread",
-        "final_feasibility_pct",
+        "final_archive_size           [archive solutions at the last iteration]",
+        "final_igd                    [IGD of the final archive]",
+        "final_gd                     [GD of the final archive]",
+        "final_hypervolume            [hypervolume of the final archive]",
+        "final_spacing                [spacing of the final archive]",
+        "final_spread                 [spread of the final archive]",
+        "final_feasibility_pct        [% feasible in population at the last iteration]",
+        "final_front_feasibility_pct  [% of returned front members satisfying all constraints]",
+        "final_feasible_front         [objective vectors of FEASIBLE front members only; for honest cross-algorithm HV]",
         "run_time_s",
     ]
 
@@ -384,6 +386,22 @@ class ExperimentRunner:
             except Exception:
                 pass
 
+        # Front-level feasibility: computed from the returned result's
+        # evaluations (population feasibility above measures the swarm).
+        front_evals = [ev for _, ev in result]
+        n_front_feasible = sum(
+            1 for ev in front_evals if self._is_solution_feasible(ev)
+        )
+        front_feas_str = (
+            f"{100.0 * n_front_feasible / len(front_evals):.4f}"
+            if front_evals else ""
+        )
+        feasible_front = [
+            [float(v) for v in ev.fitness]
+            for ev in front_evals
+            if self._is_solution_feasible(ev)
+        ]
+
         return [
             problem_name,
             solver_name,
@@ -395,6 +413,8 @@ class ExperimentRunner:
             sp_str,
             spread_str,
             self._measure_feasibility(solver),
+            front_feas_str,
+            feasible_front,
             f"{run_time:.2f}",
         ]
 

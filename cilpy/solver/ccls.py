@@ -49,6 +49,22 @@ from cilpy.problem import Problem, Evaluation, SolutionType
 from cilpy.solver import Solver
 
 
+def _total_violation(evaluation: Evaluation, tolerance: float = 1e-6) -> float:
+    """Total constraint violation of an evaluation.
+
+    Sum of positive inequality violations and absolute equality violations
+    beyond tolerance. Zero if and only if the solution is feasible.
+    """
+    violation = 0.0
+    for g in evaluation.constraints_inequality or []:
+        if g > 0:
+            violation += g
+    for h in evaluation.constraints_equality or []:
+        if abs(h) > tolerance:
+            violation += abs(h)
+    return violation
+
+
 class _LagrangianMinProblem(Problem):
     """An internal proxy problem for the objective-space solver ('min' swarm).
 
@@ -134,23 +150,57 @@ class _LagrangianMinProblem(Problem):
         gx = original_eval.constraints_inequality or []
         hx = original_eval.constraints_equality or []
 
-        # Calculate L(x, mu*, lambda*)
-        lagrangian_value = fx
-        lagrangian_value += sum(
-            mu * g for mu, g in zip(self.fixed_multipliers_inequality, gx)
-        )
-        lagrangian_value += sum(
-            la * h for la, h in zip(self.fixed_multipliers_equality, hx)
-        )
+        if isinstance(fx, (list, tuple)):
+            # Multi-objective: a single objective-independent penalty P(x)
+            # is added to EVERY objective, L_m(x) = f_m(x) + P(x).
+            #
+            # The multiplier term uses the violation-clamped ("plus
+            # function") form mu*^T max(0, g) rather than the signed
+            # Lagrangian mu*^T g. The signed form rewards deeply feasible
+            # solutions with large NEGATIVE penalties, which -- added to all
+            # objectives -- lets the single most-interior solution
+            # Pareto-dominate the entire archive and collapses the front to
+            # one point. Clamping makes P(x) = 0 for every feasible
+            # solution, so feasible solutions compete purely on their true
+            # objectives (Pareto structure preserved), while infeasible
+            # solutions are inflated on all objectives and get dominated out
+            # as the multipliers grow.
+            penalty = 0.0
+            penalty += sum(
+                mu * max(0.0, g)
+                for mu, g in zip(self.fixed_multipliers_inequality, gx)
+            )
+            penalty += sum(
+                la * abs(h)
+                for la, h in zip(self.fixed_multipliers_equality, hx)
+            )
+            if self.penalty_rho > 0.0 and gx:
+                penalty += self.penalty_rho * sum(max(0.0, g) for g in gx)
+            if self.penalty_rho_equality > 0.0 and hx:
+                penalty += self.penalty_rho_equality * sum(abs(h) for h in hx)
+            lagrangian_value = [fm + penalty for fm in fx]
+        else:
+            # Single-objective: the original signed Lagrangian, unchanged
+            # from the validated Phase 1 implementation.
+            lagrangian_value = fx
+            lagrangian_value += sum(
+                mu * g for mu, g in zip(self.fixed_multipliers_inequality, gx)
+            )
+            lagrangian_value += sum(
+                la * h for la, h in zip(self.fixed_multipliers_equality, hx)
+            )
+            if self.penalty_rho > 0.0 and gx:
+                lagrangian_value += self.penalty_rho * sum(
+                    max(0.0, g) for g in gx
+                )
+            if self.penalty_rho_equality > 0.0 and hx:
+                lagrangian_value += self.penalty_rho_equality * sum(
+                    abs(h) for h in hx
+                )
 
-        # Optional penalty term to reinforce feasibility.
-        if self.penalty_rho > 0.0 and gx:
-            lagrangian_value += self.penalty_rho * sum(max(0.0, g) for g in gx)
-
-        if self.penalty_rho_equality > 0.0 and hx:
-            lagrangian_value += self.penalty_rho_equality * sum(abs(h) for h in hx)
-
-        # This problem is now unconstrained from the solver's perspective
+        # This problem is now unconstrained from the solver's perspective,
+        # but the raw constraint values are passed through so that archive
+        # admission policies and feasibility reporting remain possible.
         return Evaluation(
             fitness=lagrangian_value,
             constraints_inequality=original_eval.constraints_inequality,
@@ -162,13 +212,26 @@ class _LagrangianMinProblem(Problem):
         return self.original_problem.get_fitness_bounds()
 
     def is_dynamic(self) -> tuple[bool, bool]:
-        """Delegates the check for dynamic properties to the original problem.
+        """Reports the dynamism of the proxy landscape.
+
+        For multi-objective problems, the objective component is reported as
+        dynamic even when the original problem is static: the Lagrangian
+        landscape L_m(x) = f_m(x) + P(x) genuinely changes every iteration as
+        the multiplier swarm updates mu*. This signals archive-based solvers
+        (e.g. MGPSO) to re-evaluate their archive each step, preventing stale
+        penalised fitness values computed under old multipliers from
+        distorting Pareto dominance in the archive.
+
+        For single-objective problems, the original behaviour (delegation) is
+        preserved, matching the validated Phase 1 setup.
 
         Returns:
-            Tuple[bool, bool]: A tuple indicating if the original problem's
-                objectives or constraints are dynamic.
+            Tuple[bool, bool]: (objectives_dynamic, constraints_dynamic).
         """
-        return self.original_problem.is_dynamic()
+        orig_obj_dyn, orig_con_dyn = self.original_problem.is_dynamic()
+        if self.original_problem.is_multi_objective():
+            return (True, orig_con_dyn)
+        return (orig_obj_dyn, orig_con_dyn)
 
     def is_multi_objective(self) -> bool:
         """Delegates the check for multi-objective to the original problem.
@@ -268,6 +331,13 @@ class _LagrangianMaxProblem(Problem):
         gx = self.fixed_solution_eval.constraints_inequality or []
         hx = self.fixed_solution_eval.constraints_equality or []
 
+        # f(x*) is constant with respect to the multipliers, so it never
+        # affects the argmax of L(x*, mu, lambda) -- it only shifts the
+        # reported value. For multi-objective problems fx is a vector and
+        # cannot be added to a scalar, so the constant term is dropped.
+        if isinstance(fx, (list, tuple)):
+            fx = 0.0
+
         # Calculate L(x*, mu, lambda)
         lagrangian_value = fx
         lagrangian_value += sum(s * g for s, g in zip(inequality_multipliers, gx))
@@ -359,6 +429,21 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         constraint_handler = kwargs.get("constraint_handler", None)
 
+        # Archive management strategy for multi-objective objective solvers:
+        #   "filter" (default) -- the archive may contain infeasible
+        #       solutions during the run (they are gradually dominated out
+        #       as the multipliers grow); get_result() filters the final
+        #       front so that only feasible solutions are reported.
+        #   "strict" -- infeasible solutions are never admitted to the
+        #       archive in the first place; no filtering is needed.
+        # Ignored for single-objective problems.
+        self.archive_strategy = str(kwargs.get("archive_strategy", "filter"))
+        if self.archive_strategy not in ("filter", "strict"):
+            raise ValueError(
+                f"archive_strategy must be 'filter' or 'strict', "
+                f"got '{self.archive_strategy}'."
+            )
+
         self.min_problem = _LagrangianMinProblem(
             problem,
             penalty_rho=penalty_rho,
@@ -368,14 +453,68 @@ class CoevolutionaryLagrangianSolver(Solver):
             problem, initial_solution, max_multiplier=max_multiplier
         )
 
+        obj_params = dict(objective_solver_params)
+        obj_params.setdefault("name", f"{name}_objective")
+        if problem.is_multi_objective() and self.archive_strategy == "strict":
+            obj_params.setdefault("feasible_archive_only", True)
         self.objective_solver = objective_solver_class(
             problem=self.min_problem,
             constraint_handler=constraint_handler,
-            **objective_solver_params
+            **obj_params
         )
+        mul_params = dict(multiplier_solver_params)
+        mul_params.setdefault("name", f"{name}_multiplier")
         self.multiplier_solver = multiplier_solver_class(
-            problem=self.max_problem, **multiplier_solver_params
+            problem=self.max_problem, **mul_params
         )
+
+    def _select_multiplier_anchor(self) -> list:
+        """Selects the solution x* against which the multipliers evolve.
+
+        Single-objective: the best solution of the objective solver, exactly
+        as in the original framework -- if it violates constraints the
+        multipliers grow; once it is feasible they relax toward the saddle
+        point.
+
+        Multi-objective: the "best solution" is an entire archive, so a
+        representative must be chosen. The rule used is:
+
+        * If the archive is non-empty, the *most-violating* archive member is
+          selected. The multipliers then respond to the worst remaining
+          violation on the current front, and pressure persists until the
+          entire front is feasible. When every archive member is feasible,
+          all violations are non-positive and the multipliers relax, matching
+          the single-objective saddle-point dynamics.
+
+        * If the archive is empty (possible under the "strict" admission
+          strategy before any feasible solution has been found), the
+          *least-violating population member* is selected instead. This is
+          the current feasibility frontier: penalising its remaining
+          violations applies pressure exactly where the swarm is closest to
+          success, while avoiding the multiplier-cap saturation that anchoring
+          on an arbitrary wildly-infeasible particle would cause.
+        """
+        results = self.objective_solver.get_result()
+
+        if not self.problem.is_multi_objective():
+            return results[0][0]
+
+        if results:
+            # Most-violating archive member (ties broken by first found).
+            worst_idx = max(
+                range(len(results)),
+                key=lambda i: _total_violation(results[i][1]),
+            )
+            return results[worst_idx][0]
+
+        # Empty archive: least-violating member of the population.
+        population = self.objective_solver.get_population()
+        evaluations = self.objective_solver.get_population_evaluations()
+        best_idx = min(
+            range(len(population)),
+            key=lambda i: _total_violation(evaluations[i]),
+        )
+        return population[best_idx]
 
     def step(self) -> None:
         """Performs one co-evolutionary step.
@@ -388,7 +527,7 @@ class CoevolutionaryLagrangianSolver(Solver):
         """
 
         # 1. Get the best individuals from each population
-        best_solution, _ = self.objective_solver.get_result()[0]
+        best_solution = self._select_multiplier_anchor()
         best_multipliers, _ = self.multiplier_solver.get_result()[0]
 
         num_inequality = self.max_problem.num_inequality
@@ -413,19 +552,38 @@ class CoevolutionaryLagrangianSolver(Solver):
         #     pass
 
     def get_result(self) -> list[tuple[list[float], Evaluation]]:
-        """Returns the best solution found in the objective space.
+        """Returns the best solution(s), evaluated on the ORIGINAL problem.
 
-        The returned solution is evaluated against the *original* constrained
-        problem, providing the user with the true fitness and constraint
-        violation information.
+        Archive members are stored by the objective solver with *penalised*
+        Lagrangian fitness, so every returned solution is re-evaluated
+        against the original constrained problem, restoring the true
+        objective values and constraint information.
+
+        Single-objective: a single (solution, evaluation) tuple, as before.
+
+        Multi-objective: the full archive. Under the "filter" strategy the
+        front is filtered to feasible solutions only; if no archive member is
+        feasible, the unfiltered archive is returned so that the state of the
+        search remains diagnosable (its feasibility is visible in the
+        evaluations). Under the "strict" strategy the archive only ever
+        contains feasible solutions, so filtering is a no-op.
 
         Returns:
-            List[Tuple[SolutionType, Evaluation[float]]]: A list containing a
-                single tuple of (best_solution, evaluation_on_original_problem).
+            List[Tuple[SolutionType, Evaluation]]: One tuple per solution.
         """
-        best_solution, _ = self.objective_solver.get_result()[0]
-        final_evaluation = self.problem.evaluate(best_solution)
-        return [(best_solution, final_evaluation)]
+        if not self.problem.is_multi_objective():
+            best_solution, _ = self.objective_solver.get_result()[0]
+            final_evaluation = self.problem.evaluate(best_solution)
+            return [(best_solution, final_evaluation)]
+
+        re_evaluated = [
+            (solution, self.problem.evaluate(solution))
+            for solution, _ in self.objective_solver.get_result()
+        ]
+        feasible = [
+            (s, e) for s, e in re_evaluated if _total_violation(e) == 0.0
+        ]
+        return feasible if feasible else re_evaluated
 
     def get_population(self) -> List[List[float]]:
         """Delegates getting population to the objective solver."""

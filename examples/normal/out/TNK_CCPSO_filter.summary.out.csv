@@ -1,0 +1,4 @@
+problem_name,solver_name,run_id,final_archive_size,final_igd,final_gd,final_hypervolume,final_spacing,final_spread,final_feasibility_pct,run_time_s
+TNK,CCPSO_filter,1,100,0.008149,0.006037,0.547059,0.006974,0.880005,36.0000,3.30
+TNK,CCPSO_filter,2,100,0.007755,0.006042,0.792664,0.007856,0.919692,32.0000,3.20
+TNK,CCPSO_filter,3,100,0.007467,0.007334,0.863414,0.008656,0.867641,35.0000,3.06

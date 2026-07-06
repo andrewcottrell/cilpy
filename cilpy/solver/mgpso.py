@@ -70,22 +70,42 @@ def dominates(fitness_a: List[float], fitness_b: List[float]) -> bool:
     return no_worse and strictly_better
 
 
+def _is_feasible(evaluation: Evaluation, tolerance: float = 1e-6) -> bool:
+    """True if all inequality constraints are <= 0 and all equality
+    constraints are within tolerance of 0. Unconstrained evaluations are
+    feasible by definition."""
+    if evaluation.constraints_inequality:
+        if any(g > 0 for g in evaluation.constraints_inequality):
+            return False
+    if evaluation.constraints_equality:
+        if any(abs(h) > tolerance for h in evaluation.constraints_equality):
+            return False
+    return True
+
+
 class _Archive:
     """Bounded archive of mutually non-dominated solutions.
 
     Stores `(position, Evaluation)` pairs. The full `Evaluation` is retained
     (rather than only the fitness vector) so that constraint information
-    remains available for feasibility reporting and for future
-    constrained-dominance extensions.
+    remains available for feasibility reporting and admission policies.
 
     When the archive exceeds `capacity` after an insertion, the solution with
     the smallest crowding distance is evicted.
+
+    Performance: an (n, nm) objective matrix and the crowding distances are
+    cached and invalidated on mutation, so dominance checks on insertion are
+    vectorized and tournament selection does not recompute crowding
+    distances for every particle (they only change when the archive does).
     """
 
-    def __init__(self, capacity: int):
+    def __init__(self, capacity: int, feasible_only: bool = False):
         self.capacity = capacity
+        self.feasible_only = feasible_only
         self.positions: List[np.ndarray] = []
         self.evaluations: List[Evaluation] = []
+        self._matrix_cache: Optional[np.ndarray] = None
+        self._crowding_cache: Optional[np.ndarray] = None
 
     def __len__(self) -> int:
         return len(self.positions)
@@ -94,32 +114,60 @@ class _Archive:
     def entries(self) -> List[Tuple[np.ndarray, Evaluation]]:
         return list(zip(self.positions, self.evaluations))
 
+    def _invalidate(self) -> None:
+        self._matrix_cache = None
+        self._crowding_cache = None
+
+    def _matrix(self) -> np.ndarray:
+        """The (n, nm) objective matrix of the archive, cached."""
+        if self._matrix_cache is None:
+            self._matrix_cache = np.array(
+                [e.fitness for e in self.evaluations], dtype=float
+            )
+        return self._matrix_cache
+
     def insert(self, position: np.ndarray, evaluation: Evaluation) -> None:
         """Attempts to insert a solution into the archive.
 
         The solution is rejected if it is dominated by any archive member.
         Otherwise, all archive members it dominates are removed and the
         solution is added. If the archive then exceeds capacity, the most
-        crowded member is evicted.
+        crowded member is evicted. Dominance checks are vectorized against
+        the cached objective matrix.
         """
-        fitness = evaluation.fitness
+        # Strict admission: infeasible solutions never enter the archive.
+        if self.feasible_only and not _is_feasible(evaluation):
+            return
 
-        # Reject if dominated by any existing member.
-        for existing in self.evaluations:
-            if dominates(existing.fitness, fitness):
+        fitness = np.asarray(evaluation.fitness, dtype=float)
+
+        if self.positions:
+            matrix = self._matrix()
+
+            # Reject if dominated by any existing member.
+            dominated_by_existing = np.any(
+                np.all(matrix <= fitness, axis=1)
+                & np.any(matrix < fitness, axis=1)
+            )
+            if dominated_by_existing:
                 return
 
-        # Remove members dominated by the new solution.
-        survivors = [
-            (p, e)
-            for p, e in zip(self.positions, self.evaluations)
-            if not dominates(fitness, e.fitness)
-        ]
-        self.positions = [p for p, _ in survivors]
-        self.evaluations = [e for _, e in survivors]
+            # Remove members dominated by the new solution.
+            dominates_mask = np.all(fitness <= matrix, axis=1) & np.any(
+                fitness < matrix, axis=1
+            )
+            if dominates_mask.any():
+                keep = ~dominates_mask
+                self.positions = [
+                    p for p, k in zip(self.positions, keep) if k
+                ]
+                self.evaluations = [
+                    e for e, k in zip(self.evaluations, keep) if k
+                ]
 
         self.positions.append(position.copy())
         self.evaluations.append(copy.deepcopy(evaluation))
+        self._invalidate()
 
         if len(self) > self.capacity:
             self._evict_most_crowded()
@@ -128,34 +176,33 @@ class _Archive:
         """Crowding distance of every archive member, in objective space.
 
         Boundary solutions receive infinite distance (Deb et al., 2002).
+        Cached until the archive next changes.
         """
+        if self._crowding_cache is not None:
+            return self._crowding_cache
+
         n = len(self)
         if n == 0:
-            return np.array([])
-        if n == 1:
-            return np.array([np.inf])
-
-        obj_matrix = np.array([e.fitness for e in self.evaluations])
-        nm = obj_matrix.shape[1]
-        distances = np.zeros(n)
-
-        for m in range(nm):
-            col = obj_matrix[:, m]
-            sorted_idx = np.argsort(col)
-            sorted_col = col[sorted_idx]
-
-            distances[sorted_idx[0]] = np.inf
-            distances[sorted_idx[-1]] = np.inf
-
-            f_range = sorted_col[-1] - sorted_col[0]
-            if f_range == 0:
-                continue
-
-            for k in range(1, n - 1):
-                distances[sorted_idx[k]] += (
-                    sorted_col[k + 1] - sorted_col[k - 1]
+            distances = np.array([])
+        elif n <= 2:
+            distances = np.full(n, np.inf)
+        else:
+            matrix = self._matrix()
+            nm = matrix.shape[1]
+            distances = np.zeros(n)
+            for m in range(nm):
+                sorted_idx = np.argsort(matrix[:, m])
+                sorted_col = matrix[sorted_idx, m]
+                distances[sorted_idx[0]] = np.inf
+                distances[sorted_idx[-1]] = np.inf
+                f_range = sorted_col[-1] - sorted_col[0]
+                if f_range == 0:
+                    continue
+                distances[sorted_idx[1:-1]] += (
+                    sorted_col[2:] - sorted_col[:-2]
                 ) / f_range
 
+        self._crowding_cache = distances
         return distances
 
     def _evict_most_crowded(self) -> None:
@@ -164,6 +211,7 @@ class _Archive:
         most_crowded_idx = int(np.argmin(distances))
         self.positions.pop(most_crowded_idx)
         self.evaluations.pop(most_crowded_idx)
+        self._invalidate()
 
     def tournament_select(self, tournament_size: int) -> Optional[np.ndarray]:
         """Selects an archive guide via crowding-distance tournament.
@@ -406,6 +454,7 @@ class MGPSO(Solver[List[float], List[float]]):
         name: str,
         swarm_size: int,
         tournament_size: int = 3,
+        feasible_archive_only: bool = False,
         w: Optional[float] = None,
         c1: Optional[float] = None,
         c2: Optional[float] = None,
@@ -461,7 +510,10 @@ class MGPSO(Solver[List[float], List[float]]):
             )
         self.n_objectives = len(probe.fitness)
 
-        self._archive = _Archive(capacity=self.n_objectives * self.swarm_size)
+        self._archive = _Archive(
+            capacity=self.n_objectives * self.swarm_size,
+            feasible_only=feasible_archive_only,
+        )
         self._swarms = [
             _Subswarm(self.swarm_size, lower, upper, objective_idx=m)
             for m in range(self.n_objectives)
