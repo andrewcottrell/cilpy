@@ -1,4 +1,4 @@
-from cilpy.problem.constrained import G01, G02, G03, G04, G05, G06, C01
+from cilpy.problem.constrained import G01, G02, G03, G04, G05, G06
 from cilpy.problem.cmpb import ConstrainedMovingPeaksBenchmark
 from cilpy.problem.mpb import generate_mpb_configs
 from concurrent.futures import ThreadPoolExecutor
