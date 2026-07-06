@@ -1,0 +1,2 @@
+Problem  , Solver   , Mean_Final_Fitness, Std_Final_Fitness, Min_Final_Fitness  , Max_Final_Fitness  , Num_Runs
+CMPB_SODC, CCPSO.out, -50.6015630270213 , 6.651973599121762, -59.530118467005096, -40.008316343256126,       10
