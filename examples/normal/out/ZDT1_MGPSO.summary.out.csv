@@ -1,0 +1,4 @@
+problem_name,solver_name,run_id,final_archive_size,final_igd,final_gd,final_hypervolume,final_spacing,final_spread,final_feasibility_pct,run_time_s
+ZDT1,MGPSO,1,100,0.004557,0.002180,6.489633,0.005540,0.173177,100.0000,5.52
+ZDT1,MGPSO,2,100,0.004662,0.002199,5.974438,0.004574,0.214307,100.0000,5.42
+ZDT1,MGPSO,3,100,0.004667,0.002804,6.688664,0.003235,0.158168,100.0000,5.38
