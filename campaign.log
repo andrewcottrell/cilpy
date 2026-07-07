@@ -1,0 +1,1982 @@
+
+### SCH1 x MGPSO  (seed=26993450)
+======== Starting All Experiments ========
+
+--- Processing Problem: SCH1 ---
+
+  -> Starting Experiment: MGPSO on SCH1
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/SCH1_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 16.87s. Archive size: 100  IGD=0.0190
+     --- Starting Run 2/30 ---
+     Run 2 finished in 16.93s. Archive size: 100  IGD=0.0190
+     --- Starting Run 3/30 ---
+     Run 3 finished in 16.55s. Archive size: 100  IGD=0.0192
+     --- Starting Run 4/30 ---
+     Run 4 finished in 16.92s. Archive size: 100  IGD=0.0189
+     --- Starting Run 5/30 ---
+     Run 5 finished in 16.69s. Archive size: 100  IGD=0.0190
+     --- Starting Run 6/30 ---
+     Run 6 finished in 16.69s. Archive size: 100  IGD=0.0190
+     --- Starting Run 7/30 ---
+     Run 7 finished in 16.88s. Archive size: 100  IGD=0.0191
+     --- Starting Run 8/30 ---
+     Run 8 finished in 16.55s. Archive size: 100  IGD=0.0192
+     --- Starting Run 9/30 ---
+     Run 9 finished in 16.75s. Archive size: 100  IGD=0.0190
+     --- Starting Run 10/30 ---
+     Run 10 finished in 16.63s. Archive size: 100  IGD=0.0191
+     --- Starting Run 11/30 ---
+     Run 11 finished in 16.92s. Archive size: 100  IGD=0.0190
+     --- Starting Run 12/30 ---
+     Run 12 finished in 16.89s. Archive size: 100  IGD=0.0190
+     --- Starting Run 13/30 ---
+     Run 13 finished in 16.77s. Archive size: 100  IGD=0.0190
+     --- Starting Run 14/30 ---
+     Run 14 finished in 16.54s. Archive size: 100  IGD=0.0192
+     --- Starting Run 15/30 ---
+     Run 15 finished in 16.66s. Archive size: 100  IGD=0.0189
+     --- Starting Run 16/30 ---
+     Run 16 finished in 16.31s. Archive size: 100  IGD=0.0193
+     --- Starting Run 17/30 ---
+     Run 17 finished in 16.67s. Archive size: 100  IGD=0.0191
+     --- Starting Run 18/30 ---
+     Run 18 finished in 16.52s. Archive size: 100  IGD=0.0191
+     --- Starting Run 19/30 ---
+     Run 19 finished in 16.62s. Archive size: 100  IGD=0.0191
+     --- Starting Run 20/30 ---
+     Run 20 finished in 16.76s. Archive size: 100  IGD=0.0190
+     --- Starting Run 21/30 ---
+     Run 21 finished in 16.74s. Archive size: 100  IGD=0.0192
+     --- Starting Run 22/30 ---
+     Run 22 finished in 16.81s. Archive size: 100  IGD=0.0190
+     --- Starting Run 23/30 ---
+     Run 23 finished in 16.68s. Archive size: 100  IGD=0.0191
+     --- Starting Run 24/30 ---
+     Run 24 finished in 16.63s. Archive size: 100  IGD=0.0193
+     --- Starting Run 25/30 ---
+     Run 25 finished in 17.08s. Archive size: 100  IGD=0.0189
+     --- Starting Run 26/30 ---
+     Run 26 finished in 16.79s. Archive size: 100  IGD=0.0192
+     --- Starting Run 27/30 ---
+     Run 27 finished in 16.50s. Archive size: 100  IGD=0.0193
+     --- Starting Run 28/30 ---
+     Run 28 finished in 16.80s. Archive size: 100  IGD=0.0191
+     --- Starting Run 29/30 ---
+     Run 29 finished in 16.79s. Archive size: 100  IGD=0.0191
+     --- Starting Run 30/30 ---
+     Run 30 finished in 16.67s. Archive size: 100  IGD=0.0192
+  -> Experiment for MGPSO on SCH1 finished in 501.87s.
+     Summary saved to: out/SCH1_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 501.87s
+
+### ZDT1 x MGPSO  (seed=26993495)
+======== Starting All Experiments ========
+
+--- Processing Problem: ZDT1 ---
+
+  -> Starting Experiment: MGPSO on ZDT1
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/ZDT1_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.87s. Archive size: 100  IGD=0.0043
+     --- Starting Run 2/30 ---
+     Run 2 finished in 14.73s. Archive size: 100  IGD=0.0043
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.37s. Archive size: 100  IGD=0.0043
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.67s. Archive size: 100  IGD=0.0043
+     --- Starting Run 5/30 ---
+     Run 5 finished in 14.51s. Archive size: 100  IGD=0.0043
+     --- Starting Run 6/30 ---
+     Run 6 finished in 14.51s. Archive size: 100  IGD=0.0043
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.57s. Archive size: 100  IGD=0.0043
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.67s. Archive size: 100  IGD=0.0043
+     --- Starting Run 9/30 ---
+     Run 9 finished in 14.93s. Archive size: 100  IGD=0.0043
+     --- Starting Run 10/30 ---
+     Run 10 finished in 14.36s. Archive size: 100  IGD=0.0043
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.19s. Archive size: 100  IGD=0.0043
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.67s. Archive size: 100  IGD=0.0042
+     --- Starting Run 13/30 ---
+     Run 13 finished in 14.26s. Archive size: 100  IGD=0.0042
+     --- Starting Run 14/30 ---
+     Run 14 finished in 14.74s. Archive size: 100  IGD=0.0043
+     --- Starting Run 15/30 ---
+     Run 15 finished in 14.09s. Archive size: 100  IGD=0.0043
+     --- Starting Run 16/30 ---
+     Run 16 finished in 14.60s. Archive size: 100  IGD=0.0043
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.63s. Archive size: 100  IGD=0.0043
+     --- Starting Run 18/30 ---
+     Run 18 finished in 14.42s. Archive size: 100  IGD=0.0043
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.36s. Archive size: 100  IGD=0.0043
+     --- Starting Run 20/30 ---
+     Run 20 finished in 14.26s. Archive size: 100  IGD=0.0043
+     --- Starting Run 21/30 ---
+     Run 21 finished in 14.30s. Archive size: 100  IGD=0.0043
+     --- Starting Run 22/30 ---
+     Run 22 finished in 14.33s. Archive size: 100  IGD=0.0043
+     --- Starting Run 23/30 ---
+     Run 23 finished in 14.34s. Archive size: 100  IGD=0.0042
+     --- Starting Run 24/30 ---
+     Run 24 finished in 14.41s. Archive size: 100  IGD=0.0043
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.59s. Archive size: 100  IGD=0.0043
+     --- Starting Run 26/30 ---
+     Run 26 finished in 14.34s. Archive size: 100  IGD=0.0043
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.26s. Archive size: 100  IGD=0.0042
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.44s. Archive size: 100  IGD=0.0043
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.49s. Archive size: 100  IGD=0.0043
+     --- Starting Run 30/30 ---
+     Run 30 finished in 14.46s. Archive size: 100  IGD=0.0043
+  -> Experiment for MGPSO on ZDT1 finished in 434.61s.
+     Summary saved to: out/ZDT1_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 434.61s
+
+### ZDT2 x MGPSO  (seed=26993499)
+======== Starting All Experiments ========
+
+--- Processing Problem: ZDT2 ---
+
+  -> Starting Experiment: MGPSO on ZDT2
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/ZDT2_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.77s. Archive size: 100  IGD=0.0045
+     --- Starting Run 2/30 ---
+     Run 2 finished in 15.55s. Archive size: 100  IGD=0.0047
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.34s. Archive size: 100  IGD=0.0047
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.49s. Archive size: 100  IGD=0.0047
+     --- Starting Run 5/30 ---
+     Run 5 finished in 14.19s. Archive size: 100  IGD=0.0047
+     --- Starting Run 6/30 ---
+     Run 6 finished in 14.58s. Archive size: 100  IGD=0.0046
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.37s. Archive size: 100  IGD=0.3094
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.81s. Archive size: 100  IGD=0.0046
+     --- Starting Run 9/30 ---
+     Run 9 finished in 15.27s. Archive size: 100  IGD=0.9153
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.01s. Archive size: 100  IGD=0.0047
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.87s. Archive size: 100  IGD=0.3094
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.91s. Archive size: 100  IGD=0.0046
+     --- Starting Run 13/30 ---
+     Run 13 finished in 14.82s. Archive size: 100  IGD=0.0046
+     --- Starting Run 14/30 ---
+     Run 14 finished in 15.21s. Archive size: 100  IGD=0.0048
+     --- Starting Run 15/30 ---
+     Run 15 finished in 15.16s. Archive size: 100  IGD=0.3094
+     --- Starting Run 16/30 ---
+     Run 16 finished in 13.29s. Archive size: 100  IGD=0.6379
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.75s. Archive size: 100  IGD=0.3094
+     --- Starting Run 18/30 ---
+     Run 18 finished in 14.47s. Archive size: 100  IGD=0.0046
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.53s. Archive size: 100  IGD=0.3094
+     --- Starting Run 20/30 ---
+     Run 20 finished in 14.82s. Archive size: 100  IGD=0.0047
+     --- Starting Run 21/30 ---
+     Run 21 finished in 15.23s. Archive size: 100  IGD=0.7309
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.52s. Archive size: 100  IGD=0.0046
+     --- Starting Run 23/30 ---
+     Run 23 finished in 15.16s. Archive size: 100  IGD=0.0046
+     --- Starting Run 24/30 ---
+     Run 24 finished in 15.30s. Archive size: 100  IGD=0.9153
+     --- Starting Run 25/30 ---
+     Run 25 finished in 13.38s. Archive size: 100  IGD=0.0047
+     --- Starting Run 26/30 ---
+     Run 26 finished in 14.45s. Archive size: 100  IGD=0.0046
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.65s. Archive size: 100  IGD=0.0047
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.96s. Archive size: 100  IGD=0.0046
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.80s. Archive size: 100  IGD=0.0046
+     --- Starting Run 30/30 ---
+     Run 30 finished in 13.93s. Archive size: 100  IGD=0.0047
+  -> Experiment for MGPSO on ZDT2 finished in 441.81s.
+     Summary saved to: out/ZDT2_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 441.82s
+
+### ZDT3 x MGPSO  (seed=26993503)
+======== Starting All Experiments ========
+
+--- Processing Problem: ZDT3 ---
+
+  -> Starting Experiment: MGPSO on ZDT3
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/ZDT3_MGPSO.out.csv
+     Generating reference Pareto front... done (269 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 9.76s. Archive size: 100  IGD=0.0058
+     --- Starting Run 2/30 ---
+     Run 2 finished in 9.89s. Archive size: 100  IGD=0.0058
+     --- Starting Run 3/30 ---
+     Run 3 finished in 9.72s. Archive size: 100  IGD=0.0058
+     --- Starting Run 4/30 ---
+     Run 4 finished in 9.98s. Archive size: 100  IGD=0.0053
+     --- Starting Run 5/30 ---
+     Run 5 finished in 9.86s. Archive size: 100  IGD=0.0055
+     --- Starting Run 6/30 ---
+     Run 6 finished in 9.78s. Archive size: 100  IGD=0.0055
+     --- Starting Run 7/30 ---
+     Run 7 finished in 9.74s. Archive size: 100  IGD=0.0056
+     --- Starting Run 8/30 ---
+     Run 8 finished in 9.94s. Archive size: 100  IGD=0.0055
+     --- Starting Run 9/30 ---
+     Run 9 finished in 9.90s. Archive size: 100  IGD=0.0055
+     --- Starting Run 10/30 ---
+     Run 10 finished in 9.98s. Archive size: 100  IGD=0.0054
+     --- Starting Run 11/30 ---
+     Run 11 finished in 9.81s. Archive size: 100  IGD=0.0056
+     --- Starting Run 12/30 ---
+     Run 12 finished in 9.60s. Archive size: 100  IGD=0.0054
+     --- Starting Run 13/30 ---
+     Run 13 finished in 10.06s. Archive size: 100  IGD=0.0055
+     --- Starting Run 14/30 ---
+     Run 14 finished in 10.08s. Archive size: 100  IGD=0.0054
+     --- Starting Run 15/30 ---
+     Run 15 finished in 10.03s. Archive size: 100  IGD=0.0054
+     --- Starting Run 16/30 ---
+     Run 16 finished in 9.72s. Archive size: 100  IGD=0.0056
+     --- Starting Run 17/30 ---
+     Run 17 finished in 9.78s. Archive size: 100  IGD=0.0058
+     --- Starting Run 18/30 ---
+     Run 18 finished in 9.89s. Archive size: 100  IGD=0.0055
+     --- Starting Run 19/30 ---
+     Run 19 finished in 9.83s. Archive size: 100  IGD=0.0058
+     --- Starting Run 20/30 ---
+     Run 20 finished in 9.99s. Archive size: 100  IGD=0.0058
+     --- Starting Run 21/30 ---
+     Run 21 finished in 10.10s. Archive size: 100  IGD=0.0055
+     --- Starting Run 22/30 ---
+     Run 22 finished in 9.99s. Archive size: 100  IGD=0.0056
+     --- Starting Run 23/30 ---
+     Run 23 finished in 9.99s. Archive size: 100  IGD=0.0056
+     --- Starting Run 24/30 ---
+     Run 24 finished in 10.09s. Archive size: 100  IGD=0.0054
+     --- Starting Run 25/30 ---
+     Run 25 finished in 9.89s. Archive size: 100  IGD=0.0056
+     --- Starting Run 26/30 ---
+     Run 26 finished in 9.65s. Archive size: 100  IGD=0.0057
+     --- Starting Run 27/30 ---
+     Run 27 finished in 9.69s. Archive size: 100  IGD=0.0056
+     --- Starting Run 28/30 ---
+     Run 28 finished in 9.71s. Archive size: 100  IGD=0.1258
+     --- Starting Run 29/30 ---
+     Run 29 finished in 10.04s. Archive size: 100  IGD=0.0054
+     --- Starting Run 30/30 ---
+     Run 30 finished in 9.85s. Archive size: 100  IGD=0.0057
+  -> Experiment for MGPSO on ZDT3 finished in 296.49s.
+     Summary saved to: out/ZDT3_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 296.53s
+
+### ZDT4 x MGPSO  (seed=26993507)
+======== Starting All Experiments ========
+
+--- Processing Problem: ZDT4 ---
+
+  -> Starting Experiment: MGPSO on ZDT4
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/ZDT4_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 7.95s. Archive size: 100  IGD=2.5054
+     --- Starting Run 2/30 ---
+     Run 2 finished in 8.89s. Archive size: 100  IGD=2.8850
+     --- Starting Run 3/30 ---
+     Run 3 finished in 7.38s. Archive size: 100  IGD=3.0776
+     --- Starting Run 4/30 ---
+     Run 4 finished in 10.51s. Archive size: 100  IGD=0.5264
+     --- Starting Run 5/30 ---
+     Run 5 finished in 7.20s. Archive size: 100  IGD=1.9541
+     --- Starting Run 6/30 ---
+     Run 6 finished in 8.24s. Archive size: 22  IGD=3.6797
+     --- Starting Run 7/30 ---
+     Run 7 finished in 9.19s. Archive size: 100  IGD=5.6943
+     --- Starting Run 8/30 ---
+     Run 8 finished in 5.55s. Archive size: 7  IGD=11.4515
+     --- Starting Run 9/30 ---
+     Run 9 finished in 6.06s. Archive size: 37  IGD=6.7697
+     --- Starting Run 10/30 ---
+     Run 10 finished in 5.66s. Archive size: 12  IGD=9.0750
+     --- Starting Run 11/30 ---
+     Run 11 finished in 8.48s. Archive size: 92  IGD=0.3954
+     --- Starting Run 12/30 ---
+     Run 12 finished in 7.42s. Archive size: 63  IGD=1.1371
+     --- Starting Run 13/30 ---
+     Run 13 finished in 5.51s. Archive size: 16  IGD=3.1832
+     --- Starting Run 14/30 ---
+     Run 14 finished in 5.66s. Archive size: 14  IGD=1.9444
+     --- Starting Run 15/30 ---
+     Run 15 finished in 7.03s. Archive size: 54  IGD=1.7816
+     --- Starting Run 16/30 ---
+     Run 16 finished in 5.48s. Archive size: 12  IGD=9.3362
+     --- Starting Run 17/30 ---
+     Run 17 finished in 7.99s. Archive size: 100  IGD=0.6672
+     --- Starting Run 18/30 ---
+     Run 18 finished in 5.66s. Archive size: 15  IGD=6.7987
+     --- Starting Run 19/30 ---
+     Run 19 finished in 7.22s. Archive size: 100  IGD=3.2720
+     --- Starting Run 20/30 ---
+     Run 20 finished in 5.96s. Archive size: 42  IGD=1.2780
+     --- Starting Run 21/30 ---
+     Run 21 finished in 5.66s. Archive size: 14  IGD=5.6397
+     --- Starting Run 22/30 ---
+     Run 22 finished in 6.28s. Archive size: 100  IGD=2.8854
+     --- Starting Run 23/30 ---
+     Run 23 finished in 6.14s. Archive size: 42  IGD=1.1163
+     --- Starting Run 24/30 ---
+     Run 24 finished in 5.61s. Archive size: 14  IGD=18.4479
+     --- Starting Run 25/30 ---
+     Run 25 finished in 5.93s. Archive size: 31  IGD=11.1851
+     --- Starting Run 26/30 ---
+     Run 26 finished in 6.03s. Archive size: 26  IGD=2.6982
+     --- Starting Run 27/30 ---
+     Run 27 finished in 5.93s. Archive size: 28  IGD=1.2807
+     --- Starting Run 28/30 ---
+     Run 28 finished in 5.86s. Archive size: 19  IGD=7.2653
+     --- Starting Run 29/30 ---
+     Run 29 finished in 9.02s. Archive size: 100  IGD=2.3188
+     --- Starting Run 30/30 ---
+     Run 30 finished in 5.84s. Archive size: 19  IGD=12.9127
+  -> Experiment for MGPSO on ZDT4 finished in 205.47s.
+     Summary saved to: out/ZDT4_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 205.47s
+
+### ZDT6 x MGPSO  (seed=26993515)
+======== Starting All Experiments ========
+
+--- Processing Problem: ZDT6 ---
+
+  -> Starting Experiment: MGPSO on ZDT6
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/ZDT6_MGPSO.out.csv
+     Generating reference Pareto front... done (1000 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 17.93s. Archive size: 100  IGD=0.0033
+     --- Starting Run 2/30 ---
+     Run 2 finished in 17.42s. Archive size: 100  IGD=0.0032
+     --- Starting Run 3/30 ---
+     Run 3 finished in 17.33s. Archive size: 100  IGD=0.0035
+     --- Starting Run 4/30 ---
+     Run 4 finished in 17.90s. Archive size: 100  IGD=0.0035
+     --- Starting Run 5/30 ---
+     Run 5 finished in 17.76s. Archive size: 100  IGD=0.0034
+     --- Starting Run 6/30 ---
+     Run 6 finished in 17.63s. Archive size: 100  IGD=0.0037
+     --- Starting Run 7/30 ---
+     Run 7 finished in 17.74s. Archive size: 100  IGD=0.0038
+     --- Starting Run 8/30 ---
+     Run 8 finished in 18.02s. Archive size: 100  IGD=0.0034
+     --- Starting Run 9/30 ---
+     Run 9 finished in 17.79s. Archive size: 100  IGD=0.0032
+     --- Starting Run 10/30 ---
+     Run 10 finished in 17.44s. Archive size: 100  IGD=0.0038
+     --- Starting Run 11/30 ---
+     Run 11 finished in 17.69s. Archive size: 100  IGD=0.0034
+     --- Starting Run 12/30 ---
+     Run 12 finished in 17.60s. Archive size: 100  IGD=0.0035
+     --- Starting Run 13/30 ---
+     Run 13 finished in 17.74s. Archive size: 100  IGD=0.0035
+     --- Starting Run 14/30 ---
+     Run 14 finished in 17.78s. Archive size: 100  IGD=0.0036
+     --- Starting Run 15/30 ---
+     Run 15 finished in 17.50s. Archive size: 100  IGD=0.0033
+     --- Starting Run 16/30 ---
+     Run 16 finished in 17.46s. Archive size: 100  IGD=0.0038
+     --- Starting Run 17/30 ---
+     Run 17 finished in 17.94s. Archive size: 100  IGD=0.0033
+     --- Starting Run 18/30 ---
+     Run 18 finished in 17.40s. Archive size: 100  IGD=0.0034
+     --- Starting Run 19/30 ---
+     Run 19 finished in 17.58s. Archive size: 100  IGD=0.0037
+     --- Starting Run 20/30 ---
+     Run 20 finished in 17.48s. Archive size: 100  IGD=0.0037
+     --- Starting Run 21/30 ---
+     Run 21 finished in 17.67s. Archive size: 100  IGD=0.0036
+     --- Starting Run 22/30 ---
+     Run 22 finished in 17.68s. Archive size: 100  IGD=0.0035
+     --- Starting Run 23/30 ---
+     Run 23 finished in 17.05s. Archive size: 100  IGD=0.0036
+     --- Starting Run 24/30 ---
+     Run 24 finished in 17.82s. Archive size: 100  IGD=0.0031
+     --- Starting Run 25/30 ---
+     Run 25 finished in 18.07s. Archive size: 100  IGD=0.0034
+     --- Starting Run 26/30 ---
+     Run 26 finished in 17.71s. Archive size: 100  IGD=0.0036
+     --- Starting Run 27/30 ---
+     Run 27 finished in 17.49s. Archive size: 100  IGD=0.0036
+     --- Starting Run 28/30 ---
+     Run 28 finished in 17.62s. Archive size: 100  IGD=0.0035
+     --- Starting Run 29/30 ---
+     Run 29 finished in 18.10s. Archive size: 100  IGD=0.0032
+     --- Starting Run 30/30 ---
+     Run 30 finished in 17.32s. Archive size: 100  IGD=0.0034
+  -> Experiment for MGPSO on ZDT6 finished in 530.05s.
+     Summary saved to: out/ZDT6_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 530.09s
+
+### BNH x MGPSO  (seed=26992811)
+======== Starting All Experiments ========
+
+--- Processing Problem: BNH ---
+
+  -> Starting Experiment: MGPSO on BNH
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/BNH_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.77s. Archive size: 100  IGD=0.4455
+     --- Starting Run 2/30 ---
+     Run 2 finished in 14.91s. Archive size: 100  IGD=0.4096
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.51s. Archive size: 100  IGD=0.4090
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.64s. Archive size: 100  IGD=0.4264
+     --- Starting Run 5/30 ---
+     Run 5 finished in 14.83s. Archive size: 100  IGD=0.4163
+     --- Starting Run 6/30 ---
+     Run 6 finished in 15.05s. Archive size: 100  IGD=0.4360
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.58s. Archive size: 100  IGD=0.4128
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.57s. Archive size: 100  IGD=0.4206
+     --- Starting Run 9/30 ---
+     Run 9 finished in 15.01s. Archive size: 100  IGD=0.4106
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.01s. Archive size: 100  IGD=0.4117
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.99s. Archive size: 100  IGD=0.4162
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.93s. Archive size: 100  IGD=0.4025
+     --- Starting Run 13/30 ---
+     Run 13 finished in 14.98s. Archive size: 100  IGD=0.4222
+     --- Starting Run 14/30 ---
+     Run 14 finished in 15.18s. Archive size: 100  IGD=0.4228
+     --- Starting Run 15/30 ---
+     Run 15 finished in 14.37s. Archive size: 100  IGD=0.4159
+     --- Starting Run 16/30 ---
+     Run 16 finished in 14.73s. Archive size: 100  IGD=0.4279
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.96s. Archive size: 100  IGD=0.3981
+     --- Starting Run 18/30 ---
+     Run 18 finished in 14.83s. Archive size: 100  IGD=0.4188
+     --- Starting Run 19/30 ---
+     Run 19 finished in 15.03s. Archive size: 100  IGD=0.4259
+     --- Starting Run 20/30 ---
+     Run 20 finished in 15.12s. Archive size: 100  IGD=0.4084
+     --- Starting Run 21/30 ---
+     Run 21 finished in 14.89s. Archive size: 100  IGD=0.4090
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.25s. Archive size: 100  IGD=0.4142
+     --- Starting Run 23/30 ---
+     Run 23 finished in 15.15s. Archive size: 100  IGD=0.4162
+     --- Starting Run 24/30 ---
+     Run 24 finished in 14.88s. Archive size: 100  IGD=0.4384
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.75s. Archive size: 100  IGD=0.4209
+     --- Starting Run 26/30 ---
+     Run 26 finished in 14.76s. Archive size: 100  IGD=0.4223
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.81s. Archive size: 100  IGD=0.4122
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.74s. Archive size: 100  IGD=0.4239
+     --- Starting Run 29/30 ---
+     Run 29 finished in 15.09s. Archive size: 100  IGD=0.4086
+     --- Starting Run 30/30 ---
+     Run 30 finished in 14.87s. Archive size: 100  IGD=0.4214
+  -> Experiment for MGPSO on BNH finished in 446.42s.
+     Summary saved to: out/BNH_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 447.17s
+
+### BNH x MGPSO_feasarch  (seed=27005800)
+======== Starting All Experiments ========
+
+--- Processing Problem: BNH ---
+
+  -> Starting Experiment: MGPSO_feasarch on BNH
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/BNH_MGPSO_feasarch.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.90s. Archive size: 100  IGD=0.4079
+     --- Starting Run 2/30 ---
+     Run 2 finished in 14.62s. Archive size: 100  IGD=0.4194
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.54s. Archive size: 100  IGD=0.4080
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.31s. Archive size: 100  IGD=0.4135
+     --- Starting Run 5/30 ---
+     Run 5 finished in 14.45s. Archive size: 100  IGD=0.4141
+     --- Starting Run 6/30 ---
+     Run 6 finished in 14.69s. Archive size: 100  IGD=0.4092
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.51s. Archive size: 100  IGD=0.4052
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.84s. Archive size: 100  IGD=0.4130
+     --- Starting Run 9/30 ---
+     Run 9 finished in 14.57s. Archive size: 100  IGD=0.4034
+     --- Starting Run 10/30 ---
+     Run 10 finished in 14.75s. Archive size: 100  IGD=0.4163
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.61s. Archive size: 100  IGD=0.4165
+     --- Starting Run 12/30 ---
+     Run 12 finished in 15.03s. Archive size: 100  IGD=0.4236
+     --- Starting Run 13/30 ---
+     Run 13 finished in 14.23s. Archive size: 100  IGD=0.4092
+     --- Starting Run 14/30 ---
+     Run 14 finished in 14.47s. Archive size: 100  IGD=0.4086
+     --- Starting Run 15/30 ---
+     Run 15 finished in 14.51s. Archive size: 100  IGD=0.4263
+     --- Starting Run 16/30 ---
+     Run 16 finished in 14.58s. Archive size: 100  IGD=0.4137
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.60s. Archive size: 100  IGD=0.4243
+     --- Starting Run 18/30 ---
+     Run 18 finished in 14.68s. Archive size: 100  IGD=0.4232
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.27s. Archive size: 100  IGD=0.4031
+     --- Starting Run 20/30 ---
+     Run 20 finished in 14.28s. Archive size: 100  IGD=0.4209
+     --- Starting Run 21/30 ---
+     Run 21 finished in 14.74s. Archive size: 100  IGD=0.4140
+     --- Starting Run 22/30 ---
+     Run 22 finished in 14.68s. Archive size: 100  IGD=0.4107
+     --- Starting Run 23/30 ---
+     Run 23 finished in 14.52s. Archive size: 100  IGD=0.4143
+     --- Starting Run 24/30 ---
+     Run 24 finished in 14.47s. Archive size: 100  IGD=0.4172
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.35s. Archive size: 100  IGD=0.4098
+     --- Starting Run 26/30 ---
+     Run 26 finished in 14.40s. Archive size: 100  IGD=0.4122
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.48s. Archive size: 100  IGD=0.4249
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.31s. Archive size: 100  IGD=0.4120
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.63s. Archive size: 100  IGD=0.4412
+     --- Starting Run 30/30 ---
+     Run 30 finished in 14.56s. Archive size: 100  IGD=0.4287
+  -> Experiment for MGPSO_feasarch on BNH finished in 436.84s.
+     Summary saved to: out/BNH_MGPSO_feasarch.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 437.58s
+
+### BNH x CCPSO_filter  (seed=27002436)
+======== Starting All Experiments ========
+
+--- Processing Problem: BNH ---
+
+  -> Starting Experiment: CCPSO_filter on BNH
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/BNH_CCPSO_filter.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 22.04s. Archive size: 100  IGD=0.4098
+     --- Starting Run 2/30 ---
+     Run 2 finished in 22.35s. Archive size: 100  IGD=0.4066
+     --- Starting Run 3/30 ---
+     Run 3 finished in 22.38s. Archive size: 100  IGD=0.4186
+     --- Starting Run 4/30 ---
+     Run 4 finished in 22.17s. Archive size: 100  IGD=0.4340
+     --- Starting Run 5/30 ---
+     Run 5 finished in 22.25s. Archive size: 100  IGD=0.4211
+     --- Starting Run 6/30 ---
+     Run 6 finished in 22.27s. Archive size: 100  IGD=0.4160
+     --- Starting Run 7/30 ---
+     Run 7 finished in 22.03s. Archive size: 100  IGD=0.4284
+     --- Starting Run 8/30 ---
+     Run 8 finished in 21.96s. Archive size: 100  IGD=0.4202
+     --- Starting Run 9/30 ---
+     Run 9 finished in 22.19s. Archive size: 100  IGD=0.4194
+     --- Starting Run 10/30 ---
+     Run 10 finished in 22.39s. Archive size: 100  IGD=0.4220
+     --- Starting Run 11/30 ---
+     Run 11 finished in 22.42s. Archive size: 100  IGD=0.4156
+     --- Starting Run 12/30 ---
+     Run 12 finished in 22.49s. Archive size: 100  IGD=0.4193
+     --- Starting Run 13/30 ---
+     Run 13 finished in 22.80s. Archive size: 100  IGD=0.4077
+     --- Starting Run 14/30 ---
+     Run 14 finished in 22.48s. Archive size: 100  IGD=0.3994
+     --- Starting Run 15/30 ---
+     Run 15 finished in 22.19s. Archive size: 100  IGD=0.4263
+     --- Starting Run 16/30 ---
+     Run 16 finished in 21.87s. Archive size: 100  IGD=0.4224
+     --- Starting Run 17/30 ---
+     Run 17 finished in 21.98s. Archive size: 100  IGD=0.4254
+     --- Starting Run 18/30 ---
+     Run 18 finished in 21.91s. Archive size: 100  IGD=0.4228
+     --- Starting Run 19/30 ---
+     Run 19 finished in 22.22s. Archive size: 100  IGD=0.4130
+     --- Starting Run 20/30 ---
+     Run 20 finished in 22.59s. Archive size: 100  IGD=0.4286
+     --- Starting Run 21/30 ---
+     Run 21 finished in 22.27s. Archive size: 100  IGD=0.4333
+     --- Starting Run 22/30 ---
+     Run 22 finished in 22.39s. Archive size: 100  IGD=0.4070
+     --- Starting Run 23/30 ---
+     Run 23 finished in 21.90s. Archive size: 100  IGD=0.4144
+     --- Starting Run 24/30 ---
+     Run 24 finished in 22.13s. Archive size: 100  IGD=0.4234
+     --- Starting Run 25/30 ---
+     Run 25 finished in 22.18s. Archive size: 100  IGD=0.4088
+     --- Starting Run 26/30 ---
+     Run 26 finished in 22.32s. Archive size: 100  IGD=0.4232
+     --- Starting Run 27/30 ---
+     Run 27 finished in 21.91s. Archive size: 100  IGD=0.4077
+     --- Starting Run 28/30 ---
+     Run 28 finished in 22.10s. Archive size: 100  IGD=0.4063
+     --- Starting Run 29/30 ---
+     Run 29 finished in 22.10s. Archive size: 100  IGD=0.4069
+     --- Starting Run 30/30 ---
+     Run 30 finished in 22.43s. Archive size: 100  IGD=0.4060
+  -> Experiment for CCPSO_filter on BNH finished in 666.97s.
+     Summary saved to: out/BNH_CCPSO_filter.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 667.70s
+
+### BNH x CCPSO_strict  (seed=27002637)
+======== Starting All Experiments ========
+
+--- Processing Problem: BNH ---
+
+  -> Starting Experiment: CCPSO_strict on BNH
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/BNH_CCPSO_strict.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 21.94s. Archive size: 100  IGD=0.4129
+     --- Starting Run 2/30 ---
+     Run 2 finished in 22.10s. Archive size: 100  IGD=0.4319
+     --- Starting Run 3/30 ---
+     Run 3 finished in 22.07s. Archive size: 100  IGD=0.4235
+     --- Starting Run 4/30 ---
+     Run 4 finished in 22.15s. Archive size: 100  IGD=0.4316
+     --- Starting Run 5/30 ---
+     Run 5 finished in 22.23s. Archive size: 100  IGD=0.4175
+     --- Starting Run 6/30 ---
+     Run 6 finished in 22.36s. Archive size: 100  IGD=0.4302
+     --- Starting Run 7/30 ---
+     Run 7 finished in 22.21s. Archive size: 100  IGD=0.4179
+     --- Starting Run 8/30 ---
+     Run 8 finished in 22.32s. Archive size: 100  IGD=0.4160
+     --- Starting Run 9/30 ---
+     Run 9 finished in 22.42s. Archive size: 100  IGD=0.4132
+     --- Starting Run 10/30 ---
+     Run 10 finished in 22.19s. Archive size: 100  IGD=0.4179
+     --- Starting Run 11/30 ---
+     Run 11 finished in 22.21s. Archive size: 100  IGD=0.4121
+     --- Starting Run 12/30 ---
+     Run 12 finished in 22.34s. Archive size: 100  IGD=0.4191
+     --- Starting Run 13/30 ---
+     Run 13 finished in 22.04s. Archive size: 100  IGD=0.4349
+     --- Starting Run 14/30 ---
+     Run 14 finished in 22.26s. Archive size: 100  IGD=0.4113
+     --- Starting Run 15/30 ---
+     Run 15 finished in 22.10s. Archive size: 100  IGD=0.4154
+     --- Starting Run 16/30 ---
+     Run 16 finished in 22.22s. Archive size: 100  IGD=0.4293
+     --- Starting Run 17/30 ---
+     Run 17 finished in 22.16s. Archive size: 100  IGD=0.4280
+     --- Starting Run 18/30 ---
+     Run 18 finished in 22.20s. Archive size: 100  IGD=0.4286
+     --- Starting Run 19/30 ---
+     Run 19 finished in 22.37s. Archive size: 100  IGD=0.4360
+     --- Starting Run 20/30 ---
+     Run 20 finished in 22.26s. Archive size: 100  IGD=0.4144
+     --- Starting Run 21/30 ---
+     Run 21 finished in 22.33s. Archive size: 100  IGD=0.4235
+     --- Starting Run 22/30 ---
+     Run 22 finished in 22.13s. Archive size: 100  IGD=0.4165
+     --- Starting Run 23/30 ---
+     Run 23 finished in 22.25s. Archive size: 100  IGD=0.4159
+     --- Starting Run 24/30 ---
+     Run 24 finished in 22.18s. Archive size: 100  IGD=0.4109
+     --- Starting Run 25/30 ---
+     Run 25 finished in 22.35s. Archive size: 100  IGD=0.4123
+     --- Starting Run 26/30 ---
+     Run 26 finished in 22.27s. Archive size: 100  IGD=0.4139
+     --- Starting Run 27/30 ---
+     Run 27 finished in 22.35s. Archive size: 100  IGD=0.4201
+     --- Starting Run 28/30 ---
+     Run 28 finished in 22.43s. Archive size: 100  IGD=0.4191
+     --- Starting Run 29/30 ---
+     Run 29 finished in 22.22s. Archive size: 100  IGD=0.4228
+     --- Starting Run 30/30 ---
+     Run 30 finished in 22.59s. Archive size: 100  IGD=0.4091
+  -> Experiment for CCPSO_strict on BNH finished in 667.48s.
+     Summary saved to: out/BNH_CCPSO_strict.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 668.20s
+
+### SRN x MGPSO  (seed=26992854)
+======== Starting All Experiments ========
+
+--- Processing Problem: SRN ---
+
+  -> Starting Experiment: MGPSO on SRN
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/SRN_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.12s. Archive size: 100  IGD=3.0022
+     --- Starting Run 2/30 ---
+     Run 2 finished in 14.29s. Archive size: 100  IGD=3.1424
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.10s. Archive size: 100  IGD=3.2697
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.24s. Archive size: 100  IGD=3.1465
+     --- Starting Run 5/30 ---
+     Run 5 finished in 14.42s. Archive size: 100  IGD=3.1150
+     --- Starting Run 6/30 ---
+     Run 6 finished in 14.32s. Archive size: 100  IGD=3.1635
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.56s. Archive size: 100  IGD=3.2177
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.54s. Archive size: 100  IGD=3.1030
+     --- Starting Run 9/30 ---
+     Run 9 finished in 14.62s. Archive size: 100  IGD=3.0276
+     --- Starting Run 10/30 ---
+     Run 10 finished in 14.59s. Archive size: 100  IGD=3.1662
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.56s. Archive size: 100  IGD=2.9674
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.68s. Archive size: 100  IGD=3.0807
+     --- Starting Run 13/30 ---
+     Run 13 finished in 14.45s. Archive size: 100  IGD=3.0119
+     --- Starting Run 14/30 ---
+     Run 14 finished in 14.52s. Archive size: 100  IGD=3.1805
+     --- Starting Run 15/30 ---
+     Run 15 finished in 14.44s. Archive size: 100  IGD=3.1624
+     --- Starting Run 16/30 ---
+     Run 16 finished in 14.21s. Archive size: 100  IGD=3.2408
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.51s. Archive size: 100  IGD=3.0162
+     --- Starting Run 18/30 ---
+     Run 18 finished in 14.45s. Archive size: 100  IGD=3.0795
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.21s. Archive size: 100  IGD=2.9914
+     --- Starting Run 20/30 ---
+     Run 20 finished in 14.31s. Archive size: 100  IGD=3.2133
+     --- Starting Run 21/30 ---
+     Run 21 finished in 14.37s. Archive size: 100  IGD=3.0213
+     --- Starting Run 22/30 ---
+     Run 22 finished in 14.16s. Archive size: 100  IGD=3.1059
+     --- Starting Run 23/30 ---
+     Run 23 finished in 14.32s. Archive size: 100  IGD=3.0940
+     --- Starting Run 24/30 ---
+     Run 24 finished in 14.58s. Archive size: 100  IGD=3.2979
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.31s. Archive size: 100  IGD=2.9205
+     --- Starting Run 26/30 ---
+     Run 26 finished in 14.63s. Archive size: 100  IGD=3.0579
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.15s. Archive size: 100  IGD=3.1846
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.95s. Archive size: 100  IGD=3.0358
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.52s. Archive size: 100  IGD=3.1020
+     --- Starting Run 30/30 ---
+     Run 30 finished in 14.51s. Archive size: 100  IGD=3.1593
+  -> Experiment for MGPSO on SRN finished in 432.85s.
+     Summary saved to: out/SRN_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 433.00s
+
+### SRN x MGPSO_feasarch  (seed=27005843)
+======== Starting All Experiments ========
+
+--- Processing Problem: SRN ---
+
+  -> Starting Experiment: MGPSO_feasarch on SRN
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/SRN_MGPSO_feasarch.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 9.62s. Archive size: 100  IGD=0.8975
+     --- Starting Run 2/30 ---
+     Run 2 finished in 9.34s. Archive size: 100  IGD=0.9028
+     --- Starting Run 3/30 ---
+     Run 3 finished in 9.48s. Archive size: 100  IGD=0.9195
+     --- Starting Run 4/30 ---
+     Run 4 finished in 9.55s. Archive size: 100  IGD=0.9254
+     --- Starting Run 5/30 ---
+     Run 5 finished in 9.56s. Archive size: 100  IGD=0.9006
+     --- Starting Run 6/30 ---
+     Run 6 finished in 9.59s. Archive size: 100  IGD=0.9104
+     --- Starting Run 7/30 ---
+     Run 7 finished in 9.38s. Archive size: 100  IGD=0.9044
+     --- Starting Run 8/30 ---
+     Run 8 finished in 9.40s. Archive size: 100  IGD=0.9026
+     --- Starting Run 9/30 ---
+     Run 9 finished in 9.50s. Archive size: 100  IGD=0.9102
+     --- Starting Run 10/30 ---
+     Run 10 finished in 9.36s. Archive size: 100  IGD=0.9050
+     --- Starting Run 11/30 ---
+     Run 11 finished in 9.54s. Archive size: 100  IGD=0.9132
+     --- Starting Run 12/30 ---
+     Run 12 finished in 9.29s. Archive size: 100  IGD=0.9137
+     --- Starting Run 13/30 ---
+     Run 13 finished in 9.40s. Archive size: 100  IGD=0.9183
+     --- Starting Run 14/30 ---
+     Run 14 finished in 9.48s. Archive size: 100  IGD=0.8934
+     --- Starting Run 15/30 ---
+     Run 15 finished in 9.56s. Archive size: 100  IGD=0.8979
+     --- Starting Run 16/30 ---
+     Run 16 finished in 9.55s. Archive size: 100  IGD=0.9119
+     --- Starting Run 17/30 ---
+     Run 17 finished in 9.54s. Archive size: 100  IGD=0.9109
+     --- Starting Run 18/30 ---
+     Run 18 finished in 9.49s. Archive size: 100  IGD=0.8949
+     --- Starting Run 19/30 ---
+     Run 19 finished in 9.51s. Archive size: 100  IGD=0.9052
+     --- Starting Run 20/30 ---
+     Run 20 finished in 9.51s. Archive size: 100  IGD=0.9098
+     --- Starting Run 21/30 ---
+     Run 21 finished in 9.44s. Archive size: 100  IGD=0.9091
+     --- Starting Run 22/30 ---
+     Run 22 finished in 9.50s. Archive size: 100  IGD=0.9262
+     --- Starting Run 23/30 ---
+     Run 23 finished in 9.48s. Archive size: 100  IGD=0.9203
+     --- Starting Run 24/30 ---
+     Run 24 finished in 9.53s. Archive size: 100  IGD=0.9043
+     --- Starting Run 25/30 ---
+     Run 25 finished in 9.51s. Archive size: 100  IGD=0.9165
+     --- Starting Run 26/30 ---
+     Run 26 finished in 9.40s. Archive size: 100  IGD=0.9135
+     --- Starting Run 27/30 ---
+     Run 27 finished in 9.57s. Archive size: 100  IGD=0.9058
+     --- Starting Run 28/30 ---
+     Run 28 finished in 9.42s. Archive size: 100  IGD=0.9242
+     --- Starting Run 29/30 ---
+     Run 29 finished in 9.57s. Archive size: 100  IGD=0.9060
+     --- Starting Run 30/30 ---
+     Run 30 finished in 9.51s. Archive size: 100  IGD=0.8939
+  -> Experiment for MGPSO_feasarch on SRN finished in 284.78s.
+     Summary saved to: out/SRN_MGPSO_feasarch.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 284.93s
+
+### SRN x CCPSO_filter  (seed=27002479)
+======== Starting All Experiments ========
+
+--- Processing Problem: SRN ---
+
+  -> Starting Experiment: CCPSO_filter on SRN
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/SRN_CCPSO_filter.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 18.98s. Archive size: 100  IGD=0.9070
+     --- Starting Run 2/30 ---
+     Run 2 finished in 19.21s. Archive size: 100  IGD=0.8997
+     --- Starting Run 3/30 ---
+     Run 3 finished in 19.10s. Archive size: 100  IGD=0.8922
+     --- Starting Run 4/30 ---
+     Run 4 finished in 19.13s. Archive size: 100  IGD=0.8996
+     --- Starting Run 5/30 ---
+     Run 5 finished in 19.12s. Archive size: 100  IGD=0.9076
+     --- Starting Run 6/30 ---
+     Run 6 finished in 19.15s. Archive size: 100  IGD=0.9056
+     --- Starting Run 7/30 ---
+     Run 7 finished in 19.19s. Archive size: 100  IGD=0.8956
+     --- Starting Run 8/30 ---
+     Run 8 finished in 19.40s. Archive size: 100  IGD=0.9072
+     --- Starting Run 9/30 ---
+     Run 9 finished in 19.13s. Archive size: 100  IGD=0.9073
+     --- Starting Run 10/30 ---
+     Run 10 finished in 19.13s. Archive size: 100  IGD=0.9027
+     --- Starting Run 11/30 ---
+     Run 11 finished in 19.04s. Archive size: 100  IGD=0.8968
+     --- Starting Run 12/30 ---
+     Run 12 finished in 18.86s. Archive size: 100  IGD=0.9083
+     --- Starting Run 13/30 ---
+     Run 13 finished in 19.01s. Archive size: 100  IGD=0.9144
+     --- Starting Run 14/30 ---
+     Run 14 finished in 18.97s. Archive size: 100  IGD=0.8928
+     --- Starting Run 15/30 ---
+     Run 15 finished in 18.72s. Archive size: 100  IGD=0.8953
+     --- Starting Run 16/30 ---
+     Run 16 finished in 19.13s. Archive size: 100  IGD=0.8981
+     --- Starting Run 17/30 ---
+     Run 17 finished in 18.94s. Archive size: 100  IGD=0.9001
+     --- Starting Run 18/30 ---
+     Run 18 finished in 19.23s. Archive size: 100  IGD=0.9033
+     --- Starting Run 19/30 ---
+     Run 19 finished in 19.19s. Archive size: 100  IGD=0.8981
+     --- Starting Run 20/30 ---
+     Run 20 finished in 19.15s. Archive size: 100  IGD=0.9054
+     --- Starting Run 21/30 ---
+     Run 21 finished in 19.46s. Archive size: 100  IGD=0.9143
+     --- Starting Run 22/30 ---
+     Run 22 finished in 19.11s. Archive size: 100  IGD=0.9039
+     --- Starting Run 23/30 ---
+     Run 23 finished in 18.83s. Archive size: 100  IGD=0.8975
+     --- Starting Run 24/30 ---
+     Run 24 finished in 18.47s. Archive size: 100  IGD=0.8990
+     --- Starting Run 25/30 ---
+     Run 25 finished in 19.09s. Archive size: 100  IGD=0.9078
+     --- Starting Run 26/30 ---
+     Run 26 finished in 19.31s. Archive size: 100  IGD=0.9041
+     --- Starting Run 27/30 ---
+     Run 27 finished in 19.02s. Archive size: 100  IGD=0.8981
+     --- Starting Run 28/30 ---
+     Run 28 finished in 19.19s. Archive size: 100  IGD=0.8964
+     --- Starting Run 29/30 ---
+     Run 29 finished in 19.19s. Archive size: 100  IGD=0.8983
+     --- Starting Run 30/30 ---
+     Run 30 finished in 19.28s. Archive size: 100  IGD=0.8936
+  -> Experiment for CCPSO_filter on SRN finished in 572.99s.
+     Summary saved to: out/SRN_CCPSO_filter.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 573.14s
+
+### SRN x CCPSO_strict  (seed=27002680)
+======== Starting All Experiments ========
+
+--- Processing Problem: SRN ---
+
+  -> Starting Experiment: CCPSO_strict on SRN
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/SRN_CCPSO_strict.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 19.08s. Archive size: 100  IGD=0.8983
+     --- Starting Run 2/30 ---
+     Run 2 finished in 19.08s. Archive size: 100  IGD=0.8999
+     --- Starting Run 3/30 ---
+     Run 3 finished in 19.05s. Archive size: 100  IGD=0.9022
+     --- Starting Run 4/30 ---
+     Run 4 finished in 19.03s. Archive size: 100  IGD=0.8918
+     --- Starting Run 5/30 ---
+     Run 5 finished in 19.11s. Archive size: 100  IGD=0.9027
+     --- Starting Run 6/30 ---
+     Run 6 finished in 19.06s. Archive size: 100  IGD=0.8870
+     --- Starting Run 7/30 ---
+     Run 7 finished in 19.00s. Archive size: 100  IGD=0.9006
+     --- Starting Run 8/30 ---
+     Run 8 finished in 18.99s. Archive size: 100  IGD=0.8920
+     --- Starting Run 9/30 ---
+     Run 9 finished in 18.90s. Archive size: 100  IGD=0.9013
+     --- Starting Run 10/30 ---
+     Run 10 finished in 19.03s. Archive size: 100  IGD=0.8978
+     --- Starting Run 11/30 ---
+     Run 11 finished in 19.03s. Archive size: 100  IGD=0.9043
+     --- Starting Run 12/30 ---
+     Run 12 finished in 19.17s. Archive size: 100  IGD=0.9014
+     --- Starting Run 13/30 ---
+     Run 13 finished in 19.08s. Archive size: 100  IGD=0.8963
+     --- Starting Run 14/30 ---
+     Run 14 finished in 19.02s. Archive size: 100  IGD=0.9064
+     --- Starting Run 15/30 ---
+     Run 15 finished in 19.15s. Archive size: 100  IGD=0.8938
+     --- Starting Run 16/30 ---
+     Run 16 finished in 18.83s. Archive size: 100  IGD=0.9033
+     --- Starting Run 17/30 ---
+     Run 17 finished in 18.93s. Archive size: 100  IGD=0.9125
+     --- Starting Run 18/30 ---
+     Run 18 finished in 18.94s. Archive size: 100  IGD=0.8936
+     --- Starting Run 19/30 ---
+     Run 19 finished in 18.89s. Archive size: 100  IGD=0.9140
+     --- Starting Run 20/30 ---
+     Run 20 finished in 18.97s. Archive size: 100  IGD=0.8904
+     --- Starting Run 21/30 ---
+     Run 21 finished in 18.38s. Archive size: 100  IGD=0.8946
+     --- Starting Run 22/30 ---
+     Run 22 finished in 18.95s. Archive size: 100  IGD=0.9003
+     --- Starting Run 23/30 ---
+     Run 23 finished in 18.81s. Archive size: 100  IGD=0.9034
+     --- Starting Run 24/30 ---
+     Run 24 finished in 18.78s. Archive size: 100  IGD=0.8999
+     --- Starting Run 25/30 ---
+     Run 25 finished in 18.95s. Archive size: 100  IGD=0.8950
+     --- Starting Run 26/30 ---
+     Run 26 finished in 18.95s. Archive size: 100  IGD=0.8938
+     --- Starting Run 27/30 ---
+     Run 27 finished in 18.74s. Archive size: 100  IGD=0.8980
+     --- Starting Run 28/30 ---
+     Run 28 finished in 18.62s. Archive size: 100  IGD=0.8815
+     --- Starting Run 29/30 ---
+     Run 29 finished in 18.93s. Archive size: 100  IGD=0.8973
+     --- Starting Run 30/30 ---
+     Run 30 finished in 18.82s. Archive size: 100  IGD=0.8995
+  -> Experiment for CCPSO_strict on SRN finished in 568.51s.
+     Summary saved to: out/SRN_CCPSO_strict.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 568.66s
+
+### TNK x MGPSO  (seed=26992838)
+======== Starting All Experiments ========
+
+--- Processing Problem: TNK ---
+
+  -> Starting Experiment: MGPSO on TNK
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/TNK_MGPSO.out.csv
+     Generating reference Pareto front... done (149 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 9.92s. Archive size: 100  IGD=0.9929
+     --- Starting Run 2/30 ---
+     Run 2 finished in 9.25s. Archive size: 100  IGD=0.9929
+     --- Starting Run 3/30 ---
+     Run 3 finished in 10.37s. Archive size: 100  IGD=0.9929
+     --- Starting Run 4/30 ---
+     Run 4 finished in 9.08s. Archive size: 100  IGD=0.9929
+     --- Starting Run 5/30 ---
+     Run 5 finished in 9.10s. Archive size: 100  IGD=0.9929
+     --- Starting Run 6/30 ---
+     Run 6 finished in 9.39s. Archive size: 100  IGD=0.9929
+     --- Starting Run 7/30 ---
+     Run 7 finished in 9.61s. Archive size: 100  IGD=0.9929
+     --- Starting Run 8/30 ---
+     Run 8 finished in 9.26s. Archive size: 100  IGD=0.9929
+     --- Starting Run 9/30 ---
+     Run 9 finished in 8.80s. Archive size: 100  IGD=0.9929
+     --- Starting Run 10/30 ---
+     Run 10 finished in 9.17s. Archive size: 100  IGD=0.9929
+     --- Starting Run 11/30 ---
+     Run 11 finished in 9.47s. Archive size: 100  IGD=0.9929
+     --- Starting Run 12/30 ---
+     Run 12 finished in 9.27s. Archive size: 100  IGD=0.9929
+     --- Starting Run 13/30 ---
+     Run 13 finished in 9.62s. Archive size: 100  IGD=0.9929
+     --- Starting Run 14/30 ---
+     Run 14 finished in 11.63s. Archive size: 100  IGD=0.9929
+     --- Starting Run 15/30 ---
+     Run 15 finished in 9.09s. Archive size: 100  IGD=0.9929
+     --- Starting Run 16/30 ---
+     Run 16 finished in 9.21s. Archive size: 100  IGD=0.9929
+     --- Starting Run 17/30 ---
+     Run 17 finished in 8.90s. Archive size: 100  IGD=0.9929
+     --- Starting Run 18/30 ---
+     Run 18 finished in 9.12s. Archive size: 100  IGD=0.9929
+     --- Starting Run 19/30 ---
+     Run 19 finished in 9.39s. Archive size: 100  IGD=0.9929
+     --- Starting Run 20/30 ---
+     Run 20 finished in 9.31s. Archive size: 100  IGD=0.9929
+     --- Starting Run 21/30 ---
+     Run 21 finished in 12.34s. Archive size: 100  IGD=0.9929
+     --- Starting Run 22/30 ---
+     Run 22 finished in 9.55s. Archive size: 100  IGD=0.9929
+     --- Starting Run 23/30 ---
+     Run 23 finished in 9.45s. Archive size: 100  IGD=0.9929
+     --- Starting Run 24/30 ---
+     Run 24 finished in 9.76s. Archive size: 100  IGD=0.9929
+     --- Starting Run 25/30 ---
+     Run 25 finished in 9.33s. Archive size: 100  IGD=0.9929
+     --- Starting Run 26/30 ---
+     Run 26 finished in 9.81s. Archive size: 100  IGD=0.9929
+     --- Starting Run 27/30 ---
+     Run 27 finished in 9.06s. Archive size: 100  IGD=0.9929
+     --- Starting Run 28/30 ---
+     Run 28 finished in 9.32s. Archive size: 100  IGD=0.9929
+     --- Starting Run 29/30 ---
+     Run 29 finished in 9.04s. Archive size: 100  IGD=0.9929
+     --- Starting Run 30/30 ---
+     Run 30 finished in 9.50s. Archive size: 100  IGD=0.9929
+  -> Experiment for MGPSO on TNK finished in 286.29s.
+     Summary saved to: out/TNK_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 286.38s
+
+### TNK x MGPSO_feasarch  (seed=27005827)
+======== Starting All Experiments ========
+
+--- Processing Problem: TNK ---
+
+  -> Starting Experiment: MGPSO_feasarch on TNK
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/TNK_MGPSO_feasarch.out.csv
+     Generating reference Pareto front... done (149 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 6.92s. Archive size: 100  IGD=0.0054
+     --- Starting Run 2/30 ---
+     Run 2 finished in 6.75s. Archive size: 100  IGD=0.0063
+     --- Starting Run 3/30 ---
+     Run 3 finished in 6.50s. Archive size: 100  IGD=0.0064
+     --- Starting Run 4/30 ---
+     Run 4 finished in 6.72s. Archive size: 100  IGD=0.0056
+     --- Starting Run 5/30 ---
+     Run 5 finished in 6.81s. Archive size: 100  IGD=0.0052
+     --- Starting Run 6/30 ---
+     Run 6 finished in 6.97s. Archive size: 100  IGD=0.0049
+     --- Starting Run 7/30 ---
+     Run 7 finished in 6.59s. Archive size: 100  IGD=0.0060
+     --- Starting Run 8/30 ---
+     Run 8 finished in 6.43s. Archive size: 100  IGD=0.0072
+     --- Starting Run 9/30 ---
+     Run 9 finished in 6.83s. Archive size: 100  IGD=0.0051
+     --- Starting Run 10/30 ---
+     Run 10 finished in 6.82s. Archive size: 100  IGD=0.0060
+     --- Starting Run 11/30 ---
+     Run 11 finished in 6.98s. Archive size: 100  IGD=0.0049
+     --- Starting Run 12/30 ---
+     Run 12 finished in 6.27s. Archive size: 100  IGD=0.0066
+     --- Starting Run 13/30 ---
+     Run 13 finished in 6.52s. Archive size: 100  IGD=0.0055
+     --- Starting Run 14/30 ---
+     Run 14 finished in 6.58s. Archive size: 100  IGD=0.0056
+     --- Starting Run 15/30 ---
+     Run 15 finished in 6.26s. Archive size: 100  IGD=0.0058
+     --- Starting Run 16/30 ---
+     Run 16 finished in 7.00s. Archive size: 100  IGD=0.0049
+     --- Starting Run 17/30 ---
+     Run 17 finished in 6.25s. Archive size: 100  IGD=0.0064
+     --- Starting Run 18/30 ---
+     Run 18 finished in 6.66s. Archive size: 100  IGD=0.0054
+     --- Starting Run 19/30 ---
+     Run 19 finished in 6.30s. Archive size: 99  IGD=0.0064
+     --- Starting Run 20/30 ---
+     Run 20 finished in 6.77s. Archive size: 100  IGD=0.0055
+     --- Starting Run 21/30 ---
+     Run 21 finished in 6.46s. Archive size: 100  IGD=0.0061
+     --- Starting Run 22/30 ---
+     Run 22 finished in 6.81s. Archive size: 100  IGD=0.0048
+     --- Starting Run 23/30 ---
+     Run 23 finished in 6.75s. Archive size: 100  IGD=0.0056
+     --- Starting Run 24/30 ---
+     Run 24 finished in 6.69s. Archive size: 100  IGD=0.0063
+     --- Starting Run 25/30 ---
+     Run 25 finished in 6.91s. Archive size: 100  IGD=0.0050
+     --- Starting Run 26/30 ---
+     Run 26 finished in 6.98s. Archive size: 100  IGD=0.0046
+     --- Starting Run 27/30 ---
+     Run 27 finished in 6.49s. Archive size: 100  IGD=0.0056
+     --- Starting Run 28/30 ---
+     Run 28 finished in 6.55s. Archive size: 100  IGD=0.0064
+     --- Starting Run 29/30 ---
+     Run 29 finished in 6.72s. Archive size: 100  IGD=0.0055
+     --- Starting Run 30/30 ---
+     Run 30 finished in 6.19s. Archive size: 99  IGD=0.0068
+  -> Experiment for MGPSO_feasarch on TNK finished in 199.63s.
+     Summary saved to: out/TNK_MGPSO_feasarch.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 199.72s
+
+### TNK x CCPSO_filter  (seed=27002463)
+======== Starting All Experiments ========
+
+--- Processing Problem: TNK ---
+
+  -> Starting Experiment: CCPSO_filter on TNK
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/TNK_CCPSO_filter.out.csv
+     Generating reference Pareto front... done (149 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 15.85s. Archive size: 100  IGD=0.0040
+     --- Starting Run 2/30 ---
+     Run 2 finished in 15.78s. Archive size: 100  IGD=0.0039
+     --- Starting Run 3/30 ---
+     Run 3 finished in 15.82s. Archive size: 100  IGD=0.0043
+     --- Starting Run 4/30 ---
+     Run 4 finished in 15.79s. Archive size: 100  IGD=0.0043
+     --- Starting Run 5/30 ---
+     Run 5 finished in 15.76s. Archive size: 100  IGD=0.0039
+     --- Starting Run 6/30 ---
+     Run 6 finished in 15.73s. Archive size: 100  IGD=0.0037
+     --- Starting Run 7/30 ---
+     Run 7 finished in 15.84s. Archive size: 100  IGD=0.0041
+     --- Starting Run 8/30 ---
+     Run 8 finished in 15.92s. Archive size: 100  IGD=0.0043
+     --- Starting Run 9/30 ---
+     Run 9 finished in 15.74s. Archive size: 100  IGD=0.0038
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.94s. Archive size: 100  IGD=0.0043
+     --- Starting Run 11/30 ---
+     Run 11 finished in 15.70s. Archive size: 100  IGD=0.0043
+     --- Starting Run 12/30 ---
+     Run 12 finished in 15.77s. Archive size: 100  IGD=0.0042
+     --- Starting Run 13/30 ---
+     Run 13 finished in 15.85s. Archive size: 100  IGD=0.0038
+     --- Starting Run 14/30 ---
+     Run 14 finished in 15.73s. Archive size: 100  IGD=0.0039
+     --- Starting Run 15/30 ---
+     Run 15 finished in 15.90s. Archive size: 100  IGD=0.0039
+     --- Starting Run 16/30 ---
+     Run 16 finished in 15.89s. Archive size: 100  IGD=0.0038
+     --- Starting Run 17/30 ---
+     Run 17 finished in 15.76s. Archive size: 100  IGD=0.0044
+     --- Starting Run 18/30 ---
+     Run 18 finished in 15.99s. Archive size: 100  IGD=0.0039
+     --- Starting Run 19/30 ---
+     Run 19 finished in 15.86s. Archive size: 100  IGD=0.0042
+     --- Starting Run 20/30 ---
+     Run 20 finished in 15.86s. Archive size: 100  IGD=0.0044
+     --- Starting Run 21/30 ---
+     Run 21 finished in 15.86s. Archive size: 100  IGD=0.0039
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.81s. Archive size: 100  IGD=0.0040
+     --- Starting Run 23/30 ---
+     Run 23 finished in 15.72s. Archive size: 100  IGD=0.0041
+     --- Starting Run 24/30 ---
+     Run 24 finished in 15.86s. Archive size: 100  IGD=0.0040
+     --- Starting Run 25/30 ---
+     Run 25 finished in 15.84s. Archive size: 100  IGD=0.0047
+     --- Starting Run 26/30 ---
+     Run 26 finished in 15.76s. Archive size: 100  IGD=0.0042
+     --- Starting Run 27/30 ---
+     Run 27 finished in 15.66s. Archive size: 100  IGD=0.0046
+     --- Starting Run 28/30 ---
+     Run 28 finished in 15.69s. Archive size: 100  IGD=0.0040
+     --- Starting Run 29/30 ---
+     Run 29 finished in 15.80s. Archive size: 99  IGD=0.0044
+     --- Starting Run 30/30 ---
+     Run 30 finished in 15.80s. Archive size: 100  IGD=0.0042
+  -> Experiment for CCPSO_filter on TNK finished in 474.47s.
+     Summary saved to: out/TNK_CCPSO_filter.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 474.56s
+
+### TNK x CCPSO_strict  (seed=27002664)
+======== Starting All Experiments ========
+
+--- Processing Problem: TNK ---
+
+  -> Starting Experiment: CCPSO_strict on TNK
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/TNK_CCPSO_strict.out.csv
+     Generating reference Pareto front... done (149 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 15.24s. Archive size: 100  IGD=0.0041
+     --- Starting Run 2/30 ---
+     Run 2 finished in 15.05s. Archive size: 100  IGD=0.0046
+     --- Starting Run 3/30 ---
+     Run 3 finished in 15.15s. Archive size: 100  IGD=0.0042
+     --- Starting Run 4/30 ---
+     Run 4 finished in 15.13s. Archive size: 100  IGD=0.0045
+     --- Starting Run 5/30 ---
+     Run 5 finished in 15.25s. Archive size: 100  IGD=0.0039
+     --- Starting Run 6/30 ---
+     Run 6 finished in 15.09s. Archive size: 100  IGD=0.0047
+     --- Starting Run 7/30 ---
+     Run 7 finished in 15.12s. Archive size: 100  IGD=0.0038
+     --- Starting Run 8/30 ---
+     Run 8 finished in 15.09s. Archive size: 100  IGD=0.0046
+     --- Starting Run 9/30 ---
+     Run 9 finished in 15.20s. Archive size: 100  IGD=0.0047
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.00s. Archive size: 100  IGD=0.0043
+     --- Starting Run 11/30 ---
+     Run 11 finished in 15.10s. Archive size: 100  IGD=0.0042
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.95s. Archive size: 100  IGD=0.0040
+     --- Starting Run 13/30 ---
+     Run 13 finished in 15.07s. Archive size: 100  IGD=0.0039
+     --- Starting Run 14/30 ---
+     Run 14 finished in 15.03s. Archive size: 100  IGD=0.0044
+     --- Starting Run 15/30 ---
+     Run 15 finished in 15.08s. Archive size: 100  IGD=0.0043
+     --- Starting Run 16/30 ---
+     Run 16 finished in 15.07s. Archive size: 100  IGD=0.0042
+     --- Starting Run 17/30 ---
+     Run 17 finished in 15.30s. Archive size: 100  IGD=0.0045
+     --- Starting Run 18/30 ---
+     Run 18 finished in 15.25s. Archive size: 100  IGD=0.0041
+     --- Starting Run 19/30 ---
+     Run 19 finished in 15.32s. Archive size: 100  IGD=0.0046
+     --- Starting Run 20/30 ---
+     Run 20 finished in 15.24s. Archive size: 99  IGD=0.0042
+     --- Starting Run 21/30 ---
+     Run 21 finished in 15.29s. Archive size: 100  IGD=0.0043
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.14s. Archive size: 100  IGD=0.0041
+     --- Starting Run 23/30 ---
+     Run 23 finished in 14.86s. Archive size: 100  IGD=0.0043
+     --- Starting Run 24/30 ---
+     Run 24 finished in 15.10s. Archive size: 100  IGD=0.0041
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.99s. Archive size: 100  IGD=0.0042
+     --- Starting Run 26/30 ---
+     Run 26 finished in 15.00s. Archive size: 100  IGD=0.0041
+     --- Starting Run 27/30 ---
+     Run 27 finished in 15.05s. Archive size: 100  IGD=0.0042
+     --- Starting Run 28/30 ---
+     Run 28 finished in 15.13s. Archive size: 100  IGD=0.0044
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.97s. Archive size: 100  IGD=0.0043
+     --- Starting Run 30/30 ---
+     Run 30 finished in 15.13s. Archive size: 100  IGD=0.0046
+  -> Experiment for CCPSO_strict on TNK finished in 453.59s.
+     Summary saved to: out/TNK_CCPSO_strict.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 453.68s
+
+### CONSTR x MGPSO  (seed=26995420)
+======== Starting All Experiments ========
+
+--- Processing Problem: CONSTR ---
+
+  -> Starting Experiment: MGPSO on CONSTR
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/CONSTR_MGPSO.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 15.64s. Archive size: 100  IGD=0.1767
+     --- Starting Run 2/30 ---
+     Run 2 finished in 15.87s. Archive size: 100  IGD=0.1768
+     --- Starting Run 3/30 ---
+     Run 3 finished in 15.44s. Archive size: 100  IGD=0.1766
+     --- Starting Run 4/30 ---
+     Run 4 finished in 15.81s. Archive size: 100  IGD=0.1765
+     --- Starting Run 5/30 ---
+     Run 5 finished in 15.66s. Archive size: 100  IGD=0.1765
+     --- Starting Run 6/30 ---
+     Run 6 finished in 15.50s. Archive size: 100  IGD=0.1766
+     --- Starting Run 7/30 ---
+     Run 7 finished in 15.35s. Archive size: 100  IGD=0.1768
+     --- Starting Run 8/30 ---
+     Run 8 finished in 15.76s. Archive size: 100  IGD=0.1766
+     --- Starting Run 9/30 ---
+     Run 9 finished in 15.67s. Archive size: 100  IGD=0.1766
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.29s. Archive size: 100  IGD=0.1768
+     --- Starting Run 11/30 ---
+     Run 11 finished in 15.39s. Archive size: 100  IGD=0.1768
+     --- Starting Run 12/30 ---
+     Run 12 finished in 15.90s. Archive size: 100  IGD=0.1768
+     --- Starting Run 13/30 ---
+     Run 13 finished in 15.54s. Archive size: 100  IGD=0.1767
+     --- Starting Run 14/30 ---
+     Run 14 finished in 15.61s. Archive size: 100  IGD=0.1768
+     --- Starting Run 15/30 ---
+     Run 15 finished in 15.31s. Archive size: 100  IGD=0.1767
+     --- Starting Run 16/30 ---
+     Run 16 finished in 15.54s. Archive size: 100  IGD=0.1766
+     --- Starting Run 17/30 ---
+     Run 17 finished in 15.75s. Archive size: 100  IGD=0.1767
+     --- Starting Run 18/30 ---
+     Run 18 finished in 15.89s. Archive size: 100  IGD=0.1767
+     --- Starting Run 19/30 ---
+     Run 19 finished in 15.45s. Archive size: 100  IGD=0.1767
+     --- Starting Run 20/30 ---
+     Run 20 finished in 15.71s. Archive size: 100  IGD=0.1766
+     --- Starting Run 21/30 ---
+     Run 21 finished in 15.39s. Archive size: 100  IGD=0.1766
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.44s. Archive size: 100  IGD=0.1767
+     --- Starting Run 23/30 ---
+     Run 23 finished in 15.63s. Archive size: 100  IGD=0.1767
+     --- Starting Run 24/30 ---
+     Run 24 finished in 15.71s. Archive size: 100  IGD=0.1767
+     --- Starting Run 25/30 ---
+     Run 25 finished in 15.69s. Archive size: 100  IGD=0.1765
+     --- Starting Run 26/30 ---
+     Run 26 finished in 15.73s. Archive size: 100  IGD=0.1768
+     --- Starting Run 27/30 ---
+     Run 27 finished in 15.49s. Archive size: 100  IGD=0.1767
+     --- Starting Run 28/30 ---
+     Run 28 finished in 15.55s. Archive size: 100  IGD=0.1765
+     --- Starting Run 29/30 ---
+     Run 29 finished in 15.58s. Archive size: 100  IGD=0.1767
+     --- Starting Run 30/30 ---
+     Run 30 finished in 15.34s. Archive size: 100  IGD=0.1768
+  -> Experiment for MGPSO on CONSTR finished in 467.85s.
+     Summary saved to: out/CONSTR_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 468.24s
+
+### CONSTR x MGPSO_feasarch  (seed=27011181)
+======== Starting All Experiments ========
+
+--- Processing Problem: CONSTR ---
+
+  -> Starting Experiment: MGPSO_feasarch on CONSTR
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/CONSTR_MGPSO_feasarch.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 11.36s. Archive size: 100  IGD=0.0262
+     --- Starting Run 2/30 ---
+     Run 2 finished in 11.64s. Archive size: 100  IGD=0.0281
+     --- Starting Run 3/30 ---
+     Run 3 finished in 11.55s. Archive size: 100  IGD=0.0295
+     --- Starting Run 4/30 ---
+     Run 4 finished in 11.24s. Archive size: 100  IGD=0.0267
+     --- Starting Run 5/30 ---
+     Run 5 finished in 11.66s. Archive size: 100  IGD=0.0257
+     --- Starting Run 6/30 ---
+     Run 6 finished in 11.65s. Archive size: 100  IGD=0.0252
+     --- Starting Run 7/30 ---
+     Run 7 finished in 11.48s. Archive size: 100  IGD=0.0264
+     --- Starting Run 8/30 ---
+     Run 8 finished in 11.56s. Archive size: 100  IGD=0.0261
+     --- Starting Run 9/30 ---
+     Run 9 finished in 11.57s. Archive size: 100  IGD=0.0284
+     --- Starting Run 10/30 ---
+     Run 10 finished in 11.38s. Archive size: 100  IGD=0.0271
+     --- Starting Run 11/30 ---
+     Run 11 finished in 11.52s. Archive size: 100  IGD=0.0289
+     --- Starting Run 12/30 ---
+     Run 12 finished in 11.28s. Archive size: 100  IGD=0.0250
+     --- Starting Run 13/30 ---
+     Run 13 finished in 11.38s. Archive size: 100  IGD=0.0281
+     --- Starting Run 14/30 ---
+     Run 14 finished in 11.66s. Archive size: 100  IGD=0.0259
+     --- Starting Run 15/30 ---
+     Run 15 finished in 11.58s. Archive size: 100  IGD=0.0268
+     --- Starting Run 16/30 ---
+     Run 16 finished in 11.57s. Archive size: 100  IGD=0.0306
+     --- Starting Run 17/30 ---
+     Run 17 finished in 11.62s. Archive size: 100  IGD=0.0265
+     --- Starting Run 18/30 ---
+     Run 18 finished in 11.37s. Archive size: 100  IGD=0.0278
+     --- Starting Run 19/30 ---
+     Run 19 finished in 11.51s. Archive size: 100  IGD=0.0255
+     --- Starting Run 20/30 ---
+     Run 20 finished in 11.59s. Archive size: 100  IGD=0.0255
+     --- Starting Run 21/30 ---
+     Run 21 finished in 11.59s. Archive size: 100  IGD=0.0274
+     --- Starting Run 22/30 ---
+     Run 22 finished in 11.56s. Archive size: 100  IGD=0.0263
+     --- Starting Run 23/30 ---
+     Run 23 finished in 11.56s. Archive size: 100  IGD=0.0256
+     --- Starting Run 24/30 ---
+     Run 24 finished in 11.63s. Archive size: 100  IGD=0.0249
+     --- Starting Run 25/30 ---
+     Run 25 finished in 11.64s. Archive size: 100  IGD=0.0295
+     --- Starting Run 26/30 ---
+     Run 26 finished in 11.77s. Archive size: 100  IGD=0.0258
+     --- Starting Run 27/30 ---
+     Run 27 finished in 11.60s. Archive size: 100  IGD=0.0278
+     --- Starting Run 28/30 ---
+     Run 28 finished in 11.66s. Archive size: 100  IGD=0.0283
+     --- Starting Run 29/30 ---
+     Run 29 finished in 11.90s. Archive size: 100  IGD=0.0267
+     --- Starting Run 30/30 ---
+     Run 30 finished in 11.76s. Archive size: 100  IGD=0.0250
+  -> Experiment for MGPSO_feasarch on CONSTR finished in 347.08s.
+     Summary saved to: out/CONSTR_MGPSO_feasarch.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 347.48s
+
+### CONSTR x CCPSO_filter  (seed=27007226)
+======== Starting All Experiments ========
+
+--- Processing Problem: CONSTR ---
+
+  -> Starting Experiment: CCPSO_filter on CONSTR
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/CONSTR_CCPSO_filter.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 19.92s. Archive size: 100  IGD=0.0254
+     --- Starting Run 2/30 ---
+     Run 2 finished in 19.89s. Archive size: 100  IGD=0.0240
+     --- Starting Run 3/30 ---
+     Run 3 finished in 19.85s. Archive size: 100  IGD=0.0248
+     --- Starting Run 4/30 ---
+     Run 4 finished in 20.01s. Archive size: 100  IGD=0.0239
+     --- Starting Run 5/30 ---
+     Run 5 finished in 19.80s. Archive size: 100  IGD=0.0242
+     --- Starting Run 6/30 ---
+     Run 6 finished in 19.87s. Archive size: 100  IGD=0.0245
+     --- Starting Run 7/30 ---
+     Run 7 finished in 19.87s. Archive size: 100  IGD=0.0229
+     --- Starting Run 8/30 ---
+     Run 8 finished in 19.99s. Archive size: 100  IGD=0.0233
+     --- Starting Run 9/30 ---
+     Run 9 finished in 19.83s. Archive size: 100  IGD=0.0246
+     --- Starting Run 10/30 ---
+     Run 10 finished in 19.78s. Archive size: 100  IGD=0.0235
+     --- Starting Run 11/30 ---
+     Run 11 finished in 19.87s. Archive size: 100  IGD=0.0240
+     --- Starting Run 12/30 ---
+     Run 12 finished in 19.94s. Archive size: 100  IGD=0.0233
+     --- Starting Run 13/30 ---
+     Run 13 finished in 19.78s. Archive size: 100  IGD=0.0242
+     --- Starting Run 14/30 ---
+     Run 14 finished in 19.50s. Archive size: 100  IGD=0.0245
+     --- Starting Run 15/30 ---
+     Run 15 finished in 19.30s. Archive size: 100  IGD=0.0249
+     --- Starting Run 16/30 ---
+     Run 16 finished in 19.60s. Archive size: 100  IGD=0.0235
+     --- Starting Run 17/30 ---
+     Run 17 finished in 19.56s. Archive size: 100  IGD=0.0241
+     --- Starting Run 18/30 ---
+     Run 18 finished in 19.50s. Archive size: 100  IGD=0.0249
+     --- Starting Run 19/30 ---
+     Run 19 finished in 19.43s. Archive size: 100  IGD=0.0248
+     --- Starting Run 20/30 ---
+     Run 20 finished in 19.48s. Archive size: 100  IGD=0.0254
+     --- Starting Run 21/30 ---
+     Run 21 finished in 19.48s. Archive size: 100  IGD=0.0242
+     --- Starting Run 22/30 ---
+     Run 22 finished in 19.41s. Archive size: 100  IGD=0.0236
+     --- Starting Run 23/30 ---
+     Run 23 finished in 19.59s. Archive size: 100  IGD=0.0237
+     --- Starting Run 24/30 ---
+     Run 24 finished in 19.66s. Archive size: 100  IGD=0.0245
+     --- Starting Run 25/30 ---
+     Run 25 finished in 19.07s. Archive size: 100  IGD=0.0244
+     --- Starting Run 26/30 ---
+     Run 26 finished in 19.55s. Archive size: 100  IGD=0.0233
+     --- Starting Run 27/30 ---
+     Run 27 finished in 19.44s. Archive size: 100  IGD=0.0232
+     --- Starting Run 28/30 ---
+     Run 28 finished in 19.74s. Archive size: 100  IGD=0.0230
+     --- Starting Run 29/30 ---
+     Run 29 finished in 19.52s. Archive size: 100  IGD=0.0239
+     --- Starting Run 30/30 ---
+     Run 30 finished in 19.78s. Archive size: 100  IGD=0.0236
+  -> Experiment for CCPSO_filter on CONSTR finished in 590.23s.
+     Summary saved to: out/CONSTR_CCPSO_filter.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 590.63s
+
+### CONSTR x CCPSO_strict  (seed=27007484)
+======== Starting All Experiments ========
+
+--- Processing Problem: CONSTR ---
+
+  -> Starting Experiment: CCPSO_strict on CONSTR
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/CONSTR_CCPSO_strict.out.csv
+     Generating reference Pareto front... done (500 points). IGD/GD/Spread will be reported.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 19.39s. Archive size: 100  IGD=0.0249
+     --- Starting Run 2/30 ---
+     Run 2 finished in 19.39s. Archive size: 100  IGD=0.0246
+     --- Starting Run 3/30 ---
+     Run 3 finished in 19.21s. Archive size: 100  IGD=0.0242
+     --- Starting Run 4/30 ---
+     Run 4 finished in 19.43s. Archive size: 100  IGD=0.0232
+     --- Starting Run 5/30 ---
+     Run 5 finished in 19.61s. Archive size: 100  IGD=0.0230
+     --- Starting Run 6/30 ---
+     Run 6 finished in 19.63s. Archive size: 100  IGD=0.0248
+     --- Starting Run 7/30 ---
+     Run 7 finished in 19.55s. Archive size: 100  IGD=0.0238
+     --- Starting Run 8/30 ---
+     Run 8 finished in 19.39s. Archive size: 100  IGD=0.0243
+     --- Starting Run 9/30 ---
+     Run 9 finished in 19.38s. Archive size: 100  IGD=0.0235
+     --- Starting Run 10/30 ---
+     Run 10 finished in 19.44s. Archive size: 100  IGD=0.0242
+     --- Starting Run 11/30 ---
+     Run 11 finished in 19.33s. Archive size: 100  IGD=0.0253
+     --- Starting Run 12/30 ---
+     Run 12 finished in 19.20s. Archive size: 100  IGD=0.0244
+     --- Starting Run 13/30 ---
+     Run 13 finished in 19.44s. Archive size: 100  IGD=0.0244
+     --- Starting Run 14/30 ---
+     Run 14 finished in 19.40s. Archive size: 100  IGD=0.0252
+     --- Starting Run 15/30 ---
+     Run 15 finished in 19.22s. Archive size: 100  IGD=0.0240
+     --- Starting Run 16/30 ---
+     Run 16 finished in 19.43s. Archive size: 100  IGD=0.0230
+     --- Starting Run 17/30 ---
+     Run 17 finished in 19.22s. Archive size: 100  IGD=0.0239
+     --- Starting Run 18/30 ---
+     Run 18 finished in 19.61s. Archive size: 100  IGD=0.0243
+     --- Starting Run 19/30 ---
+     Run 19 finished in 19.45s. Archive size: 100  IGD=0.0233
+     --- Starting Run 20/30 ---
+     Run 20 finished in 19.21s. Archive size: 100  IGD=0.0239
+     --- Starting Run 21/30 ---
+     Run 21 finished in 19.36s. Archive size: 100  IGD=0.0243
+     --- Starting Run 22/30 ---
+     Run 22 finished in 19.46s. Archive size: 100  IGD=0.0249
+     --- Starting Run 23/30 ---
+     Run 23 finished in 19.45s. Archive size: 100  IGD=0.0240
+     --- Starting Run 24/30 ---
+     Run 24 finished in 19.18s. Archive size: 100  IGD=0.0254
+     --- Starting Run 25/30 ---
+     Run 25 finished in 19.19s. Archive size: 100  IGD=0.0236
+     --- Starting Run 26/30 ---
+     Run 26 finished in 19.30s. Archive size: 100  IGD=0.0248
+     --- Starting Run 27/30 ---
+     Run 27 finished in 19.50s. Archive size: 100  IGD=0.0238
+     --- Starting Run 28/30 ---
+     Run 28 finished in 19.39s. Archive size: 100  IGD=0.0242
+     --- Starting Run 29/30 ---
+     Run 29 finished in 19.30s. Archive size: 100  IGD=0.0237
+     --- Starting Run 30/30 ---
+     Run 30 finished in 19.47s. Archive size: 100  IGD=0.0246
+  -> Experiment for CCPSO_strict on CONSTR finished in 581.78s.
+     Summary saved to: out/CONSTR_CCPSO_strict.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 582.17s
+
+### OSY x MGPSO  (seed=26992885)
+======== Starting All Experiments ========
+
+--- Processing Problem: OSY ---
+
+  -> Starting Experiment: MGPSO on OSY
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/OSY_MGPSO.out.csv
+     Generating reference Pareto front...      Info: true_pareto_front() not available; IGD/GD/Spread will be empty.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 11.25s. Archive size: 100
+     --- Starting Run 2/30 ---
+     Run 2 finished in 10.69s. Archive size: 100
+     --- Starting Run 3/30 ---
+     Run 3 finished in 10.14s. Archive size: 100
+     --- Starting Run 4/30 ---
+     Run 4 finished in 11.58s. Archive size: 100
+     --- Starting Run 5/30 ---
+     Run 5 finished in 11.09s. Archive size: 100
+     --- Starting Run 6/30 ---
+     Run 6 finished in 10.51s. Archive size: 100
+     --- Starting Run 7/30 ---
+     Run 7 finished in 9.99s. Archive size: 100
+     --- Starting Run 8/30 ---
+     Run 8 finished in 10.93s. Archive size: 100
+     --- Starting Run 9/30 ---
+     Run 9 finished in 10.01s. Archive size: 100
+     --- Starting Run 10/30 ---
+     Run 10 finished in 11.52s. Archive size: 100
+     --- Starting Run 11/30 ---
+     Run 11 finished in 10.23s. Archive size: 100
+     --- Starting Run 12/30 ---
+     Run 12 finished in 11.09s. Archive size: 100
+     --- Starting Run 13/30 ---
+     Run 13 finished in 9.94s. Archive size: 100
+     --- Starting Run 14/30 ---
+     Run 14 finished in 10.51s. Archive size: 100
+     --- Starting Run 15/30 ---
+     Run 15 finished in 10.09s. Archive size: 100
+     --- Starting Run 16/30 ---
+     Run 16 finished in 10.25s. Archive size: 100
+     --- Starting Run 17/30 ---
+     Run 17 finished in 10.60s. Archive size: 100
+     --- Starting Run 18/30 ---
+     Run 18 finished in 11.46s. Archive size: 100
+     --- Starting Run 19/30 ---
+     Run 19 finished in 10.12s. Archive size: 100
+     --- Starting Run 20/30 ---
+     Run 20 finished in 11.03s. Archive size: 100
+     --- Starting Run 21/30 ---
+     Run 21 finished in 11.40s. Archive size: 100
+     --- Starting Run 22/30 ---
+     Run 22 finished in 9.86s. Archive size: 100
+     --- Starting Run 23/30 ---
+     Run 23 finished in 11.09s. Archive size: 100
+     --- Starting Run 24/30 ---
+     Run 24 finished in 10.69s. Archive size: 100
+     --- Starting Run 25/30 ---
+     Run 25 finished in 10.09s. Archive size: 100
+     --- Starting Run 26/30 ---
+     Run 26 finished in 10.13s. Archive size: 100
+     --- Starting Run 27/30 ---
+     Run 27 finished in 10.44s. Archive size: 100
+     --- Starting Run 28/30 ---
+     Run 28 finished in 11.79s. Archive size: 100
+     --- Starting Run 29/30 ---
+     Run 29 finished in 10.58s. Archive size: 100
+     --- Starting Run 30/30 ---
+     Run 30 finished in 10.42s. Archive size: 100
+  -> Experiment for MGPSO on OSY finished in 319.67s.
+     Summary saved to: out/OSY_MGPSO.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 319.67s
+
+### OSY x MGPSO_feasarch  (seed=27005874)
+======== Starting All Experiments ========
+
+--- Processing Problem: OSY ---
+
+  -> Starting Experiment: MGPSO_feasarch on OSY
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/OSY_MGPSO_feasarch.out.csv
+     Generating reference Pareto front...      Info: true_pareto_front() not available; IGD/GD/Spread will be empty.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 4.93s. Archive size: 65
+     --- Starting Run 2/30 ---
+     Run 2 finished in 4.68s. Archive size: 62
+     --- Starting Run 3/30 ---
+     Run 3 finished in 4.82s. Archive size: 59
+     --- Starting Run 4/30 ---
+     Run 4 finished in 5.27s. Archive size: 71
+     --- Starting Run 5/30 ---
+     Run 5 finished in 4.62s. Archive size: 59
+     --- Starting Run 6/30 ---
+     Run 6 finished in 4.45s. Archive size: 48
+     --- Starting Run 7/30 ---
+     Run 7 finished in 5.28s. Archive size: 82
+     --- Starting Run 8/30 ---
+     Run 8 finished in 4.82s. Archive size: 62
+     --- Starting Run 9/30 ---
+     Run 9 finished in 5.72s. Archive size: 72
+     --- Starting Run 10/30 ---
+     Run 10 finished in 4.72s. Archive size: 74
+     --- Starting Run 11/30 ---
+     Run 11 finished in 5.01s. Archive size: 64
+     --- Starting Run 12/30 ---
+     Run 12 finished in 4.31s. Archive size: 45
+     --- Starting Run 13/30 ---
+     Run 13 finished in 4.67s. Archive size: 58
+     --- Starting Run 14/30 ---
+     Run 14 finished in 4.55s. Archive size: 53
+     --- Starting Run 15/30 ---
+     Run 15 finished in 5.10s. Archive size: 68
+     --- Starting Run 16/30 ---
+     Run 16 finished in 4.50s. Archive size: 39
+     --- Starting Run 17/30 ---
+     Run 17 finished in 5.73s. Archive size: 87
+     --- Starting Run 18/30 ---
+     Run 18 finished in 4.88s. Archive size: 61
+     --- Starting Run 19/30 ---
+     Run 19 finished in 4.91s. Archive size: 65
+     --- Starting Run 20/30 ---
+     Run 20 finished in 4.90s. Archive size: 60
+     --- Starting Run 21/30 ---
+     Run 21 finished in 5.31s. Archive size: 82
+     --- Starting Run 22/30 ---
+     Run 22 finished in 4.95s. Archive size: 72
+     --- Starting Run 23/30 ---
+     Run 23 finished in 4.83s. Archive size: 61
+     --- Starting Run 24/30 ---
+     Run 24 finished in 4.97s. Archive size: 66
+     --- Starting Run 25/30 ---
+     Run 25 finished in 4.96s. Archive size: 73
+     --- Starting Run 26/30 ---
+     Run 26 finished in 4.44s. Archive size: 46
+     --- Starting Run 27/30 ---
+     Run 27 finished in 4.68s. Archive size: 61
+     --- Starting Run 28/30 ---
+     Run 28 finished in 5.48s. Archive size: 90
+     --- Starting Run 29/30 ---
+     Run 29 finished in 4.72s. Archive size: 54
+     --- Starting Run 30/30 ---
+     Run 30 finished in 5.13s. Archive size: 79
+  -> Experiment for MGPSO_feasarch on OSY finished in 147.45s.
+     Summary saved to: out/OSY_MGPSO_feasarch.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 147.45s
+
+### OSY x CCPSO_filter  (seed=27002510)
+======== Starting All Experiments ========
+
+--- Processing Problem: OSY ---
+
+  -> Starting Experiment: CCPSO_filter on OSY
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/OSY_CCPSO_filter.out.csv
+     Generating reference Pareto front...      Info: true_pareto_front() not available; IGD/GD/Spread will be empty.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 14.74s. Archive size: 18
+     --- Starting Run 2/30 ---
+     Run 2 finished in 16.25s. Archive size: 47
+     --- Starting Run 3/30 ---
+     Run 3 finished in 14.41s. Archive size: 47
+     --- Starting Run 4/30 ---
+     Run 4 finished in 13.88s. Archive size: 90
+     --- Starting Run 5/30 ---
+     Run 5 finished in 16.14s. Archive size: 47
+     --- Starting Run 6/30 ---
+     Run 6 finished in 16.43s. Archive size: 13
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.71s. Archive size: 97
+     --- Starting Run 8/30 ---
+     Run 8 finished in 15.85s. Archive size: 14
+     --- Starting Run 9/30 ---
+     Run 9 finished in 16.39s. Archive size: 53
+     --- Starting Run 10/30 ---
+     Run 10 finished in 15.03s. Archive size: 10
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.58s. Archive size: 81
+     --- Starting Run 12/30 ---
+     Run 12 finished in 15.47s. Archive size: 40
+     --- Starting Run 13/30 ---
+     Run 13 finished in 16.04s. Archive size: 35
+     --- Starting Run 14/30 ---
+     Run 14 finished in 14.85s. Archive size: 88
+     --- Starting Run 15/30 ---
+     Run 15 finished in 14.99s. Archive size: 83
+     --- Starting Run 16/30 ---
+     Run 16 finished in 14.72s. Archive size: 72
+     --- Starting Run 17/30 ---
+     Run 17 finished in 14.84s. Archive size: 17
+     --- Starting Run 18/30 ---
+     Run 18 finished in 15.21s. Archive size: 4
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.62s. Archive size: 72
+     --- Starting Run 20/30 ---
+     Run 20 finished in 15.96s. Archive size: 46
+     --- Starting Run 21/30 ---
+     Run 21 finished in 16.43s. Archive size: 50
+     --- Starting Run 22/30 ---
+     Run 22 finished in 15.14s. Archive size: 64
+     --- Starting Run 23/30 ---
+     Run 23 finished in 15.20s. Archive size: 48
+     --- Starting Run 24/30 ---
+     Run 24 finished in 15.08s. Archive size: 88
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.57s. Archive size: 97
+     --- Starting Run 26/30 ---
+     Run 26 finished in 15.03s. Archive size: 15
+     --- Starting Run 27/30 ---
+     Run 27 finished in 14.49s. Archive size: 62
+     --- Starting Run 28/30 ---
+     Run 28 finished in 15.17s. Archive size: 11
+     --- Starting Run 29/30 ---
+     Run 29 finished in 16.04s. Archive size: 7
+     --- Starting Run 30/30 ---
+     Run 30 finished in 16.18s. Archive size: 46
+  -> Experiment for CCPSO_filter on OSY finished in 458.56s.
+     Summary saved to: out/OSY_CCPSO_filter.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 458.56s
+
+### OSY x CCPSO_strict  (seed=27002711)
+======== Starting All Experiments ========
+
+--- Processing Problem: OSY ---
+
+  -> Starting Experiment: CCPSO_strict on OSY
+     Configuration: 30 runs, 1000 iterations/run.
+     Results will be saved to: out/OSY_CCPSO_strict.out.csv
+     Generating reference Pareto front...      Info: true_pareto_front() not available; IGD/GD/Spread will be empty.
+     --- Starting Run 1/30 ---
+     Run 1 finished in 12.05s. Archive size: 100
+     --- Starting Run 2/30 ---
+     Run 2 finished in 13.93s. Archive size: 100
+     --- Starting Run 3/30 ---
+     Run 3 finished in 13.71s. Archive size: 100
+     --- Starting Run 4/30 ---
+     Run 4 finished in 14.83s. Archive size: 100
+     --- Starting Run 5/30 ---
+     Run 5 finished in 13.53s. Archive size: 100
+     --- Starting Run 6/30 ---
+     Run 6 finished in 15.08s. Archive size: 100
+     --- Starting Run 7/30 ---
+     Run 7 finished in 14.48s. Archive size: 100
+     --- Starting Run 8/30 ---
+     Run 8 finished in 14.78s. Archive size: 100
+     --- Starting Run 9/30 ---
+     Run 9 finished in 14.13s. Archive size: 100
+     --- Starting Run 10/30 ---
+     Run 10 finished in 14.58s. Archive size: 100
+     --- Starting Run 11/30 ---
+     Run 11 finished in 14.74s. Archive size: 100
+     --- Starting Run 12/30 ---
+     Run 12 finished in 14.98s. Archive size: 100
+     --- Starting Run 13/30 ---
+     Run 13 finished in 15.26s. Archive size: 100
+     --- Starting Run 14/30 ---
+     Run 14 finished in 14.25s. Archive size: 100
+     --- Starting Run 15/30 ---
+     Run 15 finished in 13.85s. Archive size: 100
+     --- Starting Run 16/30 ---
+     Run 16 finished in 13.96s. Archive size: 100
+     --- Starting Run 17/30 ---
+     Run 17 finished in 13.52s. Archive size: 100
+     --- Starting Run 18/30 ---
+     Run 18 finished in 13.78s. Archive size: 100
+     --- Starting Run 19/30 ---
+     Run 19 finished in 14.15s. Archive size: 99
+     --- Starting Run 20/30 ---
+     Run 20 finished in 14.33s. Archive size: 100
+     --- Starting Run 21/30 ---
+     Run 21 finished in 12.82s. Archive size: 100
+     --- Starting Run 22/30 ---
+     Run 22 finished in 14.63s. Archive size: 100
+     --- Starting Run 23/30 ---
+     Run 23 finished in 13.67s. Archive size: 100
+     --- Starting Run 24/30 ---
+     Run 24 finished in 14.36s. Archive size: 100
+     --- Starting Run 25/30 ---
+     Run 25 finished in 14.86s. Archive size: 100
+     --- Starting Run 26/30 ---
+     Run 26 finished in 15.05s. Archive size: 100
+     --- Starting Run 27/30 ---
+     Run 27 finished in 12.86s. Archive size: 96
+     --- Starting Run 28/30 ---
+     Run 28 finished in 14.15s. Archive size: 100
+     --- Starting Run 29/30 ---
+     Run 29 finished in 14.77s. Archive size: 100
+     --- Starting Run 30/30 ---
+     Run 30 finished in 13.73s. Archive size: 98
+  -> Experiment for CCPSO_strict on OSY finished in 424.96s.
+     Summary saved to: out/OSY_CCPSO_strict.summary.out.csv
+
+======== All Experiments Finished ========
+Total execution time: 424.96s
+
+All experiments done in 187.4 min
+
+problem  algorithm                       IGD         HV(feas,fixed)      front feas%
+SCH1     MGPSO               0.0191 ± 0.0001    12097.2787 ± 0.0005 100.0000 ± 0.0000
+ZDT1     MGPSO               0.0043 ± 0.0000        0.8720 ± 0.0000 100.0000 ± 0.0000
+ZDT2     MGPSO               0.1615 ± 0.2777        0.4097 ± 0.2015 100.0000 ± 0.0000
+ZDT3     MGPSO               0.0096 ± 0.0216        1.3183 ± 0.0421 100.0000 ± 0.0000
+ZDT4     MGPSO               4.7721 ± 4.3035        0.0218 ± 0.0714 100.0000 ± 0.0000
+ZDT6     MGPSO               0.0035 ± 0.0002        0.5044 ± 0.0001 100.0000 ± 0.0000
+BNH      MGPSO               0.4181 ± 0.0101     7220.9832 ± 0.4140 99.8333 ± 0.3727
+BNH      MGPSO_feasarch      0.4155 ± 0.0082     7220.9824 ± 0.3849 100.0000 ± 0.0000
+BNH      CCPSO_filter        0.4171 ± 0.0089     7220.9526 ± 0.4818 100.0000 ± 0.0000
+BNH      CCPSO_strict        0.4202 ± 0.0077     7220.9161 ± 0.3728 100.0000 ± 0.0000
+SRN      MGPSO               3.1092 ± 0.0912 46463.4640 ± 3768.5401  8.3333 ± 2.6119
+SRN      MGPSO_feasarch      0.9089 ± 0.0090   54403.6638 ± 14.0776 100.0000 ± 0.0000
+SRN      CCPSO_filter        0.9017 ± 0.0058    54438.1971 ± 1.6264 100.0000 ± 0.0000
+SRN      CCPSO_strict        0.8984 ± 0.0066    54438.6370 ± 1.4909 100.0000 ± 0.0000
+TNK      MGPSO               0.9929 ± 0.0000        0.0000 ± 0.0000  0.0000 ± 0.0000
+TNK      MGPSO_feasarch      0.0057 ± 0.0007        0.8880 ± 0.0014 100.0000 ± 0.0000
+TNK      CCPSO_filter        0.0041 ± 0.0003        0.8919 ± 0.0005 100.0000 ± 0.0000
+TNK      CCPSO_strict        0.0043 ± 0.0002        0.8921 ± 0.0003 100.0000 ± 0.0000
+CONSTR   MGPSO               0.1767 ± 0.0001        3.7646 ± 0.0356 24.2667 ± 0.6799
+CONSTR   MGPSO_feasarch      0.0269 ± 0.0015        5.2973 ± 0.0021 100.0000 ± 0.0000
+CONSTR   CCPSO_filter        0.0241 ± 0.0007        5.3061 ± 0.0006 100.0000 ± 0.0000
+CONSTR   CCPSO_strict        0.0242 ± 0.0006        5.3054 ± 0.0011 100.0000 ± 0.0000
+OSY      MGPSO                           n/a        0.0000 ± 0.0000  0.0000 ± 0.0000
+OSY      MGPSO_feasarch                  n/a  20018.6639 ± 639.2449 100.0000 ± 0.0000
+OSY      CCPSO_filter                    n/a  19236.0575 ± 920.9452 100.0000 ± 0.0000
+OSY      CCPSO_strict                    n/a  20372.1570 ± 281.2062 100.0000 ± 0.0000
+
+Aggregated results written to results_static_mo.csv
