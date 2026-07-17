@@ -151,20 +151,6 @@ class _LagrangianMinProblem(Problem):
         hx = original_eval.constraints_equality or []
 
         if isinstance(fx, (list, tuple)):
-            # Multi-objective: a single objective-independent penalty P(x)
-            # is added to EVERY objective, L_m(x) = f_m(x) + P(x).
-            #
-            # The multiplier term uses the violation-clamped ("plus
-            # function") form mu*^T max(0, g) rather than the signed
-            # Lagrangian mu*^T g. The signed form rewards deeply feasible
-            # solutions with large NEGATIVE penalties, which -- added to all
-            # objectives -- lets the single most-interior solution
-            # Pareto-dominate the entire archive and collapses the front to
-            # one point. Clamping makes P(x) = 0 for every feasible
-            # solution, so feasible solutions compete purely on their true
-            # objectives (Pareto structure preserved), while infeasible
-            # solutions are inflated on all objectives and get dominated out
-            # as the multipliers grow.
             penalty = 0.0
             penalty += sum(
                 mu * max(0.0, g)
@@ -180,8 +166,7 @@ class _LagrangianMinProblem(Problem):
                 penalty += self.penalty_rho_equality * sum(abs(h) for h in hx)
             lagrangian_value = [fm + penalty for fm in fx]
         else:
-            # Single-objective: the original signed Lagrangian, unchanged
-            # from the validated Phase 1 implementation.
+            # Single-objective
             lagrangian_value = fx
             lagrangian_value += sum(
                 mu * g for mu, g in zip(self.fixed_multipliers_inequality, gx)
@@ -331,10 +316,6 @@ class _LagrangianMaxProblem(Problem):
         gx = self.fixed_solution_eval.constraints_inequality or []
         hx = self.fixed_solution_eval.constraints_equality or []
 
-        # f(x*) is constant with respect to the multipliers, so it never
-        # affects the argmax of L(x*, mu, lambda) -- it only shifts the
-        # reported value. For multi-objective problems fx is a vector and
-        # cannot be added to a scalar, so the constant term is dropped.
         if isinstance(fx, (list, tuple)):
             fx = 0.0
 
@@ -343,7 +324,7 @@ class _LagrangianMaxProblem(Problem):
         lagrangian_value += sum(s * g for s, g in zip(inequality_multipliers, gx))
         lagrangian_value += sum(l * h for l, h in zip(equality_multipliers, hx))
 
-        # Return the negative value because we want to MAXIMIZE L
+        # Return the negative value
         return Evaluation(fitness=-lagrangian_value)
 
     def get_fitness_bounds(self) -> Tuple[float, float]:
@@ -429,14 +410,8 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         constraint_handler = kwargs.get("constraint_handler", None)
 
-        # Archive management strategy for multi-objective objective solvers:
-        #   "filter" (default) -- the archive may contain infeasible
-        #       solutions during the run (they are gradually dominated out
-        #       as the multipliers grow); get_result() filters the final
-        #       front so that only feasible solutions are reported.
-        #   "strict" -- infeasible solutions are never admitted to the
-        #       archive in the first place; no filtering is needed.
-        # Ignored for single-objective problems.
+        '''Archive Management, either filter infeasible solutions or do not allow infeasible
+           solutions'''
         self.archive_strategy = str(kwargs.get("archive_strategy", "filter"))
         if self.archive_strategy not in ("filter", "strict"):
             raise ValueError(
@@ -479,7 +454,7 @@ class CoevolutionaryLagrangianSolver(Solver):
         Multi-objective: the "best solution" is an entire archive, so a
         representative must be chosen. The rule used is:
 
-        * If the archive is non-empty, the *most-violating* archive member is
+        * If the archive is non-empty, the most-violating archive member is
           selected. The multipliers then respond to the worst remaining
           violation on the current front, and pressure persists until the
           entire front is feasible. When every archive member is feasible,
@@ -488,7 +463,7 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         * If the archive is empty (possible under the "strict" admission
           strategy before any feasible solution has been found), the
-          *least-violating population member* is selected instead. This is
+          least-violating population member is selected instead. This is
           the current feasibility frontier: penalising its remaining
           violations applies pressure exactly where the swarm is closest to
           success, while avoiding the multiplier-cap saturation that anchoring

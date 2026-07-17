@@ -16,3 +16,4 @@ docs/dev/ccls_changes.md
 docs/dev/ccls.md
 out/
 .claude
+.DS_STORE
