@@ -172,6 +172,66 @@ class _Archive:
         if len(self) > self.capacity:
             self._evict_most_crowded()
 
+    def rescore(self, evaluations: List[Evaluation]) -> None:
+        """Replaces stored evaluations in place, leaving positions untouched.
+
+        Used when the environment (or, under the co-evolutionary framework,
+        the penalty landscape) changes: the archived *positions* remain
+        valid candidate solutions, only their stored objective and
+        constraint values are stale.
+
+        Args:
+            evaluations: New evaluations, in the same order as `positions`.
+        """
+        self.evaluations = [copy.deepcopy(e) for e in evaluations]
+        self._invalidate()
+
+    def prune(self) -> Tuple[int, int]:
+        """Removes infeasible and dominated members in place.
+
+        Applied after `rescore`. Members are removed only if they are
+        infeasible (under strict admission) or dominated by another
+        surviving member; every other member is retained at its existing
+        position. The archive can only shrink, so no capacity eviction is
+        required.
+
+        Solutions with identical objective vectors do not dominate one
+        another and are therefore both retained.
+
+        Returns:
+            A tuple (n_infeasible_removed, n_dominated_removed).
+        """
+        n = len(self)
+        if n == 0:
+            return (0, 0)
+
+        keep = np.ones(n, dtype=bool)
+
+        n_infeasible = 0
+        if self.feasible_only:
+            for i, evaluation in enumerate(self.evaluations):
+                if not _is_feasible(evaluation):
+                    keep[i] = False
+                    n_infeasible += 1
+
+        n_dominated = 0
+        surviving = np.flatnonzero(keep)
+        if surviving.size > 1:
+            matrix = self._matrix()[surviving]
+            # dominated[i] is True if any other surviving member dominates i
+            no_worse = np.all(matrix[None, :, :] <= matrix[:, None, :], axis=2)
+            better = np.any(matrix[None, :, :] < matrix[:, None, :], axis=2)
+            dominated = np.any(no_worse & better, axis=1)
+            n_dominated = int(dominated.sum())
+            keep[surviving[dominated]] = False
+
+        if not keep.all():
+            self.positions = [p for p, k in zip(self.positions, keep) if k]
+            self.evaluations = [e for e, k in zip(self.evaluations, keep) if k]
+            self._invalidate()
+
+        return (n_infeasible, n_dominated)
+    
     def _crowding_distances(self) -> np.ndarray:
         """Crowding distance of every archive member, in objective space.
 
@@ -531,15 +591,23 @@ class MGPSO(Solver[List[float], List[float]]):
         """Re-evaluates archive members against the current environment.
 
         Used for dynamic problems, where stored fitness values become stale
-        when the landscape changes. Dominated members are pruned after
-        re-evaluation.
+        when the landscape changes, and under the co-evolutionary
+        framework, where the penalty landscape changes as the multipliers
+        evolve.
+
+        The archive is updated in place: every member is re-evaluated at
+        its existing position, and only members that have become
+        infeasible (under strict admission) or dominated are removed.
+        Members are never discarded for any other reason.
         """
-        positions = [p.copy() for p in self._archive.positions]
-        self._archive.positions = []
-        self._archive.evaluations = []
-        for position in positions:
-            evaluation = self.problem.evaluate(list(position))
-            self._archive.insert(position, evaluation)
+        if len(self._archive) == 0:
+            return
+        evaluations = [
+            self.problem.evaluate(list(position))
+            for position in self._archive.positions
+        ]
+        self._archive.rescore(evaluations)
+        self._archive.prune()
 
     def step(self) -> None:
         """Performs one MGPSO iteration.
