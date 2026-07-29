@@ -15,5 +15,9 @@ docs/dev/ccga_benchmark_exa.md
 docs/dev/ccls_changes.md
 docs/dev/ccls.md
 out/
+out_refresh_taut10
+out_refresh_taut25
+out_refresh_taut50
+*.log
 .claude
 .DS_STORE
