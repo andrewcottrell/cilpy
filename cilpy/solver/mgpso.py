@@ -231,7 +231,7 @@ class _Archive:
             self._invalidate()
 
         return (n_infeasible, n_dominated)
-    
+
     def _crowding_distances(self) -> np.ndarray:
         """Crowding distance of every archive member, in objective space.
 
@@ -515,6 +515,7 @@ class MGPSO(Solver[List[float], List[float]]):
         swarm_size: int,
         tournament_size: int = 3,
         feasible_archive_only: bool = False,
+        refresh_mode: str = "clean",
         w: Optional[float] = None,
         c1: Optional[float] = None,
         c2: Optional[float] = None,
@@ -532,6 +533,13 @@ class MGPSO(Solver[List[float], List[float]]):
             swarm_size: The number of particles in each sub-swarm.
             tournament_size: Archive-guide tournament size (2 or 3 in the
                 original paper). Defaults to 3.
+            refresh_mode: How the archive is updated on an environment
+                change (see `_refresh_archive`). `"clean"` (default)
+                re-scores every member in place, retaining any that remain
+                feasible and non-dominated. `"clear"` discards the archive
+                entirely and rebuilds it from scratch on the next
+                iterations of `step`. Ignored on problems that are never
+                dynamic.
             w: Inertia weight. If `w`, `c1`, `c2`, and `c3` are all provided,
                 fixed control parameters are used; otherwise parameters are
                 re-sampled per particle each iteration subject to the MGPSO
@@ -548,6 +556,13 @@ class MGPSO(Solver[List[float], List[float]]):
 
         self.swarm_size = swarm_size
         self.tournament_size = tournament_size
+
+        if refresh_mode not in ("clean", "clear"):
+            raise ValueError(
+                f"refresh_mode must be 'clean' or 'clear', got "
+                f"'{refresh_mode}'."
+            )
+        self.refresh_mode = refresh_mode
 
         fixed = (w, c1, c2, c3)
         if all(p is not None for p in fixed):
@@ -579,6 +594,13 @@ class MGPSO(Solver[List[float], List[float]]):
             for m in range(self.n_objectives)
         ]
 
+        # Sentinel for environment-change detection: a fixed position that
+        # is re-evaluated each step on dynamic problems. A change in its
+        # evaluation signals that the landscape moved (Lagrangian multiplier
+        # updates inside CCLS included) and triggers a full change response.
+        self._sentinel_x = lower.copy()
+        self._sentinel_eval = probe
+
         # Evaluate the initial population so that get_result() and the
         # population accessors are valid before the first step() call.
         self._dynamic = any(self.problem.is_dynamic())
@@ -593,21 +615,89 @@ class MGPSO(Solver[List[float], List[float]]):
         Used for dynamic problems, where stored fitness values become stale
         when the landscape changes, and under the co-evolutionary
         framework, where the penalty landscape changes as the multipliers
-        evolve.
+        evolve. Behaviour is controlled by `self.refresh_mode`.
 
-        The archive is updated in place: every member is re-evaluated at
-        its existing position, and only members that have become
-        infeasible (under strict admission) or dominated are removed.
-        Members are never discarded for any other reason.
+        Under `"clean"`, the archive is updated in place: every member is
+        re-evaluated at its existing position, and only members that have
+        become infeasible (under strict admission) or dominated are
+        removed. Members are never discarded for any other reason, so any
+        knowledge encoded in surviving members (their positions) is
+        retained across the change.
+
+        Under `"clear"`, the archive is discarded outright. The archive is
+        rebuilt from the current swarm positions over the following
+        iterations of `step`, as in a cold start; no member from before the
+        change is retained regardless of whether it remains feasible and
+        non-dominated.
         """
         if len(self._archive) == 0:
             return
+
+        if self.refresh_mode == "clear":
+            self._archive.positions = []
+            self._archive.evaluations = []
+            self._archive._invalidate()
+            return
+
         evaluations = [
             self.problem.evaluate(list(position))
             for position in self._archive.positions
         ]
         self._archive.rescore(evaluations)
         self._archive.prune()
+
+    def _environment_changed(self, tolerance: float = 1e-12) -> bool:
+        """Detects an environment change by re-evaluating the sentinel.
+
+        Compares both fitness and constraint values, so changes to either
+        the objective landscape or the constraint boundaries are caught.
+        The fresh evaluation replaces the stored sentinel either way.
+        """
+        fresh = self.problem.evaluate(list(self._sentinel_x))
+        old = self._sentinel_eval
+        self._sentinel_eval = fresh
+
+        if np.any(np.abs(
+            np.asarray(fresh.fitness) - np.asarray(old.fitness)
+        ) > tolerance):
+            return True
+        for new_c, old_c in (
+            (fresh.constraints_inequality, old.constraints_inequality),
+            (fresh.constraints_equality, old.constraints_equality),
+        ):
+            if new_c and old_c and np.any(
+                np.abs(np.asarray(new_c) - np.asarray(old_c)) > tolerance
+            ):
+                return True
+        return False
+
+    def _respond_to_change(self) -> None:
+        """Full response to a detected environment change.
+
+        1. The archive is re-evaluated under the current environment and
+           re-filtered for dominance (and feasibility, under strict
+           admission) -- stale fitness must not distort guide selection.
+        2. Every personal best is re-evaluated in place: the memory of WHERE
+           good solutions were is kept, but scored against the current
+           landscape, so outdated pbest fitness cannot drag particles toward
+           optima that no longer exist.
+        3. Each sub-swarm's neighbourhood best is recomputed from the
+           re-scored personal bests.
+        """
+        self._refresh_archive()
+
+        for swarm in self._swarms:
+            swarm.y_hat_eval = None
+            for particle in swarm.particles:
+                if particle.y_eval is None:
+                    continue
+                full_eval = self.problem.evaluate(list(particle.y))
+                particle.y_eval = swarm._scalar_eval(full_eval)
+                if swarm.y_hat_eval is None or self.comparator.is_better(
+                    particle.y_eval, swarm.y_hat_eval
+                ):
+                    swarm.y_hat = particle.y.copy()
+                    swarm.y_hat_eval = particle.y_eval
 
     def step(self) -> None:
         """Performs one MGPSO iteration.
@@ -617,8 +707,8 @@ class MGPSO(Solver[List[float], List[float]]):
         Phase 2: every sub-swarm updates particle velocities and positions
         using the three-guide velocity equation.
         """
-        if self._dynamic:
-            self._refresh_archive()
+        if self._dynamic and self._environment_changed():
+            self._respond_to_change()
 
         for swarm in self._swarms:
             swarm.update_particles(

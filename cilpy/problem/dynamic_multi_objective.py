@@ -299,3 +299,54 @@ class DTNK2(_SampledDynamicFrontMixin, _DynamicMOBase):
 
     def is_dynamic(self) -> Tuple[bool, bool]:
         return (True, True)
+    
+class DTNK3(_SampledDynamicFrontMixin, _DynamicMOBase):
+    """DTNK3: dynamic objectives with static constraints (DOSC).
+ 
+    The time-translated objectives of DTNK2 over the ORIGINAL static TNK
+    feasible region:
+ 
+        min f1(x, t) = x1 + 0.2 |sin(0.5 pi t)|
+        min f2(x, t) = x2 + 0.2 |cos(0.5 pi t)|
+        s.t. x1^2 + x2^2 - 1 - 0.1 cos(16 arctan(x1/x2)) >= 0
+             (x1 - 0.5)^2 + (x2 - 0.5)^2 <= 0.5
+ 
+    The supporting boundary in decision space never moves, but the front
+    translates through objective space over time. Exercises constraint
+    handling under a moving objective landscape: the multiplier dynamics
+    must remain correct while the Lagrangian's objective component shifts.
+    """
+ 
+    def __init__(self, tau_t: int = 10, n_t: int = 10):
+        super().__init__(
+            2, ([0.0, 0.0], [math.pi, math.pi]), "DTNK3", tau_t, n_t
+        )
+ 
+    def _shift(self) -> Tuple[float, float]:
+        return (
+            0.2 * abs(math.sin(0.5 * math.pi * self.t)),
+            0.2 * abs(math.cos(0.5 * math.pi * self.t)),
+        )
+ 
+    def evaluate(self, solution: List[float]) -> Evaluation[List[float]]:
+        x1, x2 = solution
+        s1, s2 = self._shift()
+        angle = math.atan2(x1, x2)
+        g1 = -(x1**2 + x2**2 - 1.0 - 0.1 * math.cos(16.0 * angle))
+        g2 = (x1 - 0.5) ** 2 + (x2 - 0.5) ** 2 - 0.5
+        return Evaluation(
+            fitness=[x1 + s1, x2 + s2], constraints_inequality=[g1, g2]
+        )
+ 
+    def _batch_evaluate(self, X1, X2):
+        s1, s2 = self._shift()
+        F = np.column_stack([X1 + s1, X2 + s2])
+        angle = np.arctan2(X1, X2)
+        G = np.column_stack([
+            -(X1**2 + X2**2 - 1.0 - 0.1 * np.cos(16.0 * angle)),
+            (X1 - 0.5) ** 2 + (X2 - 0.5) ** 2 - 0.5,
+        ])
+        return F, G
+ 
+    def is_dynamic(self) -> Tuple[bool, bool]:
+        return (True, False)

@@ -6,7 +6,8 @@ Covers three dynamic categories (SOSC is the static campaign):
 * Dynamic objectives (FDA1, FDA3): plain MGPSO only -- box constraints, so
   the co-evolutionary framework does not apply. Tests the change-response
   machinery (sentinel detection, archive + pbest re-evaluation).
-* SODC (DTNK -- static objectives, oscillating constraint boundary) and
+* SODC (DTNK -- static objectives, oscillating constraint boundary),
+  DOSC (DTNK3 -- moving objectives over the static TNK ring), and
   DODC (DTNK2 -- both dynamic): the full four-algorithm grid, i.e. plain
   MGPSO, the feasible-archive ablation, and CCPSO filter/strict.
 
@@ -46,7 +47,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2
+from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.pso import PSO
 from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
@@ -251,7 +252,7 @@ def main():
         [(f, mgpso_config("MGPSO"), num_runs, max_iterations,
           args.tau_t, args.n_t) for f in (FDA1, FDA3)]
         + [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
-           for f in (DTNK, DTNK2) for c in constrained_configs]
+           for f in (DTNK, DTNK3, DTNK2) for c in constrained_configs]
     )
 
     start = time.time()
@@ -260,7 +261,7 @@ def main():
         print(f"\nAll experiments done in {(time.time() - start) / 60:.1f} min")
 
     aggregate(
-        ["FDA1", "FDA3", "DTNK", "DTNK2"],
+        ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2"],
         ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"],
         args.tau_t,
     )

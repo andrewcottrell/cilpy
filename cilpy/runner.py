@@ -439,6 +439,11 @@ class ExperimentRunner:
         run_start_time = time.time()
         print(f"     --- Starting Run {run_id}/{self.num_runs} ---")
 
+        # Independent runs of a dynamic problem must each start at t = 0.
+        problem_for_run = solver_params["problem"]
+        if hasattr(problem_for_run, "reset_time"):
+            problem_for_run.reset_time()
+
         current_params = solver_params.copy()
 
         # Only inject constraint_handler when explicitly provided. Solvers like
@@ -462,6 +467,15 @@ class ExperimentRunner:
             solver.step()
 
             if is_multi_objective:
+                # Dynamic problems: the true front reflects the CURRENT
+                # environment, so refresh the reference each iteration
+                # (analytic fronts are cheap; sampled fronts are cached
+                # per environment by the problem).
+                if ref_front is not None and any(solver.problem.is_dynamic()):
+                    try:
+                        ref_front = solver.problem.true_pareto_front()
+                    except (NotImplementedError, AttributeError):
+                        pass
                 row, hv_ref = self._mo_iteration_row(
                     run_id, iteration, solver, hv_ref, ref_front
                 )
