@@ -18,6 +18,7 @@ out/
 out_refresh_taut10
 out_refresh_taut25
 out_refresh_taut50
+out_static
 *.log
 .claude
 .DS_STORE
