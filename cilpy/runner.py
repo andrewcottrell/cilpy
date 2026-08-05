@@ -84,9 +84,7 @@ class ExperimentRunner:
         self.num_runs = num_runs
         self.max_iterations = max_iterations
 
-    # ------------------------------------------------------------------
     # Public interface
-    # ------------------------------------------------------------------
 
     def run_experiments(self):
         """Executes the full suite of defined experiments."""
@@ -125,9 +123,7 @@ class ExperimentRunner:
         print("\n======== All Experiments Finished ========")
         print(f"Total execution time: {total_end_time - total_start_time:.2f}s")
 
-    # ------------------------------------------------------------------
     # Shared helpers
-    # ------------------------------------------------------------------
 
     def _is_solution_feasible(self, evaluation: Evaluation, tolerance: float = 1e-6) -> bool:
         if evaluation is None:
@@ -162,9 +158,7 @@ class ExperimentRunner:
         except NotImplementedError:
             return ""
 
-    # ------------------------------------------------------------------
     # Single-objective columns
-    # ------------------------------------------------------------------
 
     _SO_MAIN_HEADER = [
         "run_id",
@@ -244,9 +238,7 @@ class ExperimentRunner:
             f"{run_time:.2f}",
         ]
 
-    # ------------------------------------------------------------------
     # Multi-objective columns
-    # ------------------------------------------------------------------
 
     _MO_MAIN_HEADER = [
         "run_id",
@@ -418,9 +410,7 @@ class ExperimentRunner:
             f"{run_time:.2f}",
         ]
 
-    # ------------------------------------------------------------------
-    # Core run loop
-    # ------------------------------------------------------------------
+    # run loop
 
     def _run_single_run(
         self,

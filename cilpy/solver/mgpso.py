@@ -34,12 +34,6 @@ algorithm. Archive insertion uses Pareto dominance on the objective vector;
 for constrained problems the intended usage in this project is to wrap the
 problem in the co-evolutionary Lagrangian framework (see
 `cilpy.solver.ccls`), which folds constraint penalties into the objectives.
-
-References:
-    C. Scheepers, A. P. Engelbrecht, and C. W. Cleghorn, "Multi-guide particle
-    swarm optimization for multi-objective optimization: empirical and
-    stability analysis," Swarm Intelligence, vol. 13, pp. 245-276, 2019.
-    doi: 10.1007/s11721-019-00171-0.
 """
 
 import copy
@@ -490,8 +484,6 @@ class MGPSO(Solver[List[float], List[float]]):
             archive capacity.
 
     Example:
-        .. code-block:: python
-
             from cilpy.problem.multi_objective import ZDT1
             from cilpy.solver.mgpso import MGPSO
             from cilpy.runner import ExperimentRunner
