@@ -31,16 +31,6 @@ environment time, so distance metrics (IGD/GD/spread) computed against it
 remain valid across changes. For DTNK/DTNK2 the front is grid-sampled per
 environment and cached by t (environments repeat periodically, so the cache
 is bounded).
-
-References:
-    M. Farina, K. Deb, and P. Amato, "Dynamic multiobjective optimization
-    problems: test cases, approximations, and applications," IEEE
-    Transactions on Evolutionary Computation, vol. 8, no. 5, pp. 425-442,
-    2004. doi: 10.1109/TEVC.2004.831456.
-
-    M. Tanaka, H. Watanabe, Y. Furukawa, and T. Tanino, "GA-based decision
-    support system for multicriteria optimization," in Proc. IEEE Int. Conf.
-    Systems, Man and Cybernetics, vol. 2, 1995, pp. 1556-1561. (static TNK)
 """
 
 import math
