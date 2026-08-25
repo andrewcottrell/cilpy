@@ -1,0 +1,4 @@
+tau_t,problem,ccpso_migd,baseline_migd,ccpso_migd_bc,baseline_migd_bc,ccpso_improvement_pct,p_value,n_ccpso,n_baseline,better
+10,DTNK,0.030700,0.030221,0.025700,0.028270,-1.58,,0,30,baseline
+10,DTNK3,0.006900,0.010317,0.006500,0.008909,33.12,,0,30,CCPSO
+10,DTNK2,0.031000,0.030295,0.025800,0.028611,-2.33,,0,30,baseline
