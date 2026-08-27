@@ -217,12 +217,20 @@ def format_p(p_value):
 
 
 def verdict(ours, theirs, p_value, lower_is_better=True):
-    """Winner label, taking significance into account where available."""
+    """Winner label. Never names a winner without a significance test.
+
+    A missing p-value means per-run samples were unavailable for one
+    side, not that the difference is real. Such rows are reported as
+    "untested" so an unmeasured mean difference is never presented as a
+    result.
+    """
     if np.isnan(ours) or np.isnan(theirs):
         return "n/a"
-    better = (ours < theirs) if lower_is_better else (ours > theirs)
-    if p_value is not None and not np.isnan(p_value) and p_value >= 0.05:
+    if p_value is None or np.isnan(p_value):
+        return "untested"
+    if p_value >= 0.05:
         return "tie"
+    better = (ours < theirs) if lower_is_better else (ours > theirs)
     return "CCPSO" if better else "baseline"
 
 
