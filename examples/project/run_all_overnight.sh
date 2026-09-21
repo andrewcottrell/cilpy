@@ -19,6 +19,7 @@ cd "$REPO_ROOT"
 PYTHON="${PYTHON:-python3}"
 RUNS=30
 ITERS=1000
+WORKERS=8
 
 echo "============================================================"
 echo "  OVERNIGHT EXPERIMENT CAMPAIGN"
@@ -49,7 +50,7 @@ echo "  [1/10] STATIC MO CAMPAIGN"
 echo "  $(date)"
 echo "============================================================"
 $PYTHON examples/project/run_static_mo_experiments.py \
-    --runs "$RUNS" --iters "$ITERS"
+    --runs "$RUNS" --iters "$ITERS" --workers "$WORKERS"
 
 # -------------------------------------------------------------------
 # 2-4. Dynamic campaign at tau_t = 10, 25, 50
@@ -64,7 +65,7 @@ for TAU_T in 10 25 50; do
     # -- Dynamic (main + archive sentries) --
     echo ">>> [tau_t=$TAU_T] run_dynamic_experiements.py ..."
     $PYTHON examples/project/run_dynamic_experiements.py \
-        --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10
+        --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10 --workers "$WORKERS"
 
     # Move output to a tau-specific folder before starting the next tau.
     # The aggregate function already ran inside the script, so the CSV
@@ -80,7 +81,7 @@ for TAU_T in 10 25 50; do
     # Clear out/ so only refresh files are in it.
     rm -rf out
     $PYTHON examples/project/run_refresh_mode_experiments.py \
-        --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10
+        --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10 --workers "$WORKERS"
 
     REFRESH_DIR="out_refresh_taut${TAU_T}"
     rm -rf "$REFRESH_DIR"
