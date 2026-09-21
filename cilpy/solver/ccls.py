@@ -444,6 +444,9 @@ class CoevolutionaryLagrangianSolver(Solver):
             problem=self.max_problem, **mul_params
         )
 
+        self._prev_inequality_multipliers = None
+        self._prev_equality_multipliers = None
+
     def _select_multiplier_anchor(self) -> list:
         """Selects the solution x* against which the multipliers evolve.
 
@@ -515,6 +518,20 @@ class CoevolutionaryLagrangianSolver(Solver):
         self.min_problem.set_fixed_multipliers(
             inequality_multipliers, equality_multipliers
         )
+
+        # If the multipliers changed, tell the objective solver directly so it
+        # re-scores its archive and personal bests under the new landscape.
+        # The sentinel can miss this on problems where the anchor point has
+        # zero penalty regardless of multiplier values (e.g. BNH).
+        multipliers_changed = (
+            self._prev_inequality_multipliers != inequality_multipliers
+            or self._prev_equality_multipliers != equality_multipliers
+        )
+        if multipliers_changed and hasattr(self.objective_solver, '_respond_to_change'):
+            self.objective_solver._respond_to_change()
+        self._prev_inequality_multipliers = list(inequality_multipliers)
+        self._prev_equality_multipliers = list(equality_multipliers)
+
         # The 'max' problem gets the best solution from the 'min' solver
         self.max_problem.set_fixed_solution(best_solution)
 
