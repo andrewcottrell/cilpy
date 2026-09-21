@@ -141,6 +141,20 @@ class TestCCPSOIntegration:
         assert isinstance(result[0][1].fitness, float)
 
 
+class TestMultiplierEvolution:
+    def test_multipliers_change_over_run(self):
+        """Regression test for C1: the multiplier swarm's global best must
+        actually evolve as the anchor solution changes, not freeze at step 1."""
+        np.random.seed(42)
+        solver = _make_ccpso(CONSTR(), "filter", swarm_size=20)
+        seen = set()
+        for _ in range(50):
+            solver.step()
+            mu = tuple(solver.min_problem.fixed_multipliers_inequality)
+            seen.add(mu)
+        assert len(seen) > 1, "Multipliers never changed — P2 gbest is frozen"
+
+
 class TestAnchorSelection:
     def test_anchor_is_most_violating_archive_member(self):
         np.random.seed(3)

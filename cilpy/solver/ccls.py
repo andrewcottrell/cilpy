@@ -43,6 +43,7 @@ two PSOs for CCPSO) which manage the search process for their respective
 populations.
 """
 
+import copy
 from typing import List, Optional, Tuple, Type
 
 from cilpy.problem import Problem, Evaluation, SolutionType
@@ -516,6 +517,20 @@ class CoevolutionaryLagrangianSolver(Solver):
         )
         # The 'max' problem gets the best solution from the 'min' solver
         self.max_problem.set_fixed_solution(best_solution)
+
+        # The multiplier landscape just changed (new x*), so P2's stored
+        # personal and global bests are stale. Re-score them in place.
+        ms = self.multiplier_solver
+        ms.pbest_evaluations = [
+            self.max_problem.evaluate(pos) for pos in ms.pbest_positions
+        ]
+        best = 0
+        for i in range(1, len(ms.pbest_positions)):
+            if ms.comparator.is_better(ms.pbest_evaluations[i],
+                                       ms.pbest_evaluations[best]):
+                best = i
+        ms.gbest_position = copy.deepcopy(ms.pbest_positions[best])
+        ms.gbest_evaluation = copy.deepcopy(ms.pbest_evaluations[best])
 
         # 3. Perform one step of each sub-solver
         self.objective_solver.step()

@@ -65,6 +65,7 @@ from cilpy.compare.metrics import hypervolume
 
 BASE_SEED = 26989395  # student number: memorable and citable
 SWARM_SIZE = 50
+FIXED_PARAMS = {"w": 0.72, "c1": 1.49, "c2": 1.49, "c3": 1.49}
 
 # Fixed hypervolume reference points, one per problem. These must NEVER
 # change between algorithms or runs being compared. Chosen a comfortable
@@ -99,6 +100,7 @@ def mgpso_config(name="MGPSO", feasible_archive_only=False):
             "name": name,
             "swarm_size": SWARM_SIZE,
             "feasible_archive_only": feasible_archive_only,
+            **FIXED_PARAMS,
         },
     }
 
@@ -110,7 +112,7 @@ def ccpso_config(strategy):
             "name": f"CCPSO_{strategy}",
             "objective_solver_class": MGPSO,
             "multiplier_solver_class": PSO,
-            "objective_solver_params": {"swarm_size": SWARM_SIZE},
+            "objective_solver_params": {"swarm_size": SWARM_SIZE, **FIXED_PARAMS},
             "multiplier_solver_params": {
                 "swarm_size": 30, "w": 0.40, "c1": 1.20, "c2": 1.20,
             },
