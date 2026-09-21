@@ -54,7 +54,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3
+from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.pso import PSO
 from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
@@ -155,7 +155,7 @@ def build_tasks(num_runs, max_iterations, tau_t, n_t):
                           num_runs, max_iterations, tau_t, n_t))
 
     # DTNK family: sweep the algorithms that maintain a feasible front.
-    for factory in (DTNK, DTNK3, DTNK2):
+    for factory in (DTNK, DTNK3, DTNK2, DTNK4):
         for mode in REFRESH_MODES:
             tasks.append((factory,
                           mgpso_config("MGPSO_feasarch", mode,
@@ -216,7 +216,7 @@ def _migd_per_run(path, tau_t):
 
 
 def aggregate(tau_t, out_path="results_refresh_mode.csv"):
-    problems = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2"]
+    problems = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
     algorithms = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
 
     rows = []

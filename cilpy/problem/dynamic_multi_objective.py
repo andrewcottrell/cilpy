@@ -339,3 +339,160 @@ class DTNK3(_SampledDynamicFrontMixin, _DynamicMOBase):
 
     def is_dynamic(self) -> Tuple[bool, bool]:
         return (True, False)
+
+
+class DTNK4(_DynamicMOBase):
+    """DTNK4: orbiting crescent with rotating objectives (DODC).
+
+    A scaled TNK crescent whose centre orbits through the solution space
+    while its scalloped boundary rotates, and a time-varying rotation of
+    the objective mapping changes which edge of the crescent is Pareto-
+    optimal. Everything moves: the feasible region's location, its shape,
+    and the direction of optimality within it.
+
+    Geometry (scaled TNK at scale s=0.5):
+        Ring constraint:  (x1-cx)^2 + (x2-cy)^2 >= s^2 + 0.1s^2 cos(16(theta - phi))
+        Disc constraint:  (x1-dx)^2 + (x2-dy)^2 <= 0.5s^2
+
+    where (cx, cy) orbits at radius 0.65 around (pi/2, pi/2), (dx, dy)
+    is offset from (cx, cy) by 0.5s at 45 degrees, and phi rotates the
+    scallops at twice the orbital rate.
+
+    Objectives (rotated in objective space):
+        f1 = x1 cos(alpha) + x2 sin(alpha)
+        f2 = -x1 sin(alpha) + x2 cos(alpha)
+
+    where alpha(k) = (pi/8) sin(2pi k / K) oscillates, rotating which
+    edge of the crescent defines the Pareto front.
+
+    Time model: the phase is driven by the environment index
+    k = floor(tau / tau_t) rather than Farina's t = k / n_t. This
+    ensures all tau_t arms see the same sequence of shapes regardless
+    of change frequency, avoiding the half-period trap at large tau_t.
+    The orbit period K=20 is measured in environments.
+
+    Properties:
+        - Non-empty feasible set at every environment (verified).
+        - Zero overlap between feasible regions 4+ environments apart.
+        - Region stays inside [0, pi]^2 at all times.
+        - is_dynamic() = (True, True): both objectives and constraints
+          are time-dependent.
+    """
+
+    _GRID = 1000
+    _SCALE = 0.5
+    _ORBIT_R = 0.65
+    _ORBIT_CENTRE = (math.pi / 2, math.pi / 2)
+    _K = 20
+
+    def __init__(self, tau_t: int = 10, n_t: int = 10):
+        super().__init__(
+            2, ([0.0, 0.0], [math.pi, math.pi]), "DTNK4", tau_t, n_t
+        )
+        self._front_cache = {}
+
+    @property
+    def _k(self) -> int:
+        """Environment index (integer count of environment changes)."""
+        return self._tau // self.tau_t
+
+    def _phase(self) -> float:
+        """Orbital phase driven by environment index."""
+        return 2.0 * math.pi * self._k / self._K
+
+    def _centre(self) -> Tuple[float, float]:
+        """Ring centre position on the orbit."""
+        phase = self._phase()
+        return (
+            self._ORBIT_CENTRE[0] + self._ORBIT_R * math.cos(phase),
+            self._ORBIT_CENTRE[1] + self._ORBIT_R * math.sin(phase),
+        )
+
+    def _scallop_phase(self) -> float:
+        """Scallop rotation: twice the orbital rate."""
+        return self._phase() * 2.0
+
+    def _alpha(self) -> float:
+        """Objective rotation angle, oscillates around 0."""
+        return (math.pi / 8) * math.sin(self._phase())
+
+    def evaluate(self, solution: List[float]) -> Evaluation[List[float]]:
+        x1, x2 = solution
+        s = self._SCALE
+        cx, cy = self._centre()
+        phi = self._scallop_phase()
+        alpha = self._alpha()
+
+        dx = cx + 0.5 * s
+        dy = cy + 0.5 * s
+
+        rx, ry = x1 - cx, x2 - cy
+        angle = math.atan2(rx, ry)
+        dist_sq = rx ** 2 + ry ** 2
+        ring_r = s ** 2 + 0.1 * s ** 2 * math.cos(16.0 * (angle - phi))
+        g1 = -(dist_sq - ring_r)
+        g2 = (x1 - dx) ** 2 + (x2 - dy) ** 2 - 0.5 * s ** 2
+
+        f1 = x1 * math.cos(alpha) + x2 * math.sin(alpha)
+        f2 = -x1 * math.sin(alpha) + x2 * math.cos(alpha)
+
+        return Evaluation(
+            fitness=[f1, f2], constraints_inequality=[g1, g2]
+        )
+
+    def _batch_evaluate(self, X1, X2):
+        s = self._SCALE
+        cx, cy = self._centre()
+        phi = self._scallop_phase()
+        alpha = self._alpha()
+
+        dx = cx + 0.5 * s
+        dy = cy + 0.5 * s
+
+        RX, RY = X1 - cx, X2 - cy
+        angle = np.arctan2(RX, RY)
+        dist_sq = RX ** 2 + RY ** 2
+        ring_r = s ** 2 + 0.1 * s ** 2 * np.cos(16.0 * (angle - phi))
+
+        G = np.column_stack([
+            -(dist_sq - ring_r),
+            (X1 - dx) ** 2 + (X2 - dy) ** 2 - 0.5 * s ** 2,
+        ])
+
+        cos_a, sin_a = math.cos(alpha), math.sin(alpha)
+        F = np.column_stack([
+            X1 * cos_a + X2 * sin_a,
+            -X1 * sin_a + X2 * cos_a,
+        ])
+        return F, G
+
+    def true_pareto_front(self, n_points: int = 500) -> np.ndarray:
+        """Grid-sampled reference front, cached by environment index."""
+        key = self._k
+        if key not in self._front_cache:
+            lower, upper = self.bounds
+            a = np.linspace(lower[0], upper[0], self._GRID)
+            b = np.linspace(lower[1], upper[1], self._GRID)
+            X1, X2 = np.meshgrid(a, b)
+            X1, X2 = X1.ravel(), X2.ravel()
+            F, G = self._batch_evaluate(X1, X2)
+            feasible = np.all(G <= 1e-9, axis=1)
+            objectives = F[feasible]
+            order = np.lexsort((objectives[:, 1], objectives[:, 0]))
+            objectives = objectives[order]
+            best_f2 = np.inf
+            keep = np.zeros(len(objectives), dtype=bool)
+            for i, (_, f2) in enumerate(objectives):
+                if f2 < best_f2:
+                    keep[i] = True
+                    best_f2 = f2
+            self._front_cache[key] = objectives[keep]
+
+        front = self._front_cache[key]
+        if len(front) > n_points:
+            idx = np.linspace(0, len(front) - 1, n_points).astype(int)
+            front = front[idx]
+        return front.copy()
+
+    def is_dynamic(self) -> Tuple[bool, bool]:
+        return (True, True)

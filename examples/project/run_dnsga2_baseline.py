@@ -57,7 +57,7 @@ import numpy as np
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from cilpy.problem.dynamic_multi_objective import (
-    FDA1, FDA3, DTNK, DTNK2, DTNK3,
+    FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4,
 )
 from cilpy.compare.metrics import (
     inverted_generational_distance, feasibility_rate,
@@ -82,7 +82,7 @@ ZETA = 0.2          # fraction replaced on a change (Deb et al. use 0.2-0.3)
 
 PROBLEMS = {
     "FDA1": FDA1, "FDA3": FDA3,
-    "DTNK": DTNK, "DTNK3": DTNK3, "DTNK2": DTNK2,
+    "DTNK": DTNK, "DTNK3": DTNK3, "DTNK2": DTNK2, "DTNK4": DTNK4,
 }
 
 
