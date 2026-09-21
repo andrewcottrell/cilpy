@@ -23,6 +23,11 @@ Metric overview:
   perfectly evenly spaced.
 - `spread` (Deb's Delta): combines extent (distance to the true front's
   extreme points) and uniformity. 0 is ideal; requires a reference front.
+- `reference_point_from_front`: builds a reference point from a true front's
+  nadir plus a margin — consistent across runs and solvers.
+- `hypervolume_ratio`: HV(front) / HV(reference front), clipped to [0, 1].
+  Generalises single-objective relative error to multiple objectives.
+- `p_red`: P_RED = sqrt(mean((1 - b)^2)) over per-iteration scores b.
 - `feasibility_rate`: percentage of evaluations satisfying all constraints.
 - `nondominated_filter`: utility to reduce a set of objective vectors to its
   non-dominated subset.
@@ -207,6 +212,48 @@ def hypervolume(
         area += (r1 - f1) * (prev_f2 - f2)
         prev_f2 = f2
     return float(area)
+
+
+def reference_point_from_front(
+    reference_front: Sequence[Sequence[float]],
+    margin: float = 0.1,
+) -> np.ndarray:
+    """A reference point just worse than the worst value of each objective
+    on the reference front, pushed out by ``margin`` of the front's width."""
+    reference = _as_matrix(reference_front)
+    ideal = reference.min(axis=0)
+    nadir = reference.max(axis=0)
+    width = np.where(nadir > ideal, nadir - ideal, 1.0)
+    return nadir + margin * width
+
+
+def hypervolume_ratio(
+    front: Sequence[Sequence[float]],
+    reference_front: Sequence[Sequence[float]],
+    reference_point: Optional[Sequence[float]] = None,
+) -> float:
+    """Hypervolume of *front* divided by hypervolume of *reference_front*,
+    both measured from the same reference point.  Clipped to [0, 1].
+
+    Returns 0.0 for an empty front.  Raises if the reference front has
+    zero hypervolume (degenerate or behind the reference point).
+    """
+    if len(front) == 0:
+        return 0.0
+    if reference_point is None:
+        reference_point = reference_point_from_front(reference_front)
+    best_possible = hypervolume(reference_front, reference_point)
+    if best_possible <= 0:
+        raise ValueError("Reference front has zero hypervolume.")
+    achieved = hypervolume(front, reference_point)
+    return float(min(max(achieved / best_possible, 0.0), 1.0))
+
+
+def p_red(scores: Sequence[float]) -> float:
+    """P_RED = sqrt(mean((1 - b)^2)) over per-iteration scores *b*,
+    where b = 1 is optimal.  Returns 0 for a perfect run."""
+    b = np.asarray(scores, dtype=float)
+    return float(np.sqrt(np.mean((1.0 - b) ** 2)))
 
 
 def spacing(front: Sequence[Sequence[float]]) -> float:

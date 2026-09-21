@@ -32,6 +32,8 @@ check("mgpso: sentinel change detection (_environment_changed)",
       hasattr(mgpso.MGPSO, "_environment_changed"))
 check("mgpso: full change response with pbest re-scoring (_respond_to_change)",
       hasattr(mgpso.MGPSO, "_respond_to_change"))
+check("mgpso: archive sentries (_archive_sentries_changed)",
+      hasattr(mgpso.MGPSO, "_archive_sentries_changed"))
 check("mgpso: feasible-only archive admission flag",
       "feasible_archive_only" in inspect.signature(mgpso.MGPSO.__init__).parameters)
 check("mgpso: cached/vectorised archive (performance fix)",

@@ -53,6 +53,7 @@ from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.pso import PSO
 from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
+from cilpy.compare.metrics import p_red as compute_p_red
 from cilpy.runner import ExperimentRunner
 
 BASE_SEED = 26989395
@@ -62,27 +63,36 @@ SWARM_SIZE = 50
 FIXED_PARAMS = {"w": 0.72, "c1": 1.49, "c2": 1.49, "c3": 1.49}
 
 
-def mgpso_config(name="MGPSO", feasible_archive_only=False):
+def mgpso_config(name="MGPSO", feasible_archive_only=False,
+                 sentry_mode="fixed", n_sentries=None):
     return {
         "class": MGPSO,
         "params": {
             "name": name,
             "swarm_size": SWARM_SIZE,
             "feasible_archive_only": feasible_archive_only,
+            "sentry_mode": sentry_mode,
+            "n_sentries": n_sentries,
             **FIXED_PARAMS,
         },
     }
 
 
-def ccpso_config(strategy):
+def ccpso_config(strategy, sentry_mode="fixed", n_sentries=None):
+    name = f"CCPSO_{strategy}"
+    if sentry_mode == "archive":
+        name += "_archsentry"
     return {
         "class": CoevolutionaryLagrangianSolver,
         "params": {
-            "name": f"CCPSO_{strategy}",
+            "name": name,
             "objective_solver_class": MGPSO,
             "multiplier_solver_class": PSO,
             "objective_solver_params": {
-                "swarm_size": SWARM_SIZE, **FIXED_PARAMS,
+                "swarm_size": SWARM_SIZE,
+                "sentry_mode": sentry_mode,
+                "n_sentries": n_sentries,
+                **FIXED_PARAMS,
             },
             "multiplier_solver_params": {
                 "swarm_size": 30, "w": 0.40, "c1": 1.20, "c2": 1.20,
@@ -184,6 +194,8 @@ def aggregate(problem_names, solver_names, tau_t,
                 if before_change:
                     migd_bc_per_run.append(float(np.mean(before_change)))
 
+            # --- P_RED from summary CSV ---
+            p_red_values = []
             feas = []
             if os.path.exists(summary_path):
                 with open(summary_path, newline="") as f:
@@ -191,18 +203,37 @@ def aggregate(problem_names, solver_names, tau_t,
                     header = [h.split("[")[0].strip() for h in next(reader)]
                     try:
                         f_idx = header.index("final_front_feasibility_pct")
-                        feas = [
-                            float(r[f_idx]) for r in reader if r[f_idx] != ""
-                        ]
                     except ValueError:
-                        pass
+                        f_idx = None
+                    try:
+                        pr_idx = header.index("p_red")
+                    except ValueError:
+                        pr_idx = None
+                    for r in reader:
+                        if f_idx is not None and r[f_idx] != "":
+                            feas.append(float(r[f_idx]))
+                        if pr_idx is not None and r[pr_idx] != "":
+                            p_red_values.append(float(r[pr_idx]))
+
+            # --- RED before-change (from per-iteration relative_error) ---
+            red_series = _per_run_series(iter_path, "relative_error")
+            red_bc_per_run = []
+            for run_series in red_series.values():
+                before_change = [
+                    v for it, v in run_series if it % tau_t == tau_t - 1
+                ]
+                if before_change:
+                    red_bc_per_run.append(compute_p_red(before_change))
 
             migd_m, migd_s = _mean_std(migd_per_run)
             bc_m, bc_s = _mean_std(migd_bc_per_run)
             feas_m, feas_s = _mean_std(feas)
+            pr_m, pr_s = _mean_std(p_red_values)
+            rbc_m, rbc_s = _mean_std(red_bc_per_run)
             rows.append([
                 problem_name, solver_name,
                 migd_m, migd_s, bc_m, bc_s, feas_m, feas_s,
+                pr_m, pr_s, rbc_m, rbc_s,
             ])
 
     header = [
@@ -210,6 +241,8 @@ def aggregate(problem_names, solver_names, tau_t,
         "migd_mean", "migd_std",
         "migd_before_change_mean", "migd_before_change_std",
         "front_feasibility_pct_mean", "front_feasibility_pct_std",
+        "p_red_mean", "p_red_std",
+        "p_red_before_change_mean", "p_red_before_change_std",
     ]
     with open(out_path, "w", newline="") as f:
         writer = csv.writer(f)
@@ -217,12 +250,16 @@ def aggregate(problem_names, solver_names, tau_t,
         writer.writerows(rows)
 
     print(f"\n{'problem':8} {'algorithm':16} {'MIGD':>18} "
-          f"{'MIGD(before chg)':>20} {'front feas%':>16}")
+          f"{'MIGD(before chg)':>20} {'front feas%':>16} "
+          f"{'P_RED':>18} {'P_RED(bc)':>18}")
     for r in rows:
         migd = f"{r[2]} ± {r[3]}" if r[2] else "n/a"
         bc = f"{r[4]} ± {r[5]}" if r[4] else "n/a"
         feas = f"{r[6]} ± {r[7]}" if r[6] else "n/a"
-        print(f"{r[0]:8} {r[1]:16} {migd:>18} {bc:>20} {feas:>16}")
+        pred = f"{r[8]} ± {r[9]}" if r[8] else "n/a"
+        pred_bc = f"{r[10]} ± {r[11]}" if r[10] else "n/a"
+        print(f"{r[0]:8} {r[1]:16} {migd:>18} {bc:>20} {feas:>16} "
+              f"{pred:>18} {pred_bc:>18}")
     print(f"\nAggregated results written to {out_path}")
 
 
@@ -249,10 +286,19 @@ def main():
         mgpso_config("MGPSO_feasarch", feasible_archive_only=True),
         ccpso_config("filter"),
         ccpso_config("strict"),
+        mgpso_config("MGPSO_archsentry", sentry_mode="archive"),
+        mgpso_config("MGPSO_feasarch_archsentry",
+                     feasible_archive_only=True, sentry_mode="archive"),
+        ccpso_config("filter", sentry_mode="archive"),
+        ccpso_config("strict", sentry_mode="archive"),
+    ]
+    fda_configs = [
+        mgpso_config("MGPSO"),
+        mgpso_config("MGPSO_archsentry", sentry_mode="archive"),
     ]
     tasks = (
-        [(f, mgpso_config("MGPSO"), num_runs, max_iterations,
-          args.tau_t, args.n_t) for f in (FDA1, FDA3)]
+        [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
+         for f in (FDA1, FDA3) for c in fda_configs]
         + [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
            for f in (DTNK, DTNK3, DTNK2, DTNK4) for c in constrained_configs]
     )
@@ -264,7 +310,9 @@ def main():
 
     aggregate(
         ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"],
-        ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"],
+        ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict",
+         "MGPSO_archsentry", "MGPSO_feasarch_archsentry",
+         "CCPSO_filter_archsentry", "CCPSO_strict_archsentry"],
         args.tau_t,
     )
 

@@ -13,6 +13,8 @@ from cilpy.compare.metrics import (
     inverted_generational_distance,
     generational_distance,
     hypervolume,
+    hypervolume_ratio,
+    p_red,
     spacing,
     spread,
 )
@@ -36,8 +38,9 @@ class ExperimentRunner:
       constraints; empty when unavailable.
     * ``population_diversity``      — mean Euclidean distance of particles from
       the swarm centroid; collapses toward 0 at convergence.
-    * ``relative_error``            — (f_max - best) / (f_max - f_min); 0 at
-      the known optimum. Empty when bounds are unknown.
+    * ``relative_error``            — (f_max - best) / (f_max - f_min); 1 at
+      the known optimum, 0 at the worst known value. Empty when bounds are
+      unknown.
 
     Multi-objective columns:
 
@@ -59,6 +62,10 @@ class ExperimentRunner:
       ``true_pareto_front()`` unavailable.
     * ``population_feasibility_pct``— as above.
     * ``population_diversity``      — as above.
+    * ``relative_error``            — hypervolume of feasible archive members
+      divided by hypervolume of the true front (both against a consistent
+      reference point derived from the true front); 1 = optimal, 0 = no
+      feasible coverage. Empty when ``true_pareto_front()`` unavailable.
     * ``front``                     — the full Pareto archive as a list of
       objective vectors; useful for plotting convergence over iterations.
 
@@ -69,7 +76,9 @@ class ExperimentRunner:
 
     Multi-objective: ``problem_name``, ``solver_name``, ``run_id``,
     ``final_archive_size``, ``final_igd``, ``final_gd``, ``final_hypervolume``,
-    ``final_spacing``, ``final_spread``, ``final_feasibility_pct``, ``run_time_s``.
+    ``final_spacing``, ``final_spread``, ``final_feasibility_pct``,
+    ``final_front_feasibility_pct``, ``final_feasible_front``, ``p_red``,
+    ``run_time_s``.
     """
 
     def __init__(
@@ -222,9 +231,7 @@ class ExperimentRunner:
         final_feasibility = self._measure_feasibility(solver)
 
         if relative_error_history:
-            b = np.array(relative_error_history)
-            p_red = float(np.sqrt(np.sum((1 - b) ** 2) / len(b)))
-            p_red_str = f"{p_red:.6f}"
+            p_red_str = f"{p_red(relative_error_history):.6f}"
         else:
             p_red_str = ""
 
@@ -251,6 +258,7 @@ class ExperimentRunner:
         "spread                       [Deb Delta: extent+uniformity vs true front; 0=ideal; empty if no reference front]",
         "population_feasibility_pct   [% of current population satisfying all constraints]",
         "population_diversity         [mean distance of particles from swarm centroid]",
+        "relative_error               [hypervolume of feasible archive / hypervolume of true front; 1=optimal; empty if no reference front]",
         "front                        [full Pareto archive as list of objective vectors; useful for plotting]",
     ]
 
@@ -267,6 +275,7 @@ class ExperimentRunner:
         "final_feasibility_pct        [% feasible in population at the last iteration]",
         "final_front_feasibility_pct  [% of returned front members satisfying all constraints]",
         "final_feasible_front         [objective vectors of FEASIBLE front members only; for honest cross-algorithm HV]",
+        "p_red                        [mean relative error distance across all iterations; 0=ideal]",
         "run_time_s",
     ]
 
@@ -277,6 +286,7 @@ class ExperimentRunner:
         solver: Solver,
         hv_ref: Optional[Tuple[float, float]],
         ref_front: Optional[np.ndarray],
+        relative_error_history: List[float],
     ) -> Tuple[list, Optional[Tuple[float, float]]]:
         """Returns (row, updated_hv_ref)."""
         result = solver.get_result()
@@ -321,6 +331,20 @@ class ExperimentRunner:
             except Exception:
                 pass
 
+        # --- Relative error: hypervolume ratio vs the true front ---
+        red_str = ""
+        if ref_front is not None:
+            feasible_fitnesses = [
+                ev.fitness for _, ev in result
+                if self._is_solution_feasible(ev)
+            ]
+            try:
+                b = hypervolume_ratio(feasible_fitnesses, ref_front)
+                relative_error_history.append(b)
+                red_str = f"{b:.6f}"
+            except Exception:
+                pass
+
         row = [
             run_id,
             iteration,
@@ -332,6 +356,7 @@ class ExperimentRunner:
             spread_str,
             self._measure_feasibility(solver),
             self._measure_diversity(solver),
+            red_str,
             [[float(v) for v in f] for f in front_fitnesses],
         ]
         return row, hv_ref
@@ -344,6 +369,7 @@ class ExperimentRunner:
         solver: Solver,
         hv_ref: Optional[Tuple[float, float]],
         ref_front: Optional[np.ndarray],
+        relative_error_history: List[float],
         run_time: float,
     ) -> list:
         result = solver.get_result()
@@ -394,6 +420,11 @@ class ExperimentRunner:
             if self._is_solution_feasible(ev)
         ]
 
+        p_red_str = (
+            f"{p_red(relative_error_history):.6f}"
+            if relative_error_history else ""
+        )
+
         return [
             problem_name,
             solver_name,
@@ -407,6 +438,7 @@ class ExperimentRunner:
             self._measure_feasibility(solver),
             front_feas_str,
             feasible_front,
+            p_red_str,
             f"{run_time:.2f}",
         ]
 
@@ -467,7 +499,8 @@ class ExperimentRunner:
                     except (NotImplementedError, AttributeError):
                         pass
                 row, hv_ref = self._mo_iteration_row(
-                    run_id, iteration, solver, hv_ref, ref_front
+                    run_id, iteration, solver, hv_ref, ref_front,
+                    relative_error_history,
                 )
             else:
                 row = self._so_iteration_row(
@@ -489,9 +522,12 @@ class ExperimentRunner:
                     igd_console = f"  IGD={inverted_generational_distance(front_fitnesses, ref_front):.4f}"
                 except Exception:
                     pass
+            p_red_console = ""
+            if relative_error_history:
+                p_red_console = f"  P_RED={p_red(relative_error_history):.6f}"
             print(
                 f"     Run {run_id} finished in {run_time:.2f}s. "
-                f"Archive size: {len(result)}{igd_console}"
+                f"Archive size: {len(result)}{igd_console}{p_red_console}"
             )
         else:
             result = solver.get_result()
@@ -501,9 +537,7 @@ class ExperimentRunner:
                 f"Best fitness: {final_fitness}"
             )
             if relative_error_history:
-                b = np.array(relative_error_history)
-                p_red = float(np.sqrt(np.sum((1 - b) ** 2) / len(b)))
-                print(f"     P_RED for Run {run_id}: {p_red:.6f}")
+                print(f"     P_RED for Run {run_id}: {p_red(relative_error_history):.6f}")
             else:
                 print(f"     P_RED for Run {run_id}: N/A (fitness bounds unknown)")
 
@@ -513,7 +547,7 @@ class ExperimentRunner:
             if is_multi_objective:
                 w.writerow(self._mo_summary_row(
                     problem_name, solver_name, run_id, solver,
-                    hv_ref, ref_front, run_time
+                    hv_ref, ref_front, relative_error_history, run_time
                 ))
             else:
                 w.writerow(self._so_summary_row(

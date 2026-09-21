@@ -188,3 +188,53 @@ class TestDTNK3:
         advance(p, 1)
         f1 = p.true_pareto_front(50)
         assert not np.allclose(f0, f1[: len(f0)]) or len(f0) != len(f1)
+
+
+# --- Archive sentry tests ---
+
+from cilpy.problem import Problem, Evaluation
+
+
+class _CornerBlind(Problem):
+    """Changes only where x1 > 0.5, so the lower-corner sentry is blind."""
+    def __init__(self):
+        super().__init__(2, ([0.0, 0.0], [1.0, 1.0]), "CornerBlind")
+        self.shift = 0.0
+
+    def evaluate(self, solution):
+        x1, x2 = solution
+        bump = self.shift if x1 > 0.5 else 0.0
+        return Evaluation(fitness=[x1, 1.0 - x1 + x2 + bump])
+
+    def is_dynamic(self):
+        return (True, False)
+
+    def is_multi_objective(self):
+        return True
+
+
+class TestArchiveSentries:
+    def test_archive_sentries_detect_change(self):
+        np.random.seed(0)
+        p = FDA1(dimension=5, tau_t=1, n_t=2)
+        s = MGPSO(problem=p, name="M", swarm_size=5, sentry_mode="archive")
+        assert not s._environment_changed()
+        p.begin_iteration()
+        assert s._environment_changed()
+        s._respond_to_change()
+        assert not s._environment_changed()
+
+    def test_archive_sentries_see_what_corner_misses(self):
+        np.random.seed(1)
+        p_fixed, p_arch = _CornerBlind(), _CornerBlind()
+        fixed = MGPSO(problem=p_fixed, name="F", swarm_size=10)
+        arch = MGPSO(problem=p_arch, name="A", swarm_size=10,
+                     sentry_mode="archive")
+        for _ in range(10):
+            fixed.step()
+            arch.step()
+        assert any(pos[0] > 0.5 for pos in arch._archive.positions)
+
+        p_fixed.shift = p_arch.shift = 0.5
+        assert not fixed._environment_changed()
+        assert arch._environment_changed()

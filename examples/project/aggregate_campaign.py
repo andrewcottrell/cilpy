@@ -36,13 +36,19 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from cilpy.compare.metrics import p_red as compute_p_red
+
 try:
     from scipy.stats import wilcoxon
 except ImportError:
     wilcoxon = None
 
-PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2"]
-ALGORITHMS = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
+PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
+ALGORITHMS = [
+    "MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict",
+    "MGPSO_archsentry", "MGPSO_feasarch_archsentry",
+    "CCPSO_filter_archsentry", "CCPSO_strict_archsentry",
+]
 REFRESH_MODES = ("clean", "clear")
 
 
@@ -85,17 +91,40 @@ def _migd_per_run(path, tau_t):
     return out
 
 
-def _front_feasibility(path):
+def _per_run_series(path, column):
+    """{run_id: [(iteration, value), ...]} for any numeric column."""
+    series = defaultdict(list)
+    if not os.path.exists(path):
+        return series
+    with open(path, newline="") as f:
+        reader = csv.reader(f)
+        header = [h.split("[")[0].strip() for h in next(reader)]
+        try:
+            idx = header.index(column)
+        except ValueError:
+            return series
+        for row in reader:
+            if row[idx] != "":
+                series[row[0]].append((int(row[1]), float(row[idx])))
+    return series
+
+
+def _summary_column(path, column):
+    """Returns a list of float values for a named column in a summary CSV."""
     if not os.path.exists(path):
         return []
     with open(path, newline="") as f:
         reader = csv.reader(f)
         header = [h.split("[")[0].strip() for h in next(reader)]
         try:
-            idx = header.index("final_front_feasibility_pct")
+            idx = header.index(column)
         except ValueError:
             return []
         return [float(r[idx]) for r in reader if r[idx] != ""]
+
+
+def _front_feasibility(path):
+    return _summary_column(path, "final_front_feasibility_pct")
 
 
 # ---------------------------------------------------------------------------
@@ -116,12 +145,25 @@ def main_table(out_dir, tau_t, out_path):
             migd = [v[0] for v in per_run.values()]
             migd_bc = [v[1] for v in per_run.values()]
             feas = _front_feasibility(summary_path)
+            p_red_values = _summary_column(summary_path, "p_red")
+
+            red_series = _per_run_series(iter_path, "relative_error")
+            red_bc_per_run = []
+            for run_series in red_series.values():
+                before_change = [
+                    v for it, v in run_series if it % tau_t == tau_t - 1
+                ]
+                if before_change:
+                    red_bc_per_run.append(compute_p_red(before_change))
 
             migd_m, migd_s = _mean_std(migd)
             bc_m, bc_s = _mean_std(migd_bc)
             feas_m, feas_s = _mean_std(feas)
+            pr_m, pr_s = _mean_std(p_red_values)
+            rbc_m, rbc_s = _mean_std(red_bc_per_run)
             rows.append([problem, algorithm, migd_m, migd_s,
-                         bc_m, bc_s, feas_m, feas_s])
+                         bc_m, bc_s, feas_m, feas_s,
+                         pr_m, pr_s, rbc_m, rbc_s])
 
     with open(out_path, "w", newline="") as f:
         w = csv.writer(f)
@@ -129,15 +171,23 @@ def main_table(out_dir, tau_t, out_path):
             "problem", "algorithm", "migd_mean", "migd_std",
             "migd_before_change_mean", "migd_before_change_std",
             "front_feasibility_pct_mean", "front_feasibility_pct_std",
+            "p_red_mean", "p_red_std",
+            "p_red_before_change_mean", "p_red_before_change_std",
         ])
         w.writerows(rows)
 
     print(f"\n=== MAIN DYNAMIC TABLE (tau_t = {tau_t}) ===")
     print(f"{'problem':8} {'algorithm':16} {'MIGD':>18} "
-          f"{'MIGD(before chg)':>20} {'front feas%':>16}")
+          f"{'MIGD(before chg)':>20} {'front feas%':>16} "
+          f"{'P_RED':>18} {'P_RED(bc)':>18}")
     for r in rows:
-        print(f"{r[0]:8} {r[1]:16} {r[2] + ' ± ' + r[3]:>18} "
-              f"{r[4] + ' ± ' + r[5]:>20} {r[6] + ' ± ' + r[7]:>16}")
+        migd = f"{r[2]} ± {r[3]}" if r[2] else "n/a"
+        bc = f"{r[4]} ± {r[5]}" if r[4] else "n/a"
+        feas = f"{r[6]} ± {r[7]}" if r[6] else "n/a"
+        pred = f"{r[8]} ± {r[9]}" if r[8] else "n/a"
+        pred_bc = f"{r[10]} ± {r[11]}" if r[10] else "n/a"
+        print(f"{r[0]:8} {r[1]:16} {migd:>18} {bc:>20} {feas:>16} "
+              f"{pred:>18} {pred_bc:>18}")
     print(f"-> {out_path}")
 
 

@@ -11,8 +11,10 @@ from cilpy.compare.metrics import (
     feasibility_rate,
     generational_distance,
     hypervolume,
+    hypervolume_ratio,
     inverted_generational_distance,
     nondominated_filter,
+    p_red,
     spacing,
     spread,
 )
@@ -126,3 +128,42 @@ class TestFeasibilityRate:
 
     def test_empty(self):
         assert feasibility_rate([]) == pytest.approx(0.0)
+
+
+# --- hypervolume_ratio and p_red ---
+
+REF = np.array([[0.0, 1.0], [0.5, 0.5], [1.0, 0.0]])
+
+
+class TestHypervolumeRatio:
+    def test_ratio_is_one_for_the_reference_front_itself(self):
+        assert hypervolume_ratio(REF, REF) == pytest.approx(1.0)
+
+    def test_ratio_is_zero_for_empty_front(self):
+        assert hypervolume_ratio([], REF) == 0.0
+
+    def test_ratio_is_zero_when_front_is_past_reference_point(self):
+        assert hypervolume_ratio([[100.0, 100.0]], REF) == 0.0
+
+    def test_ratio_never_goes_above_one(self):
+        better = REF - 0.05
+        assert hypervolume_ratio(better, REF) == 1.0
+
+    def test_ratio_ignores_scale_of_an_objective(self):
+        front = np.array([[0.2, 0.9], [0.6, 0.6]])
+        scaled_front = front * [100.0, 1.0]
+        scaled_ref = REF * [100.0, 1.0]
+        assert hypervolume_ratio(front, REF) == pytest.approx(
+            hypervolume_ratio(scaled_front, scaled_ref)
+        )
+
+
+class TestPRed:
+    def test_zero_when_always_optimal(self):
+        assert p_red([1.0, 1.0, 1.0]) == 0.0
+
+    def test_one_when_always_worst(self):
+        assert p_red([0.0, 0.0]) == pytest.approx(1.0)
+
+    def test_matches_worked_example(self):
+        assert p_red([0.5, 0.75, 0.9, 1.0]) == pytest.approx(0.2839, abs=1e-4)

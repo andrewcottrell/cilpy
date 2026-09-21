@@ -254,11 +254,13 @@ def aggregate(problem_names, solver_names, out_path="results_static_mo.csv"):
                     hvs.append(hypervolume(front, ref) if front else 0.0)
                 hv_m, hv_s = _mean_std(hvs)
 
+            pr_m, pr_s = _mean_std(columns.get("p_red", []))
+
             rows.append([
                 problem_name, solver_name,
                 igd_m, igd_s, hv_m, hv_s,
                 spread_m, spread_s, feas_m, feas_s,
-                size_m, time_m,
+                size_m, time_m, pr_m, pr_s,
             ])
 
     header = [
@@ -268,6 +270,7 @@ def aggregate(problem_names, solver_names, out_path="results_static_mo.csv"):
         "spread_mean", "spread_std",
         "front_feasibility_pct_mean", "front_feasibility_pct_std",
         "archive_size_mean", "run_time_s_mean",
+        "p_red_mean", "p_red_std",
     ]
     with open(out_path, "w", newline="") as f:
         writer = csv.writer(f)

@@ -508,6 +508,8 @@ class MGPSO(Solver[List[float], List[float]]):
         tournament_size: int = 3,
         feasible_archive_only: bool = False,
         refresh_mode: str = "clean",
+        sentry_mode: str = "fixed",
+        n_sentries: Optional[int] = None,
         w: Optional[float] = None,
         c1: Optional[float] = None,
         c2: Optional[float] = None,
@@ -532,6 +534,14 @@ class MGPSO(Solver[List[float], List[float]]):
                 entirely and rebuilds it from scratch on the next
                 iterations of `step`. Ignored on problems that are never
                 dynamic.
+            sentry_mode: How environment changes are detected.
+                `"fixed"` (default) re-evaluates a single fixed point
+                (the lower bound corner). `"archive"` re-evaluates
+                archive members and compares against their stored
+                evaluations, falling back to the fixed sentry when the
+                archive is empty.
+            n_sentries: How many archive members to check each step in
+                archive mode. ``None`` (default) checks all of them.
             w: Inertia weight. If `w`, `c1`, `c2`, and `c3` are all provided,
                 fixed control parameters are used; otherwise parameters are
                 re-sampled per particle each iteration subject to the MGPSO
@@ -555,6 +565,15 @@ class MGPSO(Solver[List[float], List[float]]):
                 f"'{refresh_mode}'."
             )
         self.refresh_mode = refresh_mode
+
+        if sentry_mode not in ("fixed", "archive"):
+            raise ValueError(
+                f"sentry_mode must be 'fixed' or 'archive', got "
+                f"'{sentry_mode}'."
+            )
+        self.sentry_mode = sentry_mode
+        self.n_sentries = n_sentries
+        self.n_changes_detected = 0
 
         fixed = (w, c1, c2, c3)
         if all(p is not None for p in fixed):
@@ -638,17 +657,12 @@ class MGPSO(Solver[List[float], List[float]]):
         self._archive.rescore(evaluations)
         self._archive.prune()
 
-    def _environment_changed(self, tolerance: float = 1e-12) -> bool:
-        """Detects an environment change by re-evaluating the sentinel.
-
-        Compares both fitness and constraint values, so changes to either
-        the objective landscape or the constraint boundaries are caught.
-        The fresh evaluation replaces the stored sentinel either way.
-        """
-        fresh = self.problem.evaluate(list(self._sentinel_x))
-        old = self._sentinel_eval
-        self._sentinel_eval = fresh
-
+    @staticmethod
+    def _evaluations_differ(
+        fresh: "Evaluation", old: "Evaluation", tolerance: float
+    ) -> bool:
+        """True if the fitness or any constraint value moved by more than
+        *tolerance*."""
         if np.any(np.abs(
             np.asarray(fresh.fitness) - np.asarray(old.fitness)
         ) > tolerance):
@@ -662,6 +676,43 @@ class MGPSO(Solver[List[float], List[float]]):
             ):
                 return True
         return False
+
+    def _fixed_sentry_changed(self, tolerance: float) -> bool:
+        """Re-evaluates the single fixed sentry (the lower corner)."""
+        fresh = self.problem.evaluate(list(self._sentinel_x))
+        old = self._sentinel_eval
+        self._sentinel_eval = fresh
+        return self._evaluations_differ(fresh, old, tolerance)
+
+    def _archive_sentries_changed(self, tolerance: float) -> bool:
+        """Re-evaluates archive members and compares them with their stored
+        evaluations.  Falls back to the fixed sentry if the archive is empty."""
+        n = len(self._archive)
+        if n == 0:
+            return self._fixed_sentry_changed(tolerance)
+
+        if self.n_sentries is None or self.n_sentries >= n:
+            indices = range(n)
+        else:
+            indices = np.random.choice(n, size=self.n_sentries, replace=False)
+
+        for i in indices:
+            position = self._archive.positions[i]
+            stored = self._archive.evaluations[i]
+            fresh = self.problem.evaluate(list(position))
+            if self._evaluations_differ(fresh, stored, tolerance):
+                return True
+        return False
+
+    def _environment_changed(self, tolerance: float = 1e-12) -> bool:
+        """Detects an environment change using the chosen sentry mode."""
+        if self.sentry_mode == "archive":
+            changed = self._archive_sentries_changed(tolerance)
+        else:
+            changed = self._fixed_sentry_changed(tolerance)
+        if changed:
+            self.n_changes_detected += 1
+        return changed
 
     def _respond_to_change(self) -> None:
         """Full response to a detected environment change.
