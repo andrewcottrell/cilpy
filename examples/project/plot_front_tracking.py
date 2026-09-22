@@ -50,14 +50,14 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from cilpy.problem.dynamic_multi_objective import (
-    FDA1, FDA3, DTNK, DTNK2, DTNK3,
+    FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4,
 )
 
 csv.field_size_limit(10 ** 9)   # the front column is large
 
 PROBLEM_CLASSES = {
     "FDA1": FDA1, "FDA3": FDA3,
-    "DTNK": DTNK, "DTNK2": DTNK2, "DTNK3": DTNK3,
+    "DTNK": DTNK, "DTNK2": DTNK2, "DTNK3": DTNK3, "DTNK4": DTNK4,
 }
 
 
