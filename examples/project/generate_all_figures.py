@@ -50,9 +50,9 @@ csv.field_size_limit(10 ** 9)
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLOTTER = os.path.join(HERE, "plot_front_tracking.py")
 
-DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2"]
+DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
 # The report only needs the constrained dynamic problems in every mode.
-REPORT_DYNAMIC = ["DTNK", "DTNK3", "DTNK2"]
+REPORT_DYNAMIC = ["DTNK", "DTNK3", "DTNK2", "DTNK4"]
 STATIC_PROBLEMS = ["BNH", "SRN", "TNK", "CONSTR"]      # OSY: 6-D, no ref front
 STATIC_ALGORITHMS = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
 
