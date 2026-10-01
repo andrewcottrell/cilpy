@@ -15,10 +15,20 @@ docs/dev/ccga_benchmark_exa.md
 docs/dev/ccls_changes.md
 docs/dev/ccls.md
 out/
-out_refresh_taut10
-out_refresh_taut25
-out_refresh_taut50
-out_static
 *.log
 .claude
 .DS_STORE
+
+# Raw campaign output: too big for git. Root level only, so slim/out_* is kept.
+/out_*/
+
+# Archives of the raw output
+*.tar.gz
+*.tar.zst
+*.csv.gz
+
+# Local environments and OS files
+.venv/
+venv/
+nohup.out
+.DS_Store

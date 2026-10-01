@@ -175,7 +175,7 @@ class ExperimentRunner:
         "best_fitness                 [best objective value found so far in this run]",
         "population_feasibility_pct   [% of current population satisfying all constraints]",
         "population_diversity         [mean distance of particles from swarm centroid]",
-        "relative_error               [how far best_fitness is from known optimum; 0=optimal]",
+        "relative_error               [(f_max - best) / (f_max - f_min); 1=optimal, 0=worst]",
     ]
 
     _SO_SUMMARY_HEADER = [

@@ -1,15 +1,23 @@
 # Included Problems
 
+## Unconstrained Single-Objective
+
+::: cilpy.problem.unconstrained
+
+## Constrained Single-Objective
+
+::: cilpy.problem.constrained
+
+## Multi-Objective (Static)
+
+::: cilpy.problem.multi_objective
+
+## Dynamic Multi-Objective
+
+::: cilpy.problem.dynamic_multi_objective
+
+## Moving Peaks Benchmarks
+
 ::: cilpy.problem.mpb
 
 ::: cilpy.problem.cmpb
-
-<!-- ::: cilpy.problem.mpb._Peak
-    handler: python
-    options:
-      members:
-        - __init__
-        - evaluate
-        - update
-      show_root_heading: true
-      show_source: false -->

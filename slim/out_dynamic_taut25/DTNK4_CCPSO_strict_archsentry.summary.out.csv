@@ -1,0 +1,31 @@
+problem_name,solver_name,run_id,final_archive_size           [archive solutions at the last iteration],final_igd                    [IGD of the final archive],final_gd                     [GD of the final archive],final_hypervolume            [hypervolume of the final archive],final_spacing                [spacing of the final archive],final_spread                 [spread of the final archive],final_feasibility_pct        [% feasible in population at the last iteration],final_front_feasibility_pct  [% of returned front members satisfying all constraints],final_feasible_front         [objective vectors of FEASIBLE front members only; for honest cross-algorithm HV],p_red                        [mean relative error distance across all iterations; 0=ideal],run_time_s
+DTNK4,CCPSO_strict_archsentry,1,0,,,,,,0.0000,,[],0.493121,13.27
+DTNK4,CCPSO_strict_archsentry,2,0,,,,,,0.0000,,[],0.437674,9.07
+DTNK4,CCPSO_strict_archsentry,3,0,,,,,,0.0000,,[],0.463333,8.51
+DTNK4,CCPSO_strict_archsentry,4,0,,,,,,0.0000,,[],0.407889,8.96
+DTNK4,CCPSO_strict_archsentry,5,2,0.213984,0.032095,0.256634,0.000000,0.827308,2.0000,100.0000,"[[2.6447993842619133, 1.8405310360992029], [2.616153662327079, 1.9735154517917521]]",0.378425,8.60
+DTNK4,CCPSO_strict_archsentry,6,1,0.333024,0.061909,0.238821,0.000000,1.000000,1.0000,100.0000,"[[2.418471039100801, 2.089792353141708]]",0.452003,8.34
+DTNK4,CCPSO_strict_archsentry,7,0,,,,,,0.0000,,[],0.403203,8.40
+DTNK4,CCPSO_strict_archsentry,8,0,,,,,,0.0000,,[],0.548365,7.69
+DTNK4,CCPSO_strict_archsentry,9,0,,,,,,0.0000,,[],0.454224,8.35
+DTNK4,CCPSO_strict_archsentry,10,0,,,,,,0.0000,,[],0.671616,6.69
+DTNK4,CCPSO_strict_archsentry,11,0,,,,,,0.0000,,[],0.425642,8.40
+DTNK4,CCPSO_strict_archsentry,12,0,,,,,,0.0000,,[],0.421919,8.42
+DTNK4,CCPSO_strict_archsentry,13,0,,,,,,0.0000,,[],0.384920,8.44
+DTNK4,CCPSO_strict_archsentry,14,0,,,,,,0.0000,,[],0.650522,6.76
+DTNK4,CCPSO_strict_archsentry,15,0,,,,,,0.0000,,[],0.394698,8.00
+DTNK4,CCPSO_strict_archsentry,16,1,0.363212,0.042530,0.319841,0.000000,1.000000,1.0000,100.0000,"[[2.7265814263664114, 1.6781033318136311]]",0.409495,8.03
+DTNK4,CCPSO_strict_archsentry,17,1,0.268576,0.059596,0.067911,0.000000,1.000000,1.0000,100.0000,"[[2.5210861259031048, 2.0149378601492884]]",0.378765,8.05
+DTNK4,CCPSO_strict_archsentry,18,0,,,,,,0.0000,,[],0.412766,7.97
+DTNK4,CCPSO_strict_archsentry,19,1,0.253598,0.018918,0.245205,0.000000,1.000000,1.0000,100.0000,"[[2.618858350382883, 1.9361669616865114]]",0.413013,7.98
+DTNK4,CCPSO_strict_archsentry,20,1,0.388018,0.136015,0.151822,0.000000,1.000000,1.0000,100.0000,"[[2.4097434342720416, 2.1655701939309346]]",0.418849,7.97
+DTNK4,CCPSO_strict_archsentry,21,0,,,,,,0.0000,,[],0.406134,8.05
+DTNK4,CCPSO_strict_archsentry,22,0,,,,,,0.0000,,[],0.396737,8.09
+DTNK4,CCPSO_strict_archsentry,23,0,,,,,,0.0000,,[],0.658912,6.43
+DTNK4,CCPSO_strict_archsentry,24,1,0.256750,0.026441,0.206276,0.000000,1.000000,1.0000,100.0000,"[[2.6257072971093836, 1.9394517901991928]]",0.397225,8.02
+DTNK4,CCPSO_strict_archsentry,25,1,0.336163,0.162243,0.000000,0.000000,1.000000,1.0000,100.0000,"[[2.6035732896970996, 2.11268498105094]]",0.402727,7.88
+DTNK4,CCPSO_strict_archsentry,26,0,,,,,,0.0000,,[],0.395798,7.69
+DTNK4,CCPSO_strict_archsentry,27,0,,,,,,0.0000,,[],0.382268,7.82
+DTNK4,CCPSO_strict_archsentry,28,2,0.218448,0.089932,0.237102,0.000000,0.694813,2.0000,100.0000,"[[2.527626292277793, 1.9642181072933467], [2.365442905719171, 2.149730881148829]]",0.355677,7.90
+DTNK4,CCPSO_strict_archsentry,29,0,,,,,,0.0000,,[],0.649889,6.32
+DTNK4,CCPSO_strict_archsentry,30,0,,,,,,0.0000,,[],0.389342,7.73
