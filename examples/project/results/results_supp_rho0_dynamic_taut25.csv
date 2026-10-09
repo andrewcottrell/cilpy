@@ -1,0 +1,4 @@
+problem,algorithm,migd_mean,migd_std,migd_before_change_mean,migd_before_change_std,front_feasibility_pct_mean,front_feasibility_pct_std,p_red_mean,p_red_std,p_red_before_change_mean,p_red_before_change_std
+DTNK,CCPSO_strict_rho0,0.0324,0.0029,0.0262,0.0025,100.0000,0.0000,0.0777,0.0074,0.0554,0.0061
+DTNK3,CCPSO_strict_rho0,0.0105,0.0014,0.0096,0.0013,100.0000,0.0000,0.0296,0.0055,0.0194,0.0041
+DTNK2,CCPSO_strict_rho0,0.0344,0.0028,0.0280,0.0028,100.0000,0.0000,0.0819,0.0086,0.0584,0.0079

@@ -1,0 +1,6 @@
+problem,algorithm,migd_mean,migd_std,migd_before_change_mean,migd_before_change_std,front_feasibility_pct_mean,front_feasibility_pct_std,p_red_mean,p_red_std,p_red_before_change_mean,p_red_before_change_std
+DTNK,CCPSO_strict_sampled,0.0226,0.0012,0.0173,0.0012,100.0000,0.0000,0.0442,0.0019,0.0228,0.0012
+DTNK3,CCPSO_strict_sampled,0.0065,0.0004,0.0058,0.0004,100.0000,0.0000,0.0198,0.0037,0.0055,0.0011
+DTNK2,CCPSO_strict_sampled,0.0228,0.0018,0.0175,0.0016,100.0000,0.0000,0.0433,0.0017,0.0225,0.0012
+FDA1,MGPSO_sampled,0.1828,0.0239,0.1120,0.0197,100.0000,0.0000,0.3881,0.0377,0.2617,0.0449
+FDA3,MGPSO_sampled,0.2860,0.0288,0.2289,0.0235,100.0000,0.0000,0.5121,0.0295,0.4447,0.0275
