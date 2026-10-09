@@ -21,6 +21,11 @@ RUNS=30
 ITERS=1000
 WORKERS=8
 
+# Full campaign output (with per-iteration fronts) is kept here, out of git.
+# The runner always writes to ./out; each campaign is moved here afterwards.
+RAW_DIR="$SCRIPT_DIR/raw"
+mkdir -p "$RAW_DIR"
+
 echo "============================================================"
 echo "  OVERNIGHT EXPERIMENT CAMPAIGN"
 echo "  Started: $(date)"
@@ -49,8 +54,13 @@ echo "============================================================"
 echo "  [1/10] STATIC MO CAMPAIGN"
 echo "  $(date)"
 echo "============================================================"
+rm -rf out
 $PYTHON examples/project/run_static_mo_experiments.py \
     --runs "$RUNS" --iters "$ITERS" --workers "$WORKERS"
+
+rm -rf "$RAW_DIR/out_static"
+mv out "$RAW_DIR/out_static"
+echo "  Moved out/ -> $RAW_DIR/out_static"
 
 # -------------------------------------------------------------------
 # 2-4. Dynamic campaign at tau_t = 10, 25, 50
@@ -68,22 +78,19 @@ for TAU_T in 10 25 50; do
         --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10 --workers "$WORKERS"
 
     # Move output to a tau-specific folder before starting the next tau.
-    # The aggregate function already ran inside the script, so the CSV
-    # is in the CWD. The per-run files in out/ need to be preserved for
-    # aggregate_campaign.py to read later.
-    DYNAMIC_DIR="out_dynamic_taut${TAU_T}"
+    # The aggregate function already ran inside the script and wrote its
+    # table to examples/project/results/.
+    DYNAMIC_DIR="$RAW_DIR/out_dynamic_taut${TAU_T}"
     rm -rf "$DYNAMIC_DIR"
-    cp -r out "$DYNAMIC_DIR"
-    echo "  Copied out/ -> $DYNAMIC_DIR"
+    mv out "$DYNAMIC_DIR"
+    echo "  Moved out/ -> $DYNAMIC_DIR"
 
     # -- Refresh-mode ablation --
     echo ">>> [tau_t=$TAU_T] run_refresh_mode_experiments.py ..."
-    # Clear out/ so only refresh files are in it.
-    rm -rf out
     $PYTHON examples/project/run_refresh_mode_experiments.py \
         --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10 --workers "$WORKERS"
 
-    REFRESH_DIR="out_refresh_taut${TAU_T}"
+    REFRESH_DIR="$RAW_DIR/out_refresh_taut${TAU_T}"
     rm -rf "$REFRESH_DIR"
     mv out "$REFRESH_DIR"
     echo "  Moved out/ -> $REFRESH_DIR"
@@ -100,6 +107,13 @@ for TAU_T in 10 25 50; do
 done
 
 # -------------------------------------------------------------------
+# Stripped copies for version control
+# -------------------------------------------------------------------
+echo ""
+echo ">>> slim_campaign.py ..."
+$PYTHON examples/project/slim_campaign.py
+
+# -------------------------------------------------------------------
 # Summary
 # -------------------------------------------------------------------
 echo ""
@@ -108,13 +122,16 @@ echo "  ALL CAMPAIGNS COMPLETE"
 echo "  Finished: $(date)"
 echo "============================================================"
 echo ""
-echo "Output locations:"
-echo "  results_static_mo.csv           — static MO table"
-echo "  results_dynamic_taut{10,25,50}.csv  — main dynamic tables"
-echo "  results_refresh_taut{10,25,50}.csv  — refresh-mode paired tables"
-echo "  results_dnsga2_taut{10,25,50}.csv   — DNSGA-II baseline"
+echo "Output locations (all under examples/project/):"
+echo "  results/results_static_mo.csv                    — static MO table"
+echo "  results/results_dynamic_taut{10,25,50}.csv       — main dynamic tables"
+echo "  results/results_dynamic_sentries_taut{10,25,50}.csv — with archive sentries"
+echo "  results/results_refresh_taut{10,25,50}.csv       — refresh-mode paired tables"
+echo "  results/results_dnsga2_taut{10,25,50}.csv        — DNSGA-II baseline"
 echo ""
-echo "  out_dynamic_taut{10,25,50}/     — per-iteration CSVs (dynamic)"
-echo "  out_refresh_taut{10,25,50}/     — per-iteration CSVs (refresh)"
+echo "  raw/out_static/                  — per-iteration CSVs (static)"
+echo "  raw/out_dynamic_taut{10,25,50}/  — per-iteration CSVs (dynamic)"
+echo "  raw/out_refresh_taut{10,25,50}/  — per-iteration CSVs (refresh)"
+echo "  data/out_*/                      — the same without fronts (versioned)"
 echo ""
 echo "Done."

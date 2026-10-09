@@ -34,9 +34,10 @@ Usage (from the repository root):
     python examples/project/compare_baselines.py --static-only
     python examples/project/compare_baselines.py --dynamic-only --tau-t 10 25 50
     python examples/project/compare_baselines.py --ccpso-algorithm CCPSO_filter
-    python examples/project/compare_baselines.py --ccpso-out-dir out_static
+    python examples/project/compare_baselines.py --ccpso-out-dir examples/project/data/out_static
 
-Writes comparison_static.csv and comparison_dynamic.csv.
+Reads and writes its tables in examples/project/results/ by default, and
+writes comparison_static.csv and comparison_dynamic.csv there.
 """
 
 import argparse
@@ -48,6 +49,8 @@ from collections import defaultdict
 import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from paths import PER_RUN_DIR, results_path
 
 csv.field_size_limit(10 ** 9)
 
@@ -373,18 +376,19 @@ def compare_dynamic(tau_values, ccpso_template, baseline_template,
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--static-ccpso", default="results_static_mo.csv")
-    ap.add_argument("--static-baseline", default="results_nsga2.csv")
-    ap.add_argument("--dynamic-ccpso", default="results_dynamic_taut{tau}.csv")
+    ap.add_argument("--static-ccpso", default=results_path("results_static_mo.csv"))
+    ap.add_argument("--static-baseline", default=results_path("results_nsga2.csv"))
+    ap.add_argument("--dynamic-ccpso",
+                    default=results_path("results_dynamic_taut{tau}.csv"))
     ap.add_argument("--dynamic-baseline",
-                    default="results_dnsga2_taut{tau}.csv")
+                    default=results_path("results_dnsga2_taut{tau}.csv"))
     ap.add_argument("--tau-t", type=int, nargs="+", default=[10, 25, 50])
     ap.add_argument("--ccpso-algorithm", default="CCPSO_strict")
     ap.add_argument("--baseline-algorithm", default="DNSGA2_A")
     ap.add_argument("--ccpso-out-dir", default=None,
                     help="campaign out/ folder, enables per-run statistics "
                          "e.g. out_static or out_refresh_taut{tau}")
-    ap.add_argument("--per-run-dir", default="per_run",
+    ap.add_argument("--per-run-dir", default=PER_RUN_DIR,
                     help="folder of per-run baseline CSVs written by the "
                          "pymoo baseline scripts")
     ap.add_argument("--static-only", action="store_true")
@@ -394,13 +398,15 @@ def main():
     if not args.dynamic_only:
         compare_static(args.static_ccpso, args.static_baseline,
                        args.ccpso_algorithm, args.ccpso_out_dir,
-                       args.per_run_dir, "comparison_static.csv")
+                       args.per_run_dir,
+                       results_path("comparison_static.csv"))
 
     if not args.static_only:
         compare_dynamic(args.tau_t, args.dynamic_ccpso,
                         args.dynamic_baseline, args.ccpso_algorithm,
                         args.baseline_algorithm, args.ccpso_out_dir,
-                        args.per_run_dir, "comparison_dynamic.csv")
+                        args.per_run_dir,
+                        results_path("comparison_dynamic.csv"))
 
     print("\nMann--Whitney U, two-sided, alpha = 0.05. A '--' p-value means "
           "per-run\nvalues were unavailable for one side: pass "

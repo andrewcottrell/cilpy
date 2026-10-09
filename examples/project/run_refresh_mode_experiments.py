@@ -54,6 +54,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import results_path
+
 from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.pso import PSO
@@ -215,7 +217,8 @@ def _migd_per_run(path, tau_t):
     return out
 
 
-def aggregate(tau_t, out_path="results_refresh_mode.csv"):
+def aggregate(tau_t, out_dir="out", out_path=None):
+    out_path = out_path or results_path(f"results_refresh_taut{tau_t}.csv")
     problems = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
     algorithms = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
 
@@ -227,7 +230,8 @@ def aggregate(tau_t, out_path="results_refresh_mode.csv"):
         for algorithm in algorithms:
             per_mode = {}
             for mode in REFRESH_MODES:
-                path = f"out/{problem}_{algorithm}_{mode}.out.csv"
+                path = os.path.join(
+                    out_dir, f"{problem}_{algorithm}_{mode}.out.csv")
                 per_mode[mode] = _migd_per_run(path, tau_t)
 
             if not per_mode["clean"] or not per_mode["clear"]:
@@ -298,6 +302,9 @@ def main():
     parser.add_argument("--quick", action="store_true",
                         help="smoke test: 3 runs, 100 iterations")
     parser.add_argument("--aggregate-only", action="store_true")
+    parser.add_argument("--out-dir", default="out",
+                        help="folder of campaign CSVs to aggregate; the "
+                             "runner itself always writes to out/")
     args = parser.parse_args()
 
     num_runs = 3 if args.quick else args.runs
@@ -312,7 +319,7 @@ def main():
         run_campaign(tasks, args.workers)
         print(f"\nAll experiments done in {(time.time() - start) / 60:.1f} min")
 
-    aggregate(args.tau_t)
+    aggregate(args.tau_t, args.out_dir)
 
 
 if __name__ == "__main__":

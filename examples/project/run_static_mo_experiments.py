@@ -53,6 +53,8 @@ import numpy as np
 # Make the repository root importable regardless of invocation directory.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import results_path
+
 from cilpy.problem.multi_objective import (
     SCH1, ZDT1, ZDT2, ZDT3, ZDT4, ZDT6,
     BNH, SRN, TNK, CONSTR, OSY,
@@ -210,13 +212,16 @@ def _final_fronts_from_out_csv(path):
     return fronts
 
 
-def aggregate(problem_names, solver_names, out_path="results_static_mo.csv"):
+def aggregate(problem_names, solver_names, out_dir="out", out_path=None):
     """Aggregates per-run summaries into mean +/- std per experiment."""
+    out_path = out_path or results_path("results_static_mo.csv")
     rows = []
     for problem_name in problem_names:
         for solver_name in solver_names:
-            summary_path = f"out/{problem_name}_{solver_name}.summary.out.csv"
-            iter_path = f"out/{problem_name}_{solver_name}.out.csv"
+            summary_path = os.path.join(
+                out_dir, f"{problem_name}_{solver_name}.summary.out.csv")
+            iter_path = os.path.join(
+                out_dir, f"{problem_name}_{solver_name}.out.csv")
             if not os.path.exists(summary_path):
                 continue
 
@@ -302,6 +307,9 @@ def main():
                              "is independent; results identical to sequential)")
     parser.add_argument("--aggregate-only", action="store_true",
                         help="skip experiments, just re-aggregate existing out/ CSVs")
+    parser.add_argument("--out-dir", default="out",
+                        help="folder of campaign CSVs to aggregate; the "
+                             "runner itself always writes to out/")
     args = parser.parse_args()
 
     num_runs = 3 if args.quick else args.runs
@@ -338,7 +346,7 @@ def main():
     if args.suite in ("all", "constrained"):
         all_problems += constrained_names
     all_solvers = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
-    aggregate(all_problems, all_solvers)
+    aggregate(all_problems, all_solvers, args.out_dir)
 
 
 if __name__ == "__main__":

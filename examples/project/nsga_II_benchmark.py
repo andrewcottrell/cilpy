@@ -52,6 +52,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import PER_RUN_DIR, results_path
+
 from cilpy.problem.multi_objective import (
     SCH1, ZDT1, ZDT2, ZDT3, ZDT4, ZDT6, BNH, SRN, TNK, CONSTR, OSY,
 )
@@ -218,8 +220,8 @@ def main():
     ap.add_argument("--compare-with", default=None,
                     help="CCPSO aggregate CSV, e.g. results_static_mo.csv")
     ap.add_argument("--ccpso-algorithm", default="CCPSO_strict")
-    ap.add_argument("--out", default="results_nsga2.csv")
-    ap.add_argument("--per-run-dir", default="per_run",
+    ap.add_argument("--out", default=results_path("results_nsga2.csv"))
+    ap.add_argument("--per-run-dir", default=PER_RUN_DIR,
                     help="folder for per-run value CSVs, used for "
                          "significance testing")
     args = ap.parse_args()

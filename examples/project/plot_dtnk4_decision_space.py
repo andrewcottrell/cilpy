@@ -21,6 +21,8 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import FIGURES_DIR
+
 from cilpy.problem.dynamic_multi_objective import DTNK4
 
 
@@ -121,7 +123,7 @@ def main():
     ap.add_argument("--overlay", action="store_true",
                     help="all environments on one axis")
     ap.add_argument("--out", help="output path")
-    ap.add_argument("--fig-dir", default="figures")
+    ap.add_argument("--fig-dir", default=FIGURES_DIR)
     args = ap.parse_args()
 
     os.makedirs(args.fig_dir, exist_ok=True)

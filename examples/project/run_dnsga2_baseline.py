@@ -56,6 +56,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import PER_RUN_DIR, results_path
+
 from cilpy.problem.dynamic_multi_objective import (
     FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4,
 )
@@ -246,14 +248,15 @@ def main():
     ap.add_argument("--quick", action="store_true",
                     help="3 runs of 100 generations, for a smoke test")
     ap.add_argument("--out", default=None)
-    ap.add_argument("--per-run-dir", default="per_run",
+    ap.add_argument("--per-run-dir", default=PER_RUN_DIR,
                     help="folder for per-run value CSVs, used for "
                          "significance testing")
     args = ap.parse_args()
 
     num_runs = 3 if args.quick else args.runs
     n_gen = 100 if args.quick else args.n_gen
-    out_path = args.out or f"results_dnsga2_taut{args.tau_t}.csv"
+    out_path = args.out or results_path(
+        f"results_dnsga2_taut{args.tau_t}.csv")
 
     print(f"DNSGA-II ({args.variant}) baseline: {num_runs} runs, "
           f"pop {args.pop_size} x {n_gen} generations "

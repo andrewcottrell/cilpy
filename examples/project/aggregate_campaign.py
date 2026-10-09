@@ -36,6 +36,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import results_path
+
 from cilpy.compare.metrics import p_red as compute_p_red
 
 try:
@@ -267,9 +269,9 @@ def main():
         sys.exit(1)
 
     main_table(args.out_dir, args.tau_t,
-               f"results_dynamic_taut{args.tau_t}.csv")
+               results_path(f"results_dynamic_taut{args.tau_t}.csv"))
     paired_table(args.out_dir, args.tau_t,
-                 f"results_refresh_taut{args.tau_t}.csv")
+                 results_path(f"results_refresh_taut{args.tau_t}.csv"))
 
 
 if __name__ == "__main__":

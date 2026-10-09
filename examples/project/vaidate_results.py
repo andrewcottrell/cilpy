@@ -58,6 +58,9 @@ IGD_PLAUSIBLE_CEILING = {
     # ZDT4 intentionally absent: failure is the expected, documented outcome.
 }
 
+# Campaign folder under inspection; set from --out-dir in main().
+OUT_DIR = "out"
+
 _counts = {"PASS": 0, "WARN": 0, "FAIL": 0}
 
 
@@ -67,7 +70,7 @@ def report(level, message):
 
 
 def read_summary(problem, algo):
-    path = f"out/{problem}_{algo}.summary.out.csv"
+    path = os.path.join(OUT_DIR, f"{problem}_{algo}.summary.out.csv")
     if not os.path.exists(path):
         return None
     columns = defaultdict(list)
@@ -82,7 +85,7 @@ def read_summary(problem, algo):
 
 def read_igd_series(problem, algo):
     """Per-run IGD time series from the per-iteration CSV."""
-    path = f"out/{problem}_{algo}.out.csv"
+    path = os.path.join(OUT_DIR, f"{problem}_{algo}.out.csv")
     if not os.path.exists(path):
         return {}
     series = defaultdict(list)
@@ -224,10 +227,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs", type=int, default=30,
                         help="expected number of runs per experiment")
+    parser.add_argument("--out-dir", default="out",
+                        help="static campaign folder to validate")
     args = parser.parse_args()
 
-    if not os.path.isdir("out"):
-        print("No out/ directory found -- run the campaign first.")
+    global OUT_DIR
+    OUT_DIR = args.out_dir
+    if not os.path.isdir(OUT_DIR):
+        print(f"No {OUT_DIR}/ directory found -- run the campaign first.")
         sys.exit(1)
 
     check_completeness(args.runs)

@@ -1,7 +1,9 @@
 # examples/project/generate_all_figures.py
 """Generates the full report figure set from campaign output folders.
 
-Produces, into ``figures/`` by default:
+Reads the full campaign output in ``examples/project/raw/`` (the per-iteration
+``front`` column is required, so the stripped copies in ``data/`` will not
+do) and produces, into ``examples/project/figures/`` by default:
 
 Dynamic (one campaign folder per change frequency):
   <problem>_overlay_taut<T>.png    front motion across environments, true
@@ -44,6 +46,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from paths import FIGURES_DIR, RAW_DIR
 
 csv.field_size_limit(10 ** 9)
 
@@ -202,14 +206,16 @@ def static_figure(out_dir, fig_dir, force):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--tau-t", type=int, nargs="+", default=[10, 25, 50])
-    ap.add_argument("--dynamic-dir", default="out_refresh_taut{tau}",
+    ap.add_argument("--dynamic-dir",
+                    default=os.path.join(RAW_DIR, "out_refresh_taut{tau}"),
                     help="template for dynamic campaign folders")
-    ap.add_argument("--static-dir", default="out_static",
+    ap.add_argument("--static-dir",
+                    default=os.path.join(RAW_DIR, "out_static"),
                     help="static campaign output folder")
     ap.add_argument("--problems", nargs="+", default=None,
                     help=f"default: {DYNAMIC_PROBLEMS}")
     ap.add_argument("--algorithm", default=DEFAULT_ALGORITHM)
-    ap.add_argument("--fig-dir", default="figures")
+    ap.add_argument("--fig-dir", default=FIGURES_DIR)
     ap.add_argument("--max-iter", type=int, default=None,
                     help="trace window; default scales with tau_t")
     ap.add_argument("--report-set", action="store_true",

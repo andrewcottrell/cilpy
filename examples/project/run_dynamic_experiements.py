@@ -49,6 +49,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from paths import results_path
+
 from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.pso import PSO
@@ -168,13 +170,17 @@ def _per_run_series(path, column):
     return series
 
 
-def aggregate(problem_names, solver_names, tau_t,
-              out_path="results_dynamic_mo.csv"):
+def aggregate(problem_names, solver_names, tau_t, out_dir="out",
+              out_path=None):
+    out_path = out_path or results_path(
+        f"results_dynamic_sentries_taut{tau_t}.csv")
     rows = []
     for problem_name in problem_names:
         for solver_name in solver_names:
-            iter_path = f"out/{problem_name}_{solver_name}.out.csv"
-            summary_path = f"out/{problem_name}_{solver_name}.summary.out.csv"
+            iter_path = os.path.join(
+                out_dir, f"{problem_name}_{solver_name}.out.csv")
+            summary_path = os.path.join(
+                out_dir, f"{problem_name}_{solver_name}.summary.out.csv")
             if not os.path.exists(iter_path):
                 continue
 
@@ -276,6 +282,9 @@ def main():
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--quick", action="store_true")
     parser.add_argument("--aggregate-only", action="store_true")
+    parser.add_argument("--out-dir", default="out",
+                        help="folder of campaign CSVs to aggregate; the "
+                             "runner itself always writes to out/")
     args = parser.parse_args()
 
     num_runs = 3 if args.quick else args.runs
@@ -314,6 +323,7 @@ def main():
          "MGPSO_archsentry", "MGPSO_feasarch_archsentry",
          "CCPSO_filter_archsentry", "CCPSO_strict_archsentry"],
         args.tau_t,
+        args.out_dir,
     )
 
 

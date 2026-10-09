@@ -19,8 +19,10 @@ out/
 .claude
 .DS_STORE
 
-# Raw campaign output: too big for git. Root level only, so slim/out_* is kept.
+# Raw campaign output: too big for git. The stripped copies in
+# examples/project/data/ are kept.
 /out_*/
+examples/project/raw/
 
 # Archives of the raw output
 *.tar.gz
