@@ -119,6 +119,21 @@ class Solver(ABC, Generic[SolutionType, FitnessType]):
         """
         pass
 
+    def respond_to_change(self) -> None:
+        """Tells the solver that the fitness landscape has changed.
+
+        Called by whatever changed the landscape, for example a
+        co-evolutionary framework that has just updated the problem this
+        solver is optimizing. Solvers that keep a memory of past evaluations
+        (personal bests, an archive) should override this method and
+        re-evaluate that memory, so that values computed under the old
+        landscape do not guide the search.
+
+        This method is optional. The default does nothing, which suits
+        solvers without such a memory.
+        """
+        pass
+
     def get_population(self) -> List[SolutionType]:
         """
         Returns the entire current population or set of candidate solutions.

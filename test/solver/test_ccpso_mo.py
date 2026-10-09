@@ -11,6 +11,7 @@ import pytest
 
 from cilpy.problem.multi_objective import CONSTR, BNH, SRN
 from cilpy.solver.mgpso import MGPSO
+from cilpy.solver.ga import GA
 from cilpy.solver.pso import PSO
 from cilpy.solver.ccls import (
     CoevolutionaryLagrangianSolver,
@@ -166,4 +167,45 @@ class TestAnchorSelection:
         anchor_eval = BNH().evaluate(anchor)
         assert _total_violation(anchor_eval) == pytest.approx(
             max(violations), abs=1e-9
+        )
+
+
+class TestChangeResponseHook:
+    """The framework must work with any solver, not only PSO."""
+
+    @pytest.mark.parametrize("objective_class, objective_params", [
+        (GA, {"population_size": 10, "crossover_rate": 0.8,
+              "mutation_rate": 0.1}),
+        (PSO, {"swarm_size": 10, "w": 0.7, "c1": 1.4, "c2": 1.4}),
+    ])
+    def test_runs_with_ga_multiplier_solver(self, objective_class,
+                                            objective_params):
+        solver = CoevolutionaryLagrangianSolver(
+            name="CCLS",
+            problem=G01(),
+            objective_solver_class=objective_class,
+            multiplier_solver_class=GA,
+            objective_solver_params=objective_params,
+            multiplier_solver_params={
+                "population_size": 10, "crossover_rate": 0.8,
+                "mutation_rate": 0.1,
+            },
+        )
+        for _ in range(5):
+            solver.step()
+        assert len(solver.get_result()) == 1
+
+    def test_pso_rescoring_follows_the_landscape(self):
+        """PSO re-scores its bests against the problem as it now stands."""
+        solver = _make_ccpso(CONSTR(), "filter")
+        solver.step()
+        ms = solver.multiplier_solver
+        ms.respond_to_change()
+        for position, evaluation in zip(ms.pbest_positions,
+                                        ms.pbest_evaluations):
+            fresh = solver.max_problem.evaluate(position)
+            assert evaluation.fitness == pytest.approx(fresh.fitness)
+        assert not any(
+            ms.comparator.is_better(evaluation, ms.gbest_evaluation)
+            for evaluation in ms.pbest_evaluations
         )

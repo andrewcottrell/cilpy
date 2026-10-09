@@ -57,7 +57,7 @@ References:
     doi: 10.1109/4235.996017. (Spread Delta)
 """
 
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 

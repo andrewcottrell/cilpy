@@ -141,6 +141,24 @@ class PSO(Solver[List[float], float]):
                     self.gbest_position = copy.deepcopy(self.pbest_positions[i])
                     self.gbest_evaluation = copy.deepcopy(self.pbest_evaluations[i])
 
+    def respond_to_change(self) -> None:
+        """Re-evaluates the swarm's memory after a landscape change.
+
+        The personal best positions are kept, but re-scored against the
+        current landscape, and the global best is recomputed from them.
+        """
+        self.pbest_evaluations = [
+            self.problem.evaluate(pos) for pos in self.pbest_positions
+        ]
+        best = 0
+        for i in range(1, len(self.pbest_positions)):
+            if self.comparator.is_better(
+                self.pbest_evaluations[i], self.pbest_evaluations[best]
+            ):
+                best = i
+        self.gbest_position = copy.deepcopy(self.pbest_positions[best])
+        self.gbest_evaluation = copy.deepcopy(self.pbest_evaluations[best])
+
     def get_result(self) -> List[Tuple[List[float], Evaluation[float]]]:
         """Returns the global best solution found by the swarm."""
         return [(self.gbest_position, self.gbest_evaluation)]

@@ -714,6 +714,10 @@ class MGPSO(Solver[List[float], List[float]]):
             self.n_changes_detected += 1
         return changed
 
+    def respond_to_change(self) -> None:
+        """Re-evaluates the archive and personal bests after a change."""
+        self._respond_to_change()
+
     def _respond_to_change(self) -> None:
         """Full response to a detected environment change.
 

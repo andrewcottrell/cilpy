@@ -43,7 +43,6 @@ two PSOs for CCPSO) which manage the search process for their respective
 populations.
 """
 
-import copy
 from typing import List, Optional, Tuple, Type
 
 from cilpy.problem import Problem, Evaluation, SolutionType
@@ -184,9 +183,6 @@ class _LagrangianMinProblem(Problem):
                     abs(h) for h in hx
                 )
 
-        # This problem is now unconstrained from the solver's perspective,
-        # but the raw constraint values are passed through so that archive
-        # admission policies and feasibility reporting remain possible.
         return Evaluation(
             fitness=lagrangian_value,
             constraints_inequality=original_eval.constraints_inequality,
@@ -209,7 +205,7 @@ class _LagrangianMinProblem(Problem):
         distorting Pareto dominance in the archive.
 
         For single-objective problems, the original behaviour (delegation) is
-        preserved, matching the validated Phase 1 setup.
+        preserved.
 
         Returns:
             Tuple[bool, bool]: (objectives_dynamic, constraints_dynamic).
@@ -411,8 +407,8 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         constraint_handler = kwargs.get("constraint_handler", None)
 
-        '''Archive Management, either filter infeasible solutions or do not allow infeasible
-           solutions'''
+        # Archive management: either filter infeasible solutions out of the
+        # reported front, or never admit them to the archive.
         self.archive_strategy = str(kwargs.get("archive_strategy", "filter"))
         if self.archive_strategy not in ("filter", "strict"):
             raise ValueError(
@@ -527,36 +523,21 @@ class CoevolutionaryLagrangianSolver(Solver):
             self._prev_inequality_multipliers != inequality_multipliers
             or self._prev_equality_multipliers != equality_multipliers
         )
-        if multipliers_changed and hasattr(self.objective_solver, '_respond_to_change'):
-            self.objective_solver._respond_to_change()
+        if multipliers_changed and self.problem.is_multi_objective():
+            self.objective_solver.respond_to_change()
         self._prev_inequality_multipliers = list(inequality_multipliers)
         self._prev_equality_multipliers = list(equality_multipliers)
 
         # The 'max' problem gets the best solution from the 'min' solver
         self.max_problem.set_fixed_solution(best_solution)
 
-        # The multiplier landscape just changed (new x*), so P2's stored
-        # personal and global bests are stale. Re-score them in place.
-        ms = self.multiplier_solver
-        ms.pbest_evaluations = [
-            self.max_problem.evaluate(pos) for pos in ms.pbest_positions
-        ]
-        best = 0
-        for i in range(1, len(ms.pbest_positions)):
-            if ms.comparator.is_better(ms.pbest_evaluations[i],
-                                       ms.pbest_evaluations[best]):
-                best = i
-        ms.gbest_position = copy.deepcopy(ms.pbest_positions[best])
-        ms.gbest_evaluation = copy.deepcopy(ms.pbest_evaluations[best])
+        # The multiplier landscape just changed (new x*), so anything the
+        # multiplier solver remembers from earlier evaluations is stale.
+        self.multiplier_solver.respond_to_change()
 
         # 3. Perform one step of each sub-solver
         self.objective_solver.step()
         self.multiplier_solver.step()
-
-        # TODO: Handle dynamic changes
-        # is_obj_dyn, is_con_dyn = self.problem.is_dynamic()
-        # if is_obj_dyn or is_con_dyn:
-        #     pass
 
     def get_result(self) -> list[tuple[list[float], Evaluation]]:
         """Returns the best solution(s), evaluated on the ORIGINAL problem.
