@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from cilpy.problem import Evaluation
-from cilpy.problem.multi_objective import SCH1, TNK
+from cilpy.problem.multi_objective import SCH1
 from cilpy.problem.dynamic_multi_objective import DTNK, FDA1
 from cilpy.solver.mgpso import MGPSO, _Archive
 

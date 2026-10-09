@@ -1,15 +1,15 @@
 # test/solver/test_ccpso_mo.py
 """Integration tests for the CoevolutionaryLagrangianSolver wrapping MGPSO.
 
-These tests validate Milestone 4: constrained multi-objective optimization
-via the co-evolutionary Lagrangian framework with MGPSO as the objective
-solver, under both archive management strategies.
+These tests cover constrained multi-objective optimization via the
+co-evolutionary Lagrangian framework with MGPSO as the objective solver,
+under both archive management strategies.
 """
 
 import numpy as np
 import pytest
 
-from cilpy.problem.multi_objective import CONSTR, BNH, SRN
+from cilpy.problem.multi_objective import CONSTR, BNH
 from cilpy.solver.mgpso import MGPSO
 from cilpy.solver.ga import GA
 from cilpy.solver.pso import PSO

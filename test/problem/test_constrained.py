@@ -13,12 +13,12 @@ from typing import List, Type
 
 # Assuming the project is installed in editable mode or path is configured
 from cilpy.problem import Problem, Evaluation
-from cilpy.problem.constrained import G01
+from cilpy.problem.constrained import G01, G02, G03, G04, G05, G06
 
 # --- Test Configuration ---
 # Add any new constrained problem class here to include it in the tests.
 CONSTRAINED_PROBLEMS: List[Type[Problem]] = [
-    G01
+    G01, G02, G03, G04, G05, G06
 ]
 
 # --- Test Cases ---

@@ -12,9 +12,8 @@ build/
 dist/
 
 out/
+!examples/project/phase1/out/
 *.log
-.claude
-.DS_STORE
 
 # Raw campaign output: too big for git. The stripped copies in
 # examples/project/data/ are kept.

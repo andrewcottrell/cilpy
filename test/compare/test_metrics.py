@@ -1,8 +1,6 @@
 # test/compare/test_metrics.py
 """Unit tests for cilpy.compare.metrics with hand-verifiable values."""
 
-import math
-
 import numpy as np
 import pytest
 
