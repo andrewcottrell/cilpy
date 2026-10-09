@@ -1,4 +1,4 @@
-# examples/project/run_dynamic_mo_experiments.py
+# examples/project/run_dynamic_experiments.py
 """Dynamic multi-objective experimental campaign (Milestone 5).
 
 Covers three dynamic categories (SOSC is the static campaign):
@@ -30,10 +30,10 @@ Seeding follows the static campaign exactly (per-experiment deterministic
 seeds for both RNGs).
 
 Usage (from the repository root):
-    python examples/project/run_dynamic_mo_experiments.py             # 30 x 1000
-    python examples/project/run_dynamic_mo_experiments.py --quick
-    python examples/project/run_dynamic_mo_experiments.py --workers 4
-    python examples/project/run_dynamic_mo_experiments.py --tau-t 25  # slower changes
+    python examples/project/run_dynamic_experiments.py             # 30 x 1000
+    python examples/project/run_dynamic_experiments.py --quick
+    python examples/project/run_dynamic_experiments.py --workers 4
+    python examples/project/run_dynamic_experiments.py --tau-t 25  # slower changes
 """
 
 import argparse

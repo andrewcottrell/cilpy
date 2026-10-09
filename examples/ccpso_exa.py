@@ -1,4 +1,4 @@
-# examples/normal/ccpso_exa.py
+# examples/ccpso_exa.py
 """Example: constrained multi-objective optimization with CCPSO.
 
 CCPSO = CoevolutionaryLagrangianSolver wrapping MGPSO as the objective
@@ -6,7 +6,7 @@ solver. Demonstrates both archive strategies, usage through the
 ExperimentRunner, and direct usage with metric computation.
 
 Run from the repository root:
-    python examples/normal/ccpso_exa.py
+    python examples/ccpso_exa.py
 """
 
 import numpy as np

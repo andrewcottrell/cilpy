@@ -25,7 +25,7 @@ Usage (from the repository root):
           --out-dir out_refresh_taut$t --tau-t $t
     done
 
-Results are written to significance_dynamic_taut<tau>.csv.
+Results are written to results/significance_dynamic_taut<tau>.csv.
 """
 
 import argparse
@@ -36,6 +36,8 @@ from collections import defaultdict
 
 import numpy as np
 from scipy.stats import mannwhitneyu
+
+from paths import results_path
 
 csv.field_size_limit(10 ** 9)
 
@@ -125,7 +127,7 @@ def main():
             ])
         print()
 
-    out_path = f"significance_dynamic_taut{args.tau_t}.csv"
+    out_path = results_path(f"significance_dynamic_taut{args.tau_t}.csv")
     with open(out_path, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["tau_t", "problem", "category", "algorithm_a",

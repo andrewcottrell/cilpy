@@ -21,8 +21,6 @@ Ensure the library enables the following constraint handling techniques:
   box-constrained optimization problem through the use of penalty methods.
 - [X] techniques which formulate the constrained optimization problem as a dual
   Lagrangian.
-- [X] techniques which formulate the constrained optimization problem as a
+- [ ] techniques which formulate the constrained optimization problem as a
   box-constrained multi-/many-objective optimization problem, and then to use
   multi-/many-objective optimization problem to find feasible solutions.
-  (Implemented via `CoevolutionaryLagrangianSolver` with MGPSO as the objective
-  solver — the Lagrangian penalties are folded into additional objectives.)

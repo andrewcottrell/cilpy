@@ -1,9 +1,12 @@
 """
 Analyze results from ExperimentRunner CSV outputs.
 
-Reads summary and detailed CSVs from out/ directory and produces
+Reads summary and detailed CSVs from the out/ directory next to this script
+and produces
 aggregated statistics for reporting.
 """
+
+import os
 
 import pandas as pd
 import glob
@@ -13,7 +16,7 @@ import numpy as np
 
 def analyze_summary_stats():
     """Aggregate summary CSVs to get mean/std of relative error per problem/solver."""
-    summary_files = glob.glob("out/*.summary.out.csv")
+    summary_files = sorted(glob.glob("out/*.summary.out.csv"))
     
     if not summary_files:
         print("No summary files found in out/")
@@ -67,7 +70,7 @@ def analyze_summary_stats():
 
 def analyze_feasibility():
     """Extract final feasibility % per problem/solver/run from detailed CSVs."""
-    detail_files = glob.glob("out/*.out.csv")
+    detail_files = sorted(glob.glob("out/*.out.csv"))
     
     if not detail_files:
         print("No detail files found in out/")
@@ -158,7 +161,7 @@ def analyze_fitness_stats():
 
 def analyze_convergence_per_problem():
     """Track convergence over iterations (diversity, feasibility trend)."""
-    detail_files = glob.glob("out/*.out.csv")
+    detail_files = sorted(glob.glob("out/*.out.csv"))
     
     if not detail_files:
         return None
@@ -359,7 +362,9 @@ def export_tables_for_report():
 
 
 if __name__ == "__main__":
-    # Make sure out/ directory exists
+    # Work from this script's folder, so out/ and the summary CSVs are found
+    # and written here whatever directory the script is launched from.
+    os.chdir(Path(__file__).resolve().parent)
     Path("out").mkdir(exist_ok=True)
     
     # Generate full report

@@ -47,7 +47,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from paths import results_path
 
 import run_static_mo_experiments as static
-import run_dynamic_experiements as dynamic
+import run_dynamic_experiments as dynamic
 
 from cilpy.problem.multi_objective import (
     SCH1, ZDT1, ZDT2, ZDT3, ZDT4, ZDT6,

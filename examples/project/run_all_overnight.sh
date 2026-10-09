@@ -73,8 +73,8 @@ for TAU_T in 10 25 50; do
     echo "============================================================"
 
     # -- Dynamic (main + archive sentries) --
-    echo ">>> [tau_t=$TAU_T] run_dynamic_experiements.py ..."
-    $PYTHON examples/project/run_dynamic_experiements.py \
+    echo ">>> [tau_t=$TAU_T] run_dynamic_experiments.py ..."
+    $PYTHON examples/project/run_dynamic_experiments.py \
         --runs "$RUNS" --iters "$ITERS" --tau-t "$TAU_T" --n-t 10 --workers "$WORKERS"
 
     # Move output to a tau-specific folder before starting the next tau.

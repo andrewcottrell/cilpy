@@ -1,8 +1,8 @@
-# examples/normal/mgpso_exa.py
+# examples/mgpso_exa.py
 """Example: MGPSO on the ZDT1 benchmark, with post-hoc metric computation.
 
 Run from the repository root:
-    python examples/normal/mgpso_exa.py
+    python examples/mgpso_exa.py
 """
 
 import numpy as np
