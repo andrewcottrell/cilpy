@@ -53,6 +53,11 @@ from cilpy.problem import Problem, Evaluation, SolutionType
 from cilpy.solver import Solver
 
 
+def _position_key(solution) -> tuple:
+    """Hashable key of a position, for the evaluation cache."""
+    return tuple(float(v) for v in solution)
+
+
 def _total_violation(evaluation: Evaluation, tolerance: float = 1e-6) -> float:
     """Total constraint violation of an evaluation.
 
@@ -124,6 +129,12 @@ class _LagrangianMinProblem(Problem):
         # Per-objective multipliers; None means the shared vector above is used.
         self.objective_multipliers = None
 
+        # Evaluations of the original problem, keyed by position, so that
+        # solutions already evaluated are not evaluated again when only the
+        # multipliers change. Off unless the solver switches it on.
+        self.reuse_evaluations = False
+        self._cache = {}
+
 
     def set_fixed_multipliers(self, inequality_multipliers, equality_multipliers):
         """Updates the fixed Lagrangian multipliers for the next generation.
@@ -173,6 +184,39 @@ class _LagrangianMinProblem(Problem):
         """
         # Evaluate the original problem to get f(x), g(x), and h(x)
         original_eval = self.original_problem.evaluate(solution)
+        if self.reuse_evaluations:
+            self._cache[_position_key(solution)] = original_eval
+        return self._lagrangian(original_eval)
+
+    def original_evaluation(self, solution: list[float]) -> Evaluation:
+        """Evaluation of `solution` on the original problem, taken from the
+        cache when the position has been evaluated since the last detected
+        environment change."""
+        if self.reuse_evaluations:
+            cached = self._cache.get(_position_key(solution))
+            if cached is not None:
+                return cached
+            self.evaluate(solution)
+            return self._cache[_position_key(solution)]
+        return self.original_problem.evaluate(solution)
+
+    def evaluate_cached(self, solution: list[float]) -> Evaluation:
+        """As `evaluate`, but reuses the cached evaluation of the original
+        problem. Used to re-score solutions when only the multipliers have
+        changed, since f(x) and g(x) are then unchanged."""
+        return self._lagrangian(self.original_evaluation(solution))
+
+    def clear_cache(self) -> None:
+        """Discards every cached evaluation (after an environment change)."""
+        self._cache = {}
+
+    def prune_cache(self, positions) -> None:
+        """Keeps only the cached evaluations of the given positions."""
+        keep = {_position_key(x) for x in positions}
+        self._cache = {k: v for k, v in self._cache.items() if k in keep}
+
+    def _lagrangian(self, original_eval: Evaluation) -> Evaluation:
+        """L(x, mu*, lambda*) from an evaluation of the original problem."""
         fx = original_eval.fitness
         gx = original_eval.constraints_inequality or []
         hx = original_eval.constraints_equality or []
@@ -511,6 +555,12 @@ class CoevolutionaryLagrangianSolver(Solver):
             penalty_rho=penalty_rho,
             penalty_rho_equality=penalty_rho_equality,
         )
+        # Reuse evaluations of the original problem when only the multipliers
+        # change (re-scoring, reference sets, the returned front), so that
+        # CCMGPSO spends no more problem evaluations than MGPSO.
+        self.min_problem.reuse_evaluations = bool(
+            kwargs.get("reuse_evaluations", False)
+        )
         self.max_problem = _LagrangianMaxProblem(
             problem, initial_solution, max_multiplier=max_multiplier
         )
@@ -576,6 +626,8 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         R_m holds the personal best positions of sub-swarm m (the current
         position where no personal best exists yet) and every archive member.
+        With `reuse_evaluations` these are read from the cache, since every
+        one of them has already been evaluated.
         """
         swarm = self.objective_solver._swarms[objective_idx]
         positions = [
@@ -583,7 +635,7 @@ class CoevolutionaryLagrangianSolver(Solver):
             for p in swarm.particles
         ]
         positions += [s for s, _ in self.objective_solver.get_result()]
-        return [self.problem.evaluate(x) for x in positions]
+        return [self.min_problem.original_evaluation(x) for x in positions]
 
     def _add_immigrants(self, solver, dual) -> None:
         """Moves a random share of the penalty swarm to random positions.
@@ -632,6 +684,23 @@ class CoevolutionaryLagrangianSolver(Solver):
         for solver in self.multiplier_solvers:
             for _ in range(self.multiplier_steps):
                 solver.step()
+        self._prune_cache()
+
+    def _prune_cache(self) -> None:
+        """Keeps the cached evaluations of the current positions, personal
+        bests and archive members only, so the cache cannot grow without
+        bound."""
+        if not self.min_problem.reuse_evaluations:
+            return
+        positions = [s for s, _ in self.objective_solver.get_result()]
+        for swarm in getattr(self.objective_solver, "_swarms", []):
+            for p in swarm.particles:
+                positions.append(p.x)
+                positions.append(p.y)
+        sentinel = getattr(self.objective_solver, "_sentinel_x", None)
+        if sentinel is not None:
+            positions.append(sentinel)
+        self.min_problem.prune_cache(positions)
 
     def _select_multiplier_anchor(self) -> list:
         """Selects the solution x* against which the multipliers evolve.
@@ -736,14 +805,16 @@ class CoevolutionaryLagrangianSolver(Solver):
         # 3. Perform one step of each sub-solver
         self.objective_solver.step()
         self.multiplier_solver.step()
+        self._prune_cache()
 
     def get_result(self) -> list[tuple[list[float], Evaluation]]:
         """Returns the best solution(s), evaluated on the ORIGINAL problem.
 
         Archive members are stored by the objective solver with *penalised*
         Lagrangian fitness, so every returned solution is re-evaluated
-        against the original constrained problem, restoring the true
-        objective values and constraint information.
+        against the original constrained problem (or, with
+        `reuse_evaluations`, its cached evaluation is used), restoring the
+        true objective values and constraint information.
 
         Single-objective: a single (solution, evaluation) tuple, as before.
 
@@ -759,11 +830,11 @@ class CoevolutionaryLagrangianSolver(Solver):
         """
         if not self.problem.is_multi_objective():
             best_solution, _ = self.objective_solver.get_result()[0]
-            final_evaluation = self.problem.evaluate(best_solution)
+            final_evaluation = self.min_problem.original_evaluation(best_solution)
             return [(best_solution, final_evaluation)]
 
         re_evaluated = [
-            (solution, self.problem.evaluate(solution))
+            (solution, self.min_problem.original_evaluation(solution))
             for solution, _ in self.objective_solver.get_result()
         ]
         feasible = [

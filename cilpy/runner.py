@@ -20,6 +20,31 @@ from cilpy.compare.metrics import (
 )
 
 
+class _EvaluationCounter:
+    """Counts a solver's evaluations of a problem during one run.
+
+    The problem's `evaluate` is wrapped on the instance and restored by
+    `restore`. Counting happens only while `active` is set, so evaluations
+    made by the runner to measure the result are not counted.
+    """
+
+    def __init__(self, problem: Problem):
+        self.problem = problem
+        self.count = 0
+        self.active = False
+        evaluate = problem.evaluate
+
+        def counted(solution):
+            if self.active:
+                self.count += 1
+            return evaluate(solution)
+
+        problem.evaluate = counted
+
+    def restore(self) -> None:
+        del self.problem.evaluate
+
+
 class ExperimentRunner:
     """Orchestrates the execution of computational intelligence experiments.
 
@@ -72,13 +97,15 @@ class ExperimentRunner:
     **<problem>_<solver>.summary.out.csv** — one row per run.
 
     Single-objective: ``problem_name``, ``solver_name``, ``run_id``,
-    ``final_best_fitness``, ``final_feasibility_pct``, ``p_red``, ``run_time_s``.
+    ``final_best_fitness``, ``final_feasibility_pct``, ``p_red``, ``run_time_s``,
+    ``evaluations``.
 
     Multi-objective: ``problem_name``, ``solver_name``, ``run_id``,
     ``final_archive_size``, ``final_igd``, ``final_gd``, ``final_hypervolume``,
     ``final_spacing``, ``final_spread``, ``final_feasibility_pct``,
     ``final_front_feasibility_pct``, ``final_feasible_front``, ``p_red``,
-    ``run_time_s``.
+    ``run_time_s``, ``evaluations`` (problem evaluations made by the solver,
+    measurement excluded).
     """
 
     def __init__(
@@ -186,6 +213,7 @@ class ExperimentRunner:
         "final_feasibility_pct        [% feasible in population at the last iteration]",
         "p_red                        [mean relative error distance across all iterations; 0=ideal]",
         "run_time_s",
+        "evaluations                  [problem evaluations made by the solver; measurement excluded]",
     ]
 
     def _so_iteration_row(
@@ -225,6 +253,7 @@ class ExperimentRunner:
         solver: Solver,
         relative_error_history: List[float],
         run_time: float,
+        evaluations: int,
     ) -> list:
         result = solver.get_result()
         final_fitness = result[0][1].fitness if result else ""
@@ -243,6 +272,7 @@ class ExperimentRunner:
             final_feasibility,
             p_red_str,
             f"{run_time:.2f}",
+            evaluations,
         ]
 
     # Multi-objective columns
@@ -277,6 +307,7 @@ class ExperimentRunner:
         "final_feasible_front         [objective vectors of FEASIBLE front members only; for honest cross-algorithm HV]",
         "p_red                        [mean relative error distance across all iterations; 0=ideal]",
         "run_time_s",
+        "evaluations                  [problem evaluations made by the solver; measurement excluded]",
     ]
 
     def _mo_iteration_row(
@@ -371,6 +402,7 @@ class ExperimentRunner:
         ref_front: Optional[np.ndarray],
         relative_error_history: List[float],
         run_time: float,
+        evaluations: int,
     ) -> list:
         result = solver.get_result()
         front_fitnesses = [ev.fitness for _, ev in result]
@@ -440,6 +472,7 @@ class ExperimentRunner:
             feasible_front,
             p_red_str,
             f"{run_time:.2f}",
+            evaluations,
         ]
 
     # run loop
@@ -476,7 +509,34 @@ class ExperimentRunner:
             handler_params = constraint_handler_config.get("params", {})
             current_params["constraint_handler"] = handler_class(**handler_params)
 
-        solver = solver_class(**current_params)
+        # Count the solver's problem evaluations: construction and steps only.
+        counter = _EvaluationCounter(problem_for_run)
+        try:
+            counter.active = True
+            solver = solver_class(**current_params)
+            counter.active = False
+            self._iterate(
+                solver, counter, run_id, run_start_time, main_writer,
+                summary_file_path, is_multi_objective, bounds_known, f_max,
+                fitness_range, ref_front,
+            )
+        finally:
+            counter.restore()
+
+    def _iterate(
+        self,
+        solver: Solver,
+        counter: _EvaluationCounter,
+        run_id: int,
+        run_start_time: float,
+        main_writer,
+        summary_file_path: str,
+        is_multi_objective: bool,
+        bounds_known: bool,
+        f_max: float,
+        fitness_range: float,
+        ref_front: Optional[np.ndarray],
+    ):
 
         problem_name = solver.problem.name
         solver_name = solver.name
@@ -486,7 +546,9 @@ class ExperimentRunner:
 
         for iteration in range(1, self.max_iterations + 1):
             solver.problem.begin_iteration()
+            counter.active = True
             solver.step()
+            counter.active = False
 
             if is_multi_objective:
                 # Dynamic problems: the true front reflects the CURRENT
@@ -547,12 +609,13 @@ class ExperimentRunner:
             if is_multi_objective:
                 w.writerow(self._mo_summary_row(
                     problem_name, solver_name, run_id, solver,
-                    hv_ref, ref_front, relative_error_history, run_time
+                    hv_ref, ref_front, relative_error_history, run_time,
+                    counter.count,
                 ))
             else:
                 w.writerow(self._so_summary_row(
                     problem_name, solver_name, run_id, solver,
-                    relative_error_history, run_time
+                    relative_error_history, run_time, counter.count,
                 ))
 
     def _run_single_experiment(

@@ -621,7 +621,9 @@ class MGPSO(Solver[List[float], List[float]]):
             swarm.update_bests(self.comparator)
             swarm.update_archive(self._archive)
 
-    def _refresh_archive(self, refresh_mode: Optional[str] = None) -> None:
+    def _refresh_archive(
+        self, refresh_mode: Optional[str] = None, evaluate=None
+    ) -> None:
         """Re-evaluates archive members against the current environment.
 
         `refresh_mode` overrides `self.refresh_mode` for this call.
@@ -653,8 +655,9 @@ class MGPSO(Solver[List[float], List[float]]):
             self._archive._invalidate()
             return
 
+        evaluate = evaluate or self.problem.evaluate
         evaluations = [
-            self.problem.evaluate(list(position))
+            evaluate(list(position))
             for position in self._archive.positions
         ]
         self._archive.rescore(evaluations)
@@ -729,6 +732,11 @@ class MGPSO(Solver[List[float], List[float]]):
             return
         self._environment_checked = True
         if self._dynamic and self._environment_changed():
+            # Cached evaluations (a co-evolutionary proxy problem) are stale
+            # after a change; the response below re-evaluates what it keeps.
+            clear_cache = getattr(self.problem, "clear_cache", None)
+            if clear_cache is not None:
+                clear_cache()
             self._respond_to_change()
 
     def rescore(self) -> None:
@@ -737,11 +745,18 @@ class MGPSO(Solver[List[float], List[float]]):
         Lagrangian multipliers). The refresh policy is not applied: members
         are always kept and re-scored, as under `"clean"`, since the
         underlying problem has not changed. The fixed sentry is re-scored too,
-        so the change is not mistaken for an environment change."""
-        self._respond_to_change(refresh_mode="clean")
-        self._sentinel_eval = self.problem.evaluate(list(self._sentinel_x))
+        so the change is not mistaken for an environment change.
 
-    def _respond_to_change(self, refresh_mode: Optional[str] = None) -> None:
+        A problem that caches its evaluations (`evaluate_cached`, the
+        co-evolutionary proxy problem) is asked for cached values, since only
+        the penalty has changed, not the solutions."""
+        evaluate = getattr(self.problem, "evaluate_cached", self.problem.evaluate)
+        self._respond_to_change(refresh_mode="clean", evaluate=evaluate)
+        self._sentinel_eval = evaluate(list(self._sentinel_x))
+
+    def _respond_to_change(
+        self, refresh_mode: Optional[str] = None, evaluate=None
+    ) -> None:
         """Full response to a detected environment change.
 
         1. The archive is re-evaluated under the current environment and
@@ -754,14 +769,15 @@ class MGPSO(Solver[List[float], List[float]]):
         3. Each sub-swarm's neighbourhood best is recomputed from the
            re-scored personal bests.
         """
-        self._refresh_archive(refresh_mode)
+        evaluate = evaluate or self.problem.evaluate
+        self._refresh_archive(refresh_mode, evaluate)
 
         for swarm in self._swarms:
             swarm.y_hat_eval = None
             for particle in swarm.particles:
                 if particle.y_eval is None:
                     continue
-                full_eval = self.problem.evaluate(list(particle.y))
+                full_eval = evaluate(list(particle.y))
                 particle.y_eval = swarm._scalar_eval(full_eval)
                 if swarm.y_hat_eval is None or self.comparator.is_better(
                     particle.y_eval, swarm.y_hat_eval

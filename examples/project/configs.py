@@ -77,6 +77,10 @@ def ccmgpso_config(strategy, refresh_mode="clean", name=None):
             "max_multiplier": MAX_MULTIPLIER,
             "multiplier_immigrants": MULTIPLIER_IMMIGRANTS,
             "multiplier_steps": MULTIPLIER_STEPS,
+            # Solutions already evaluated are not evaluated again when only
+            # the multipliers change, so CCMGPSO and MGPSO spend the same
+            # number of problem evaluations per iteration.
+            "reuse_evaluations": True,
             "archive_strategy": strategy,
         },
     }
