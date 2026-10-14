@@ -27,7 +27,7 @@ Usage (from the repository root):
 
     # specific frequencies / a subset of problems
     python examples/project/generate_all_figures.py --tau-t 10 50
-    python examples/project/generate_all_figures.py --problems DTNK DTNK2
+    python examples/project/generate_all_figures.py --problems DTNK DTNK6
 
     # only the report-critical figures
     python examples/project/generate_all_figures.py --report-set
@@ -54,13 +54,13 @@ csv.field_size_limit(10 ** 9)
 HERE = os.path.dirname(os.path.abspath(__file__))
 PLOTTER = os.path.join(HERE, "plot_front_tracking.py")
 
-DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
+DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK5", "DTNK6", "DTNK4"]
 # The report only needs the constrained dynamic problems in every mode.
-REPORT_DYNAMIC = ["DTNK", "DTNK3", "DTNK2", "DTNK4"]
+REPORT_DYNAMIC = ["DTNK", "DTNK5", "DTNK6", "DTNK4"]
 STATIC_PROBLEMS = ["BNH", "SRN", "TNK", "CONSTR"]      # OSY: 6-D, no ref front
-STATIC_ALGORITHMS = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
+STATIC_ALGORITHMS = ["MGPSO", "MGPSO_feasarch", "CCMGPSO_filter", "CCMGPSO_strict"]
 
-DEFAULT_ALGORITHM = "CCPSO_strict"
+DEFAULT_ALGORITHM = "CCMGPSO_strict"
 
 
 def find_csv(out_dir, problem, algorithm, suffixes=("_clean", "")):

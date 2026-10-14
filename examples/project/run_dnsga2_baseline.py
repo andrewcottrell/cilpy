@@ -40,7 +40,7 @@ Usage (from the repository root):
     python examples/project/run_dnsga2_baseline.py --tau-t 10
     python examples/project/run_dnsga2_baseline.py --tau-t 10 --quick
     python examples/project/run_dnsga2_baseline.py --tau-t 25 --variant B
-    python examples/project/run_dnsga2_baseline.py --tau-t 10 --problems DTNK DTNK3
+    python examples/project/run_dnsga2_baseline.py --tau-t 10 --problems DTNK DTNK5
 
 Writes results_dnsga2_taut<TAU>.csv with the same column meanings as the
 CCPSO dynamic tables, so the two can be placed side by side.
@@ -59,7 +59,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from paths import PER_RUN_DIR, results_path
 
 from cilpy.problem.dynamic_multi_objective import (
-    FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4,
+    FDA1, FDA3, DTNK, DTNK4, DTNK5, DTNK6,
 )
 from cilpy.compare.metrics import (
     inverted_generational_distance, feasibility_rate,
@@ -84,7 +84,7 @@ ZETA = 0.2          # fraction replaced on a change (Deb et al. use 0.2-0.3)
 
 PROBLEMS = {
     "FDA1": FDA1, "FDA3": FDA3,
-    "DTNK": DTNK, "DTNK3": DTNK3, "DTNK2": DTNK2, "DTNK4": DTNK4,
+    "DTNK": DTNK, "DTNK5": DTNK5, "DTNK6": DTNK6, "DTNK4": DTNK4,
 }
 
 

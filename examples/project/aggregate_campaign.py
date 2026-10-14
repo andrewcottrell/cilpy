@@ -2,9 +2,9 @@
 """Produces BOTH result tables from a single refresh-mode campaign.
 
 The refresh-mode campaign's ``clean`` arm is exactly the main dynamic
-campaign: the same 14 (problem, algorithm) experiments, run with identical
+campaign: the same (problem, algorithm) experiments, run with identical
 seeds, and therefore identical results. Running both campaigns duplicates
-14 of 39 experiments per frequency for no gain. This script lets you run
+the clean arm for no gain. This script lets you run
 only the refresh-mode campaign and derive both tables from its output:
 
 1. ``results_dynamic_mo.csv``   -- the main dynamic table (MIGD,
@@ -45,12 +45,8 @@ try:
 except ImportError:
     wilcoxon = None
 
-PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
-ALGORITHMS = [
-    "MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict",
-    "MGPSO_archsentry", "MGPSO_feasarch_archsentry",
-    "CCPSO_filter_archsentry", "CCPSO_strict_archsentry",
-]
+from configs import CONSTRAINED_ALGORITHMS as ALGORITHMS
+from configs import DYNAMIC_NAMES as PROBLEMS
 REFRESH_MODES = ("clean", "clear")
 
 

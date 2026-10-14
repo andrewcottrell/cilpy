@@ -25,9 +25,16 @@ Problems provided, by dynamic category:
   moving the feasible boundary that the Pareto front lies on.
 - `DTNK2` : DODC -- DTNK's dynamic constraint plus time-translated
   objectives f1 = x1 + 0.2|sin(0.5 pi t)|, f2 = x2 + 0.2|cos(0.5 pi t)|.
-- `DTNK3` : DOSC -- the time-translated objectives of DTNK2 with the STATIC
-  TNK constraints (fixed ring, r = 1). Completes the four-category grid:
-  SOSC is the static campaign, SODC = DTNK, DOSC = DTNK3, DODC = DTNK2.
+- `DTNK3` : the time-translated objectives of DTNK2 with the STATIC
+  TNK constraints (fixed ring, r = 1).
+  NOTE: a translation f_m + s_m(t) changes no comparison between solutions,
+  so DTNK3 behaves exactly as static TNK and DTNK2 exactly as DTNK for any
+  dominance-based algorithm (and IGD against the translated front is
+  unchanged). Kept for reproducibility of the 22 Sept campaign only.
+- `DTNK5` : DOSC -- static TNK constraints, rotating objective mapping.
+- `DTNK6` : DODC -- DTNK's oscillating ring plus the rotating objectives.
+  Four-category grid: SOSC is the static campaign, SODC = DTNK,
+  DOSC = DTNK5, DODC = DTNK6 and DTNK4.
 
 All problems implement `true_pareto_front(n_points)` reflecting the CURRENT
 environment time, so distance metrics (IGD/GD/spread) computed against it
@@ -339,6 +346,107 @@ class DTNK3(_SampledDynamicFrontMixin, _DynamicMOBase):
 
     def is_dynamic(self) -> Tuple[bool, bool]:
         return (True, False)
+
+
+def _rotate(X1, X2, alpha):
+    """Rotates the objective mapping f = (x1, x2) by alpha."""
+    cos_a, sin_a = math.cos(alpha), math.sin(alpha)
+    return X1 * cos_a + X2 * sin_a, -X1 * sin_a + X2 * cos_a
+
+
+class DTNK5(_SampledDynamicFrontMixin, _DynamicMOBase):
+    """DTNK5: dynamic objectives with static constraints (DOSC).
+
+    The static TNK constraints with a rotating objective mapping:
+
+        min f1(x, t) =  x1 cos(alpha(t)) + x2 sin(alpha(t))
+        min f2(x, t) = -x1 sin(alpha(t)) + x2 cos(alpha(t))
+        alpha(t) = (pi / 8) sin(0.5 pi t)
+        s.t. TNK's constraints (fixed ring, r = 1).
+
+    Unlike a translation of the objectives (DTNK3), a rotation changes the
+    dominance relation, so it changes WHICH part of the fixed constraint
+    boundary is Pareto-optimal: at alpha = +-pi/8 about a third of the
+    Pareto-optimal set lies away from the set at alpha = 0. The feasible
+    region never moves.
+    """
+
+    def __init__(self, tau_t: int = 10, n_t: int = 10):
+        super().__init__(
+            2, ([0.0, 0.0], [math.pi, math.pi]), "DTNK5", tau_t, n_t
+        )
+
+    def _alpha(self) -> float:
+        return (math.pi / 8) * math.sin(0.5 * math.pi * self.t)
+
+    def evaluate(self, solution: List[float]) -> Evaluation[List[float]]:
+        x1, x2 = solution
+        f1, f2 = _rotate(x1, x2, self._alpha())
+        angle = math.atan2(x1, x2)
+        g1 = -(x1**2 + x2**2 - 1.0 - 0.1 * math.cos(16.0 * angle))
+        g2 = (x1 - 0.5) ** 2 + (x2 - 0.5) ** 2 - 0.5
+        return Evaluation(fitness=[f1, f2], constraints_inequality=[g1, g2])
+
+    def _batch_evaluate(self, X1, X2):
+        F = np.column_stack(_rotate(X1, X2, self._alpha()))
+        angle = np.arctan2(X1, X2)
+        G = np.column_stack([
+            -(X1**2 + X2**2 - 1.0 - 0.1 * np.cos(16.0 * angle)),
+            (X1 - 0.5) ** 2 + (X2 - 0.5) ** 2 - 0.5,
+        ])
+        return F, G
+
+    def is_dynamic(self) -> Tuple[bool, bool]:
+        return (True, False)
+
+
+class DTNK6(_SampledDynamicFrontMixin, _DynamicMOBase):
+    """DTNK6: dynamic objectives and dynamic constraints (DODC).
+
+    DTNK's oscillating ring with DTNK5's rotating objective mapping:
+
+        min f1(x, t) =  x1 cos(alpha(t)) + x2 sin(alpha(t))
+        min f2(x, t) = -x1 sin(alpha(t)) + x2 cos(alpha(t))
+        alpha(t) = (pi / 8) cos(0.5 pi t)
+        s.t. x1^2 + x2^2 - r(t) - 0.1 cos(16 arctan(x1/x2)) >= 0,
+             r(t) = 1 + 0.2 sin(0.5 pi t)
+             (x1 - 0.5)^2 + (x2 - 0.5)^2 <= 0.5
+
+    The ring radius moves the feasible boundary and the rotation changes
+    which part of it is Pareto-optimal. The rotation uses cos so that the
+    two changes are out of phase.
+    """
+
+    def __init__(self, tau_t: int = 10, n_t: int = 10):
+        super().__init__(
+            2, ([0.0, 0.0], [math.pi, math.pi]), "DTNK6", tau_t, n_t
+        )
+
+    def _r(self) -> float:
+        return 1.0 + 0.2 * math.sin(0.5 * math.pi * self.t)
+
+    def _alpha(self) -> float:
+        return (math.pi / 8) * math.cos(0.5 * math.pi * self.t)
+
+    def evaluate(self, solution: List[float]) -> Evaluation[List[float]]:
+        x1, x2 = solution
+        f1, f2 = _rotate(x1, x2, self._alpha())
+        angle = math.atan2(x1, x2)
+        g1 = -(x1**2 + x2**2 - self._r() - 0.1 * math.cos(16.0 * angle))
+        g2 = (x1 - 0.5) ** 2 + (x2 - 0.5) ** 2 - 0.5
+        return Evaluation(fitness=[f1, f2], constraints_inequality=[g1, g2])
+
+    def _batch_evaluate(self, X1, X2):
+        F = np.column_stack(_rotate(X1, X2, self._alpha()))
+        angle = np.arctan2(X1, X2)
+        G = np.column_stack([
+            -(X1**2 + X2**2 - self._r() - 0.1 * np.cos(16.0 * angle)),
+            (X1 - 0.5) ** 2 + (X2 - 0.5) ** 2 - 0.5,
+        ])
+        return F, G
+
+    def is_dynamic(self) -> Tuple[bool, bool]:
+        return (True, True)
 
 
 class DTNK4(_DynamicMOBase):

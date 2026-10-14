@@ -30,3 +30,6 @@ examples/project/raw/
 venv/
 nohup.out
 .DS_Store
+
+# 22 Sept campaign raw output, moved aside by run_all_overnight.sh
+examples/project/raw_22sept/

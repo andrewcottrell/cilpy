@@ -71,10 +71,10 @@ check("ccls: violation-aware multiplier anchor",
 
 # --- Problems ---
 try:
-    from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
-    check("problems: all six dynamic MO problems incl. DTNK4 (DODC)", True)
+    from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK4, DTNK5, DTNK6
+    check("problems: dynamic MO problems incl. DTNK5 (DOSC) and DTNK6, DTNK4 (DODC)", True)
 except ImportError:
-    check("problems: all six dynamic MO problems incl. DTNK4 (DODC)", False)
+    check("problems: dynamic MO problems incl. DTNK5 (DOSC) and DTNK6, DTNK4 (DODC)", False)
 
 # --- Functional smoke: correct dynamic behaviour end to end ---
 print("\n== Functional smoke test (few seconds) ==")

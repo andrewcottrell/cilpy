@@ -4,8 +4,9 @@
 Compares the two archive refresh policies on environment change:
 
 * ``clean``  -- the archive is re-scored in place and only members that
-  have become infeasible or dominated are removed, so surviving members
-  (and the knowledge encoded in their positions) persist across changes.
+  have become dominated (or infeasible, under strict admission) are
+  removed, so surviving members (and the knowledge encoded in their
+  positions) persist across changes.
 * ``clear``  -- the archive is discarded on every change and rebuilt from
   scratch, as in a cold start.
 
@@ -30,7 +31,7 @@ reference. On the FDA problems the plain MGPSO does track a genuine
 front and is swept.
 
 Output files carry the mode in the solver name
-(e.g. ``DTNK_CCPSO_strict_clean.out.csv``) so that the two modes never
+(e.g. ``DTNK_CCMGPSO_strict_clean.out.csv``) so that the two modes never
 overwrite each other.
 
 Usage (from the repository root):
@@ -56,61 +57,22 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from paths import results_path
 
-from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
-from cilpy.solver.mgpso import MGPSO
-from cilpy.solver.pso import PSO
-from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
 from cilpy.runner import ExperimentRunner
+from configs import (BASE_SEED, BOX_DYNAMIC, CONSTRAINED_ALGORITHMS,
+                     CONSTRAINED_DYNAMIC, DYNAMIC_NAMES, ccmgpso_config,
+                     mgpso_config)
 
 try:
     from scipy.stats import wilcoxon
 except ImportError:  # analysis degrades gracefully without scipy
     wilcoxon = None
 
-BASE_SEED = 26989395
-SWARM_SIZE = 50
-FIXED_PARAMS = {"w": 0.72, "c1": 1.49, "c2": 1.49, "c3": 1.49}
 REFRESH_MODES = ("clean", "clear")
 
 
 # ---------------------------------------------------------------------------
 # Solver configurations
 # ---------------------------------------------------------------------------
-
-def mgpso_config(base_name, refresh_mode, feasible_archive_only=False):
-    return {
-        "class": MGPSO,
-        "params": {
-            "name": f"{base_name}_{refresh_mode}",
-            "swarm_size": SWARM_SIZE,
-            "feasible_archive_only": feasible_archive_only,
-            "refresh_mode": refresh_mode,
-            **FIXED_PARAMS,
-        },
-    }
-
-
-def ccpso_config(strategy, refresh_mode):
-    return {
-        "class": CoevolutionaryLagrangianSolver,
-        "params": {
-            "name": f"CCPSO_{strategy}_{refresh_mode}",
-            "objective_solver_class": MGPSO,
-            "multiplier_solver_class": PSO,
-            "objective_solver_params": {
-                "swarm_size": SWARM_SIZE,
-                "refresh_mode": refresh_mode,
-                **FIXED_PARAMS,
-            },
-            "multiplier_solver_params": {
-                "swarm_size": 30, "w": 0.40, "c1": 1.20, "c2": 1.20,
-            },
-            "penalty_rho": 1.0,
-            "max_multiplier": 1000.0,
-            "archive_strategy": strategy,
-        },
-    }
-
 
 def base_algorithm_name(solver_name):
     """Strips the refresh-mode suffix, so paired experiments share a seed."""
@@ -151,23 +113,27 @@ def build_tasks(num_runs, max_iterations, tau_t, n_t):
     tasks = []
 
     # FDA: plain MGPSO tracks a genuine front -> sweep both modes.
-    for factory in (FDA1, FDA3):
+    for factory in BOX_DYNAMIC:
         for mode in REFRESH_MODES:
-            tasks.append((factory, mgpso_config("MGPSO", mode),
+            tasks.append((factory, mgpso_config(f"MGPSO_{mode}",
+                                                refresh_mode=mode),
                           num_runs, max_iterations, tau_t, n_t))
 
     # DTNK family: sweep the algorithms that maintain a feasible front.
-    for factory in (DTNK, DTNK3, DTNK2, DTNK4):
+    for factory in CONSTRAINED_DYNAMIC:
         for mode in REFRESH_MODES:
             tasks.append((factory,
-                          mgpso_config("MGPSO_feasarch", mode,
-                                       feasible_archive_only=True),
+                          mgpso_config(f"MGPSO_feasarch_{mode}",
+                                       feasible_archive_only=True,
+                                       refresh_mode=mode),
                           num_runs, max_iterations, tau_t, n_t))
             for strategy in ("filter", "strict"):
-                tasks.append((factory, ccpso_config(strategy, mode),
+                tasks.append((factory,
+                              ccmgpso_config(strategy, mode,
+                                             name=f"CCMGPSO_{strategy}_{mode}"),
                               num_runs, max_iterations, tau_t, n_t))
         # Plain MGPSO baseline: no feasible front to retain, run once.
-        tasks.append((factory, mgpso_config("MGPSO", "clean"),
+        tasks.append((factory, mgpso_config("MGPSO_clean"),
                       num_runs, max_iterations, tau_t, n_t))
 
     return tasks
@@ -219,8 +185,8 @@ def _migd_per_run(path, tau_t):
 
 def aggregate(tau_t, out_dir="out", out_path=None):
     out_path = out_path or results_path(f"results_refresh_taut{tau_t}.csv")
-    problems = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"]
-    algorithms = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
+    problems = DYNAMIC_NAMES
+    algorithms = CONSTRAINED_ALGORITHMS
 
     rows = []
     print(f"\n{'problem':7} {'algorithm':16} {'clean MIGD':>18} "

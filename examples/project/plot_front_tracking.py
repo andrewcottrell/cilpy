@@ -25,14 +25,14 @@ The problem is inferred from the filename, or given with ``--problem``.
 Examples (from the repository root):
 
     python examples/project/plot_front_tracking.py \\
-        out_refresh_taut10/DTNK3_CCPSO_strict_clean.out.csv --tau-t 10
+        out_refresh_taut10/DTNK5_CCMGPSO_strict_clean.out.csv --tau-t 10
 
     python examples/project/plot_front_tracking.py \\
-        out_refresh_taut10/DTNK_CCPSO_strict_clean.out.csv --tau-t 10 --mode trace
+        out_refresh_taut10/DTNK_CCMGPSO_strict_clean.out.csv --tau-t 10 --mode trace
 
     python examples/project/plot_front_tracking.py \\
-        out_refresh_taut10/DTNK3_CCPSO_strict_clean.out.csv \\
-        --compare-with out_refresh_taut10/DTNK3_CCPSO_strict_clear.out.csv \\
+        out_refresh_taut10/DTNK5_CCMGPSO_strict_clean.out.csv \\
+        --compare-with out_refresh_taut10/DTNK5_CCMGPSO_strict_clear.out.csv \\
         --tau-t 10 --mode compare
 """
 
@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from cilpy.problem.dynamic_multi_objective import (
-    FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4,
+    FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4, DTNK5, DTNK6,
 )
 
 csv.field_size_limit(10 ** 9)   # the front column is large
@@ -58,6 +58,7 @@ csv.field_size_limit(10 ** 9)   # the front column is large
 PROBLEM_CLASSES = {
     "FDA1": FDA1, "FDA3": FDA3,
     "DTNK": DTNK, "DTNK2": DTNK2, "DTNK3": DTNK3, "DTNK4": DTNK4,
+    "DTNK5": DTNK5, "DTNK6": DTNK6,
 }
 
 

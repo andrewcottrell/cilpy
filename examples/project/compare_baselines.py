@@ -1,5 +1,5 @@
 # examples/project/compare_baselines.py
-"""Head-to-head comparison: CCPSO against the external pymoo baselines.
+"""Head-to-head comparison: CCMGPSO against the external pymoo baselines.
 
 Reads aggregate tables already produced by the campaigns and prints (and
 writes) side-by-side comparisons. Runs nothing: it is pure analysis, so it
@@ -7,7 +7,7 @@ is cheap to re-run whenever a table is regenerated.
 
 Static comparison
 -----------------
-    CCPSO   <- results_static_mo.csv        (run_static_mo_experiments.py)
+    CCMGPSO   <- results_static_mo.csv        (run_static_mo_experiments.py)
     NSGA-II <- results_nsga2.csv            (run_nsga2_baseline.py)
 
 Compared on mean IGD, and on feasible-front hypervolume for OSY, which has
@@ -15,7 +15,7 @@ no reference front.
 
 Dynamic comparison
 ------------------
-    CCPSO    <- results_dynamic_taut<T>.csv  (aggregate_campaign.py)
+    CCMGPSO    <- results_dynamic_taut<T>.csv  (aggregate_campaign.py)
     DNSGA-II <- results_dnsga2_taut<T>.csv   (run_dnsga2_baseline.py)
 
 Compared on MIGD and MIGD_bc, per change frequency.
@@ -25,7 +25,7 @@ Significance
 Aggregate tables carry means and standard deviations, not per-run values,
 so where per-run data is available the script uses it for a Mann--Whitney
 U test; otherwise it reports the effect size only and says so. Per-run
-CCPSO values are read from the campaign's out/ folders when a folder is
+CCMGPSO values are read from the campaign's out/ folders when a folder is
 supplied with --ccpso-out-dir.
 
 Usage (from the repository root):
@@ -33,7 +33,7 @@ Usage (from the repository root):
     python examples/project/compare_baselines.py                    # both, defaults
     python examples/project/compare_baselines.py --static-only
     python examples/project/compare_baselines.py --dynamic-only --tau-t 10 25 50
-    python examples/project/compare_baselines.py --ccpso-algorithm CCPSO_filter
+    python examples/project/compare_baselines.py --ccpso-algorithm CCMGPSO_filter
     python examples/project/compare_baselines.py --ccpso-out-dir examples/project/data/out_static
 
 Reads and writes its tables in examples/project/results/ by default, and
@@ -61,7 +61,7 @@ except ImportError:
 
 STATIC_PROBLEMS = ["SCH1", "ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT6",
                    "BNH", "SRN", "TNK", "CONSTR", "OSY"]
-DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2"]
+DYNAMIC_PROBLEMS = ["FDA1", "FDA3", "DTNK", "DTNK5", "DTNK6"]  # DTNK4: MIGD not comparable, see analyse_dynamic_significance.py
 NO_REFERENCE_FRONT = {"OSY"}          # hypervolume instead of IGD
 
 # Identical to the campaign aggregation; never change between algorithms.
@@ -121,7 +121,7 @@ def per_run_igd(out_dir, problem, algorithm):
 
 
 def per_run_hv(out_dir, problem, algorithm):
-    """Per-run feasible-front hypervolume from a CCPSO summary file.
+    """Per-run feasible-front hypervolume from a CCMGPSO summary file.
 
     The campaign stores the feasible front itself, so hypervolume is
     recomputed here against the same fixed reference point used in the
@@ -234,11 +234,11 @@ def verdict(ours, theirs, p_value, lower_is_better=True):
     if p_value >= 0.05:
         return "tie"
     better = (ours < theirs) if lower_is_better else (ours > theirs)
-    return "CCPSO" if better else "baseline"
+    return "CCMGPSO" if better else "baseline"
 
 
 def improvement(ours, theirs, lower_is_better=True):
-    """Percentage improvement of CCPSO over the baseline."""
+    """Percentage improvement of CCMGPSO over the baseline."""
     if np.isnan(ours) or np.isnan(theirs) or theirs == 0:
         return float("nan")
     return (100.0 * (theirs - ours) / abs(theirs) if lower_is_better
@@ -257,7 +257,7 @@ def compare_static(ccpso_path, baseline_path, ccpso_algorithm, out_dir,
         return
 
     print(f"\n=== STATIC: {ccpso_algorithm} vs NSGA-II ===")
-    print(f"{'problem':8} {'metric':6} {'CCPSO':>11} {'NSGA-II':>11} "
+    print(f"{'problem':8} {'metric':6} {'CCMGPSO':>11} {'NSGA-II':>11} "
           f"{'improv':>9} {'p':>10} {'better':>9}")
 
     rows = []
@@ -303,8 +303,8 @@ def compare_static(ccpso_path, baseline_path, ccpso_algorithm, out_dir,
         writer.writerows(rows)
     print(f"-> {out_csv}")
 
-    wins = sum(1 for r in rows if r[-1] == "CCPSO")
-    print(f"   CCPSO better on {wins} of {len(rows)} problems")
+    wins = sum(1 for r in rows if r[-1] == "CCMGPSO")
+    print(f"   CCMGPSO better on {wins} of {len(rows)} problems")
 
 
 def compare_dynamic(tau_values, ccpso_template, baseline_template,
@@ -323,7 +323,7 @@ def compare_dynamic(tau_values, ccpso_template, baseline_template,
                    if out_dir_template else None)
 
         print(f"\n  tau_t = {tau_t}")
-        print(f"  {'problem':8} {'CCPSO MIGD':>11} {'base MIGD':>11} "
+        print(f"  {'problem':8} {'CCMGPSO MIGD':>11} {'base MIGD':>11} "
               f"{'improv':>9} {'p':>11} {'better':>9}")
 
         for problem in DYNAMIC_PROBLEMS:
@@ -370,8 +370,8 @@ def compare_dynamic(tau_values, ccpso_template, baseline_template,
                              "n_ccpso", "n_baseline", "better"])
             writer.writerows(rows)
         print(f"\n-> {out_csv}")
-        wins = sum(1 for r in rows if r[-1] == "CCPSO")
-        print(f"   CCPSO better on {wins} of {len(rows)} comparisons")
+        wins = sum(1 for r in rows if r[-1] == "CCMGPSO")
+        print(f"   CCMGPSO better on {wins} of {len(rows)} comparisons")
 
 
 def main():
@@ -383,7 +383,7 @@ def main():
     ap.add_argument("--dynamic-baseline",
                     default=results_path("results_dnsga2_taut{tau}.csv"))
     ap.add_argument("--tau-t", type=int, nargs="+", default=[10, 25, 50])
-    ap.add_argument("--ccpso-algorithm", default="CCPSO_strict")
+    ap.add_argument("--ccpso-algorithm", default="CCMGPSO_strict")
     ap.add_argument("--baseline-algorithm", default="DNSGA2_A")
     ap.add_argument("--ccpso-out-dir", default=None,
                     help="campaign out/ folder, enables per-run statistics "
@@ -410,7 +410,7 @@ def main():
 
     print("\nMann--Whitney U, two-sided, alpha = 0.05. A '--' p-value means "
           "per-run\nvalues were unavailable for one side: pass "
-          "--ccpso-out-dir for CCPSO, and\nensure the baseline scripts "
+          "--ccpso-out-dir for CCMGPSO, and\nensure the baseline scripts "
           "wrote to --per-run-dir.")
 
 

@@ -5,10 +5,10 @@ The refresh-mode ablation already reports paired Wilcoxon tests. This
 script supplies the significance tests for the *main* dynamic comparisons,
 which are unpaired (different algorithms, different seeds):
 
-1. CCPSO vs the MGPSO-FA ablation -- isolates the contribution of the
+1. CCMGPSO vs the MGPSO-FA ablation -- isolates the contribution of the
    co-evolutionary mechanism from archive-level constraint handling alone.
    This is the headline claim of the dynamic chapter.
-2. CCPSO filter vs CCPSO strict -- the archive admission comparison, for
+2. CCMGPSO filter vs CCMGPSO strict -- the archive admission comparison, for
    the dynamic counterpart of the static-campaign finding.
 
 Both are computed on per-run MIGD, extracted from the per-iteration CSVs
@@ -37,12 +37,16 @@ from collections import defaultdict
 import numpy as np
 from scipy.stats import mannwhitneyu
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from paths import results_path
+from configs import CATEGORY, CONSTRAINED_DYNAMIC_NAMES
 
 csv.field_size_limit(10 ** 9)
 
-PROBLEMS = ["DTNK", "DTNK3", "DTNK2"]
-CATEGORY = {"DTNK": "SODC", "DTNK3": "DOSC", "DTNK2": "DODC"}
+# NOTE: on DTNK4 MIGD skips iterations with an empty archive, which is most
+# of them for MGPSO_feasarch, so its MIGD there is not comparable; use P_RED.
+PROBLEMS = CONSTRAINED_DYNAMIC_NAMES
 
 
 def migd_per_run(path, tau_t):
@@ -98,9 +102,9 @@ def main():
         sys.exit(1)
 
     comparisons = [
-        ("CCPSO_strict", "MGPSO_feasarch"),
-        ("CCPSO_filter", "MGPSO_feasarch"),
-        ("CCPSO_filter", "CCPSO_strict"),
+        ("CCMGPSO_strict", "MGPSO_feasarch"),
+        ("CCMGPSO_filter", "MGPSO_feasarch"),
+        ("CCMGPSO_filter", "CCMGPSO_strict"),
     ]
 
     rows = []

@@ -23,7 +23,7 @@ reporting PASS / WARN / FAIL:
 
 5. SIGNIFICANCE  -- two-sided Mann-Whitney U tests (the standard
    non-parametric test in evolutionary computation, since fitness
-   distributions are rarely normal) between CCPSO_filter and the
+   distributions are rarely normal) between CCMGPSO_filter and the
    MGPSO_feasarch ablation on final IGD, per constrained problem. Reports
    which differences are significant at alpha = 0.05.
 
@@ -47,7 +47,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 UNCONSTRAINED = ["SCH1", "ZDT1", "ZDT2", "ZDT3", "ZDT4", "ZDT6"]
 CONSTRAINED = ["BNH", "SRN", "TNK", "CONSTR", "OSY"]
-CONSTRAINED_ALGOS = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
+CONSTRAINED_ALGOS = ["MGPSO", "MGPSO_feasarch", "CCMGPSO_filter", "CCMGPSO_strict"]
 
 # Plausible final-IGD ceilings for a correctly implemented MO-PSO after
 # ~1000 iterations (generous: published MGPSO/NSGA-II results are usually
@@ -129,7 +129,7 @@ def check_convergence():
     print("\n== 2. CONVERGENCE (IGD plateau) ==")
     experiments = [(p, "MGPSO") for p in UNCONSTRAINED if p != "ZDT4"] + [
         (p, a) for p in CONSTRAINED if p != "OSY"
-        for a in ("CCPSO_filter", "CCPSO_strict")
+        for a in ("CCMGPSO_filter", "CCMGPSO_strict")
     ]
     for problem, algo in experiments:
         series = read_igd_series(problem, algo)
@@ -180,7 +180,7 @@ def check_plausibility():
 def check_orderings():
     print("\n== 4. EXPECTED ORDERINGS ==")
     for problem in CONSTRAINED:
-        for algo in ("CCPSO_filter", "CCPSO_strict"):
+        for algo in ("CCMGPSO_filter", "CCMGPSO_strict"):
             columns = read_summary(problem, algo)
             if columns is None:
                 continue
@@ -198,11 +198,11 @@ def check_orderings():
 
 def check_significance():
     print("\n== 5. SIGNIFICANCE (Mann-Whitney U, alpha=0.05) ==")
-    print("     CCPSO_filter vs MGPSO_feasarch on final IGD:")
+    print("     CCMGPSO_filter vs MGPSO_feasarch on final IGD:")
     for problem in CONSTRAINED:
         if problem == "OSY":
             continue  # no IGD available
-        a = read_summary(problem, "CCPSO_filter")
+        a = read_summary(problem, "CCMGPSO_filter")
         b = read_summary(problem, "MGPSO_feasarch")
         if a is None or b is None:
             continue

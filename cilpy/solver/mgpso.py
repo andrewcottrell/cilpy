@@ -615,13 +615,16 @@ class MGPSO(Solver[List[float], List[float]]):
         # Evaluate the initial population so that get_result() and the
         # population accessors are valid before the first step() call.
         self._dynamic = any(self.problem.is_dynamic())
+        self._environment_checked = False
         for swarm in self._swarms:
             swarm.evaluate(self.problem)
             swarm.update_bests(self.comparator)
             swarm.update_archive(self._archive)
 
-    def _refresh_archive(self) -> None:
+    def _refresh_archive(self, refresh_mode: Optional[str] = None) -> None:
         """Re-evaluates archive members against the current environment.
+
+        `refresh_mode` overrides `self.refresh_mode` for this call.
 
         Used for dynamic problems, where stored fitness values become stale
         when the landscape changes, and under the co-evolutionary
@@ -644,7 +647,7 @@ class MGPSO(Solver[List[float], List[float]]):
         if len(self._archive) == 0:
             return
 
-        if self.refresh_mode == "clear":
+        if (refresh_mode or self.refresh_mode) == "clear":
             self._archive.positions = []
             self._archive.evaluations = []
             self._archive._invalidate()
@@ -718,7 +721,27 @@ class MGPSO(Solver[List[float], List[float]]):
         """Re-evaluates the archive and personal bests after a change."""
         self._respond_to_change()
 
-    def _respond_to_change(self) -> None:
+    def check_environment(self) -> None:
+        """Detects an environment change and responds to it, at most once per
+        iteration. Called by `step`, or earlier by a wrapping solver that must
+        see the environment change before it changes the landscape itself."""
+        if self._environment_checked:
+            return
+        self._environment_checked = True
+        if self._dynamic and self._environment_changed():
+            self._respond_to_change()
+
+    def rescore(self) -> None:
+        """Re-evaluates the archive and personal bests in place after a change
+        of the penalised landscape that is not an environment change (e.g. new
+        Lagrangian multipliers). The refresh policy is not applied: members
+        are always kept and re-scored, as under `"clean"`, since the
+        underlying problem has not changed. The fixed sentry is re-scored too,
+        so the change is not mistaken for an environment change."""
+        self._respond_to_change(refresh_mode="clean")
+        self._sentinel_eval = self.problem.evaluate(list(self._sentinel_x))
+
+    def _respond_to_change(self, refresh_mode: Optional[str] = None) -> None:
         """Full response to a detected environment change.
 
         1. The archive is re-evaluated under the current environment and
@@ -731,7 +754,7 @@ class MGPSO(Solver[List[float], List[float]]):
         3. Each sub-swarm's neighbourhood best is recomputed from the
            re-scored personal bests.
         """
-        self._refresh_archive()
+        self._refresh_archive(refresh_mode)
 
         for swarm in self._swarms:
             swarm.y_hat_eval = None
@@ -754,8 +777,7 @@ class MGPSO(Solver[List[float], List[float]]):
         Phase 2: every sub-swarm updates particle velocities and positions
         using the three-guide velocity equation.
         """
-        if self._dynamic and self._environment_changed():
-            self._respond_to_change()
+        self.check_environment()
 
         for swarm in self._swarms:
             swarm.update_particles(
@@ -766,6 +788,7 @@ class MGPSO(Solver[List[float], List[float]]):
             swarm.evaluate(self.problem)
             swarm.update_bests(self.comparator)
             swarm.update_archive(self._archive)
+        self._environment_checked = False
 
     def get_result(self) -> List[Tuple[List[float], Evaluation[List[float]]]]:
         """Returns the archive of non-dominated solutions (the Pareto front).

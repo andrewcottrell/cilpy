@@ -5,13 +5,13 @@ Covers three dynamic categories (SOSC is the static campaign):
 
 * Dynamic objectives (FDA1, FDA3): plain MGPSO only -- box constraints, so
   the co-evolutionary framework does not apply. Tests the change-response
-  machinery (sentinel detection, archive + pbest re-evaluation).
+  machinery (archive sentries, archive + pbest re-evaluation).
 * SODC (DTNK -- static objectives, oscillating constraint boundary),
-  DOSC (DTNK3 -- moving objectives over the static TNK ring),
-  DODC (DTNK2 -- translated objectives + oscillating radius), and
+  DOSC (DTNK5 -- rotating objectives over the static TNK constraints),
+  DODC (DTNK6 -- rotating objectives + oscillating radius), and
   DODC (DTNK4 -- orbiting shape-changing crescent + rotated objectives):
-  the full four-algorithm grid, i.e. plain MGPSO, the feasible-archive
-  ablation, and CCPSO filter/strict.
+  the full four-algorithm grid of configs.py, i.e. plain MGPSO, MGPSO-FA,
+  and CCMGPSO filter/strict. Every algorithm uses archive sentries.
 
 Reporting uses the standard dynamic-MO metrics, computed from the runner's
 per-iteration IGD column (the runner refreshes the reference front to the
@@ -51,64 +51,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from paths import results_path
 
-from cilpy.problem.dynamic_multi_objective import FDA1, FDA3, DTNK, DTNK2, DTNK3, DTNK4
-from cilpy.solver.mgpso import MGPSO
-from cilpy.solver.pso import PSO
-from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
 from cilpy.compare.metrics import p_red as compute_p_red
 from cilpy.runner import ExperimentRunner
-
-BASE_SEED = 26989395
-SWARM_SIZE = 50
-
-# Fixed MGPSO parameters, consistent with the static campaign / Phase 1.
-FIXED_PARAMS = {"w": 0.72, "c1": 1.49, "c2": 1.49, "c3": 1.49}
-
-
-def mgpso_config(name="MGPSO", feasible_archive_only=False,
-                 sentry_mode="fixed", n_sentries=None):
-    return {
-        "class": MGPSO,
-        "params": {
-            "name": name,
-            "swarm_size": SWARM_SIZE,
-            "feasible_archive_only": feasible_archive_only,
-            "sentry_mode": sentry_mode,
-            "n_sentries": n_sentries,
-            **FIXED_PARAMS,
-        },
-    }
-
-
-def ccpso_config(strategy, sentry_mode="fixed", n_sentries=None):
-    name = f"CCPSO_{strategy}"
-    if sentry_mode == "archive":
-        name += "_archsentry"
-    return {
-        "class": CoevolutionaryLagrangianSolver,
-        "params": {
-            "name": name,
-            "objective_solver_class": MGPSO,
-            "multiplier_solver_class": PSO,
-            "objective_solver_params": {
-                "swarm_size": SWARM_SIZE,
-                "sentry_mode": sentry_mode,
-                "n_sentries": n_sentries,
-                **FIXED_PARAMS,
-            },
-            "multiplier_solver_params": {
-                "swarm_size": 30, "w": 0.40, "c1": 1.20, "c2": 1.20,
-            },
-            "penalty_rho": 1.0,
-            "max_multiplier": 1000.0,
-            "archive_strategy": strategy,
-        },
-    }
-
-
-def experiment_seed(problem_name, solver_name):
-    key = f"{problem_name}:{solver_name}"
-    return BASE_SEED + sum(ord(c) * (i + 1) for i, c in enumerate(key))
+from configs import (BOX_DYNAMIC, CONSTRAINED_ALGORITHMS, CONSTRAINED_DYNAMIC,
+                     DYNAMIC_NAMES, constrained_configs, experiment_seed,
+                     mgpso_config)
 
 
 def _run_one_experiment(task):
@@ -173,7 +120,7 @@ def _per_run_series(path, column):
 def aggregate(problem_names, solver_names, tau_t, out_dir="out",
               out_path=None):
     out_path = out_path or results_path(
-        f"results_dynamic_sentries_taut{tau_t}.csv")
+        f"results_dynamic_taut{tau_t}.csv")
     rows = []
     for problem_name in problem_names:
         for solver_name in solver_names:
@@ -290,26 +237,11 @@ def main():
     num_runs = 3 if args.quick else args.runs
     max_iterations = 100 if args.quick else args.iters
 
-    constrained_configs = [
-        mgpso_config("MGPSO"),
-        mgpso_config("MGPSO_feasarch", feasible_archive_only=True),
-        ccpso_config("filter"),
-        ccpso_config("strict"),
-        mgpso_config("MGPSO_archsentry", sentry_mode="archive"),
-        mgpso_config("MGPSO_feasarch_archsentry",
-                     feasible_archive_only=True, sentry_mode="archive"),
-        ccpso_config("filter", sentry_mode="archive"),
-        ccpso_config("strict", sentry_mode="archive"),
-    ]
-    fda_configs = [
-        mgpso_config("MGPSO"),
-        mgpso_config("MGPSO_archsentry", sentry_mode="archive"),
-    ]
     tasks = (
-        [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
-         for f in (FDA1, FDA3) for c in fda_configs]
+        [(f, mgpso_config("MGPSO"), num_runs, max_iterations, args.tau_t, args.n_t)
+         for f in BOX_DYNAMIC]
         + [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
-           for f in (DTNK, DTNK3, DTNK2, DTNK4) for c in constrained_configs]
+           for f in CONSTRAINED_DYNAMIC for c in constrained_configs()]
     )
 
     start = time.time()
@@ -318,10 +250,8 @@ def main():
         print(f"\nAll experiments done in {(time.time() - start) / 60:.1f} min")
 
     aggregate(
-        ["FDA1", "FDA3", "DTNK", "DTNK3", "DTNK2", "DTNK4"],
-        ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict",
-         "MGPSO_archsentry", "MGPSO_feasarch_archsentry",
-         "CCPSO_filter_archsentry", "CCPSO_strict_archsentry"],
+        DYNAMIC_NAMES,
+        CONSTRAINED_ALGORITHMS,
         args.tau_t,
         args.out_dir,
     )

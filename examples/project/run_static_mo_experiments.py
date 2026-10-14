@@ -12,10 +12,11 @@ Orchestrates the full static MO benchmark grid:
     - MGPSO_feasarch   : MGPSO with feasible-only archive admission but NO
                          co-evolution (ablation: isolates the contribution
                          of the co-evolutionary multipliers)
-    - CCPSO_filter     : co-evolutionary Lagrangian + MGPSO, permissive
-                         archive, feasible-filtered final front
-    - CCPSO_strict     : co-evolutionary Lagrangian + MGPSO, feasible-only
-                         archive admission
+    - CCMGPSO_filter   : co-evolutionary MGPSO (one penalty swarm per
+                         objective, no fixed penalty), permissive archive,
+                         feasible-filtered final front
+    - CCMGPSO_strict   : as CCMGPSO_filter, feasible-only archive admission
+  The configurations are defined in configs.py.
 
 Reproducibility: a deterministic seed is derived per (problem, algorithm)
 experiment from BASE_SEED, and BOTH random number generators are seeded
@@ -59,15 +60,10 @@ from cilpy.problem.multi_objective import (
     SCH1, ZDT1, ZDT2, ZDT3, ZDT4, ZDT6,
     BNH, SRN, TNK, CONSTR, OSY,
 )
-from cilpy.solver.mgpso import MGPSO
-from cilpy.solver.pso import PSO
-from cilpy.solver.ccls import CoevolutionaryLagrangianSolver
 from cilpy.runner import ExperimentRunner
+from configs import (CONSTRAINED_ALGORITHMS, constrained_configs,
+                     experiment_seed, mgpso_config)
 from cilpy.compare.metrics import hypervolume
-
-BASE_SEED = 26989395  # student number: memorable and citable
-SWARM_SIZE = 50
-FIXED_PARAMS = {"w": 0.72, "c1": 1.49, "c2": 1.49, "c3": 1.49}
 
 # Fixed hypervolume reference points, one per problem. These must NEVER
 # change between algorithms or runs being compared. Chosen a comfortable
@@ -94,42 +90,6 @@ def unconstrained_problems():
 def constrained_problems():
     return [BNH(), SRN(), TNK(), CONSTR(), OSY()]
 
-
-def mgpso_config(name="MGPSO", feasible_archive_only=False):
-    return {
-        "class": MGPSO,
-        "params": {
-            "name": name,
-            "swarm_size": SWARM_SIZE,
-            "feasible_archive_only": feasible_archive_only,
-            **FIXED_PARAMS,
-        },
-    }
-
-
-def ccpso_config(strategy):
-    return {
-        "class": CoevolutionaryLagrangianSolver,
-        "params": {
-            "name": f"CCPSO_{strategy}",
-            "objective_solver_class": MGPSO,
-            "multiplier_solver_class": PSO,
-            "objective_solver_params": {"swarm_size": SWARM_SIZE, **FIXED_PARAMS},
-            "multiplier_solver_params": {
-                "swarm_size": 30, "w": 0.40, "c1": 1.20, "c2": 1.20,
-            },
-            "penalty_rho": 1.0,
-            "max_multiplier": 1000.0,
-            "archive_strategy": strategy,
-        },
-    }
-
-
-def experiment_seed(problem_name: str, solver_name: str) -> int:
-    """Deterministic per-experiment seed. Stable across Python sessions
-    (unlike hash()), so any experiment can be reproduced in isolation."""
-    key = f"{problem_name}:{solver_name}"
-    return BASE_SEED + sum(ord(c) * (i + 1) for i, c in enumerate(key))
 
 
 def _run_one_experiment(task):
@@ -317,12 +277,6 @@ def main():
 
     unconstrained_names = [p.name for p in unconstrained_problems()]
     constrained_names = [p.name for p in constrained_problems()]
-    constrained_configs = [
-        mgpso_config("MGPSO"),
-        mgpso_config("MGPSO_feasarch", feasible_archive_only=True),
-        ccpso_config("filter"),
-        ccpso_config("strict"),
-    ]
 
     start = time.time()
     if not args.aggregate_only:
@@ -335,7 +289,7 @@ def main():
         if args.suite in ("all", "constrained"):
             run_campaign(
                 [BNH, SRN, TNK, CONSTR, OSY],
-                constrained_configs,
+                constrained_configs(),
                 num_runs, max_iterations, workers=args.workers,
             )
         print(f"\nAll experiments done in {(time.time() - start) / 60:.1f} min")
@@ -345,7 +299,7 @@ def main():
         all_problems += unconstrained_names
     if args.suite in ("all", "constrained"):
         all_problems += constrained_names
-    all_solvers = ["MGPSO", "MGPSO_feasarch", "CCPSO_filter", "CCPSO_strict"]
+    all_solvers = CONSTRAINED_ALGORITHMS
     aggregate(all_problems, all_solvers, args.out_dir)
 
 

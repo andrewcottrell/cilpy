@@ -64,9 +64,11 @@ class TestMinProxyMO:
         pen = proxy.evaluate(x)
         assert pen.fitness == pytest.approx(raw.fitness)
 
-    def test_mo_proxy_reports_objective_dynamic(self):
+    def test_mo_proxy_dynamism_delegated(self):
+        # Multiplier changes are not environment changes; the solver re-scores
+        # the objective solver directly instead (MGPSO.rescore).
         proxy = _LagrangianMinProblem(CONSTR(), penalty_rho=1.0)
-        assert proxy.is_dynamic()[0] is True
+        assert proxy.is_dynamic() == CONSTR().is_dynamic()
 
     def test_so_proxy_dynamism_unchanged(self):
         proxy = _LagrangianMinProblem(G01(), penalty_rho=1.0)

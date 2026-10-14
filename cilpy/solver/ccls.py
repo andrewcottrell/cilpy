@@ -45,6 +45,10 @@ populations.
 
 from typing import List, Optional, Tuple, Type
 
+import random
+
+import numpy as np
+
 from cilpy.problem import Problem, Evaluation, SolutionType
 from cilpy.solver import Solver
 
@@ -116,7 +120,10 @@ class _LagrangianMinProblem(Problem):
 
         self.penalty_rho = penalty_rho
         self.penalty_rho_equality = penalty_rho_equality if penalty_rho_equality is not None else penalty_rho
-        
+
+        # Per-objective multipliers; None means the shared vector above is used.
+        self.objective_multipliers = None
+
 
     def set_fixed_multipliers(self, inequality_multipliers, equality_multipliers):
         """Updates the fixed Lagrangian multipliers for the next generation.
@@ -130,6 +137,26 @@ class _LagrangianMinProblem(Problem):
         """
         self.fixed_multipliers_inequality = inequality_multipliers
         self.fixed_multipliers_equality = equality_multipliers
+
+    def set_objective_multipliers(self, multipliers):
+        """Sets one multiplier vector per objective (per-objective mode).
+
+        Args:
+            multipliers (List[Tuple[List[float], List[float]]]): For each
+                objective m, the pair (mu_m*, lambda_m*). Objective m is then
+                penalised with its own multipliers only.
+        """
+        self.objective_multipliers = multipliers
+
+    def _penalty(self, gx, hx, mu, la) -> float:
+        """Clamped penalty for one multiplier vector, plus the fixed rho terms."""
+        penalty = sum(m * max(0.0, g) for m, g in zip(mu, gx))
+        penalty += sum(l * abs(h) for l, h in zip(la, hx))
+        if self.penalty_rho > 0.0 and gx:
+            penalty += self.penalty_rho * sum(max(0.0, g) for g in gx)
+        if self.penalty_rho_equality > 0.0 and hx:
+            penalty += self.penalty_rho_equality * sum(abs(h) for h in hx)
+        return penalty
 
     def evaluate(self, solution: list[float]) -> Evaluation:
         """Calculates the Lagrangian value L(x, mu*, lambda*).
@@ -150,7 +177,12 @@ class _LagrangianMinProblem(Problem):
         gx = original_eval.constraints_inequality or []
         hx = original_eval.constraints_equality or []
 
-        if isinstance(fx, (list, tuple)):
+        if isinstance(fx, (list, tuple)) and self.objective_multipliers is not None:
+            lagrangian_value = [
+                fm + self._penalty(gx, hx, mu, la)
+                for fm, (mu, la) in zip(fx, self.objective_multipliers)
+            ]
+        elif isinstance(fx, (list, tuple)):
             penalty = 0.0
             penalty += sum(
                 mu * max(0.0, g)
@@ -194,26 +226,17 @@ class _LagrangianMinProblem(Problem):
         return self.original_problem.get_fitness_bounds()
 
     def is_dynamic(self) -> tuple[bool, bool]:
-        """Reports the dynamism of the proxy landscape.
+        """Delegates to the original problem.
 
-        For multi-objective problems, the objective component is reported as
-        dynamic even when the original problem is static: the Lagrangian
-        landscape L_m(x) = f_m(x) + P(x) genuinely changes every iteration as
-        the multiplier swarm updates mu*. This signals archive-based solvers
-        (e.g. MGPSO) to re-evaluate their archive each step, preventing stale
-        penalised fitness values computed under old multipliers from
-        distorting Pareto dominance in the archive.
-
-        For single-objective problems, the original behaviour (delegation) is
-        preserved.
+        Changes of the multipliers are not reported here: they are not
+        environment changes. The solver re-scores the objective solver
+        directly when the multipliers change (`MGPSO.rescore`), so the
+        refresh policy is applied to environment changes only.
 
         Returns:
             Tuple[bool, bool]: (objectives_dynamic, constraints_dynamic).
         """
-        orig_obj_dyn, orig_con_dyn = self.original_problem.is_dynamic()
-        if self.original_problem.is_multi_objective():
-            return (True, orig_con_dyn)
-        return (orig_obj_dyn, orig_con_dyn)
+        return self.original_problem.is_dynamic()
 
     def is_multi_objective(self) -> bool:
         """Delegates the check for multi-objective to the original problem.
@@ -347,6 +370,73 @@ class _LagrangianMaxProblem(Problem):
         return self.original_problem.is_multi_objective()
 
 
+class _DualMultiplierProblem(Problem):
+    """Proxy problem for the penalty swarm of one objective (per-objective mode).
+
+    The fitness of a multiplier vector (mu_m, lambda_m) is the sampled dual
+    function of objective m,
+
+        q_m(mu, lambda) = min_{x in R_m} f_m(x) + mu^T g(x) + lambda^T h(x),
+
+    where R_m is a reference set of solutions supplied by the objective
+    swarm. Scoring the multipliers against a set of solutions, with the
+    objective value included, gives q_m a maximum at the multiplier value that
+    balances objective m against the constraints. Scoring against a single
+    fixed solution with no objective term (the shared mode) is linear in the
+    multipliers, so its maximum always lies at zero or at the bound.
+    Returns -q_m, since library solvers minimise.
+    """
+
+    def __init__(
+        self,
+        original_problem: Problem,
+        objective_idx: int,
+        num_inequality: int,
+        num_equality: int,
+        max_multiplier: float,
+    ):
+        lower_bounds = [0.0] * num_inequality + [-max_multiplier] * num_equality
+        upper_bounds = [max_multiplier] * (num_inequality + num_equality)
+        super().__init__(
+            num_inequality + num_equality,
+            (lower_bounds, upper_bounds),
+            f"DualMultiplierProblem_{objective_idx}",
+        )
+        self.original_problem = original_problem
+        self.objective_idx = objective_idx
+        self.num_inequality = num_inequality
+        self._f = np.zeros(0)
+        self._g = np.zeros((0, num_inequality))
+        self._h = np.zeros((0, num_equality))
+
+    def set_reference(self, evaluations: List[Evaluation]) -> None:
+        """Sets the reference set R_m from evaluations on the original problem."""
+        self._f = np.array([e.fitness[self.objective_idx] for e in evaluations])
+        self._g = np.array(
+            [e.constraints_inequality or [] for e in evaluations], dtype=float
+        ).reshape(len(evaluations), self.num_inequality)
+        self._h = np.array(
+            [e.constraints_equality or [] for e in evaluations], dtype=float
+        ).reshape(len(evaluations), self.dimension - self.num_inequality)
+
+    def evaluate(self, solution: list[float]) -> Evaluation:
+        if len(self._f) == 0:
+            return Evaluation(fitness=0.0)
+        mu = np.asarray(solution[: self.num_inequality], dtype=float)
+        la = np.asarray(solution[self.num_inequality :], dtype=float)
+        values = self._f + self._g @ mu + self._h @ la
+        return Evaluation(fitness=-float(values.min()))
+
+    def get_fitness_bounds(self) -> Tuple[float, float]:
+        return self.original_problem.get_fitness_bounds()
+
+    def is_dynamic(self) -> tuple[bool, bool]:
+        return (True, False)
+
+    def is_multi_objective(self) -> bool:
+        return False
+
+
 class CoevolutionaryLagrangianSolver(Solver):
     """A meta-solver for constrained optimization using a co-evolutionary
     Lagrangian framework.
@@ -443,6 +533,106 @@ class CoevolutionaryLagrangianSolver(Solver):
         self._prev_inequality_multipliers = None
         self._prev_equality_multipliers = None
 
+        # Multiplier mode: "shared" uses one penalty swarm scored against one
+        # representative solution; "per_objective" gives every objective its
+        # own penalty swarm, scored with the sampled dual function.
+        self.multiplier_mode = str(kwargs.get("multiplier_mode", "shared"))
+        if self.multiplier_mode not in ("shared", "per_objective"):
+            raise ValueError(
+                f"multiplier_mode must be 'shared' or 'per_objective', "
+                f"got '{self.multiplier_mode}'."
+            )
+        self.multiplier_solvers = []
+        self.dual_problems = []
+        self._prev_objective_multipliers = None
+        # Share of each penalty swarm moved to random positions every
+        # iteration (random immigrants), so the swarm can follow the dual
+        # function as the reference set changes.
+        self.multiplier_immigrants = float(kwargs.get("multiplier_immigrants", 0.0))
+        # Penalty swarm steps per iteration. Scoring the sampled dual needs no
+        # evaluations of the original problem, so extra steps are cheap.
+        self.multiplier_steps = int(kwargs.get("multiplier_steps", 1))
+        if self.multiplier_mode == "per_objective":
+            if not problem.is_multi_objective():
+                raise ValueError("multiplier_mode 'per_objective' needs a "
+                                 "multi-objective problem.")
+            n_objectives = len(problem.evaluate(initial_solution).fitness)
+            for m in range(n_objectives):
+                dual = _DualMultiplierProblem(
+                    problem, m,
+                    self.max_problem.num_inequality,
+                    self.max_problem.dimension - self.max_problem.num_inequality,
+                    max_multiplier if max_multiplier is not None else 1000.0,
+                )
+                params = dict(multiplier_solver_params)
+                params["name"] = f"{name}_multiplier_{m}"
+                self.dual_problems.append(dual)
+                self.multiplier_solvers.append(
+                    multiplier_solver_class(problem=dual, **params)
+                )
+
+    def _reference_evaluations(self, objective_idx: int) -> List[Evaluation]:
+        """Evaluations on the original problem of the reference set R_m.
+
+        R_m holds the personal best positions of sub-swarm m (the current
+        position where no personal best exists yet) and every archive member.
+        """
+        swarm = self.objective_solver._swarms[objective_idx]
+        positions = [
+            list(p.y) if p.y_eval is not None else list(p.x)
+            for p in swarm.particles
+        ]
+        positions += [s for s, _ in self.objective_solver.get_result()]
+        return [self.problem.evaluate(x) for x in positions]
+
+    def _add_immigrants(self, solver, dual) -> None:
+        """Moves a random share of the penalty swarm to random positions.
+
+        Personal bests are kept, so no information is lost; the moved
+        particles only widen the search. Magnitudes are sampled uniformly on
+        a log scale from 1e-3 up to the bound, since the useful multiplier
+        values can be orders of magnitude smaller than the bound.
+        """
+        upper = dual.bounds[1]
+        n = int(round(self.multiplier_immigrants * solver.swarm_size))
+        for i in random.sample(range(solver.swarm_size), n):
+            position = [
+                10 ** random.uniform(-3.0, np.log10(upper[d]))
+                for d in range(dual.dimension)
+            ]
+            for d in range(dual.num_inequality, dual.dimension):
+                position[d] *= random.choice((-1.0, 1.0))
+            solver.population[i] = position
+
+    def _step_per_objective(self) -> None:
+        """One co-evolutionary step with one penalty swarm per objective."""
+        # Detect an environment change before the new multipliers change the
+        # penalised landscape.
+        self.objective_solver.check_environment()
+
+        multipliers = []
+        for m, (dual, solver) in enumerate(
+            zip(self.dual_problems, self.multiplier_solvers)
+        ):
+            dual.set_reference(self._reference_evaluations(m))
+            # The dual landscape changed with the new reference set.
+            solver.respond_to_change()
+            if self.multiplier_immigrants > 0.0:
+                self._add_immigrants(solver, dual)
+            best, _ = solver.get_result()[0]
+            k = dual.num_inequality
+            multipliers.append((list(best[:k]), list(best[k:])))
+
+        self.min_problem.set_objective_multipliers(multipliers)
+        if multipliers != self._prev_objective_multipliers:
+            self.objective_solver.rescore()
+        self._prev_objective_multipliers = multipliers
+
+        self.objective_solver.step()
+        for solver in self.multiplier_solvers:
+            for _ in range(self.multiplier_steps):
+                solver.step()
+
     def _select_multiplier_anchor(self) -> list:
         """Selects the solution x* against which the multipliers evolve.
 
@@ -500,6 +690,14 @@ class CoevolutionaryLagrangianSolver(Solver):
            individual from the other population.
         3. Advancing each subordinate solver by one iteration.
         """
+        if self.multiplier_mode == "per_objective":
+            self._step_per_objective()
+            return
+
+        # 0. Detect an environment change first, before new multipliers
+        #    change the penalised landscape.
+        if hasattr(self.objective_solver, "check_environment"):
+            self.objective_solver.check_environment()
 
         # 1. Get the best individuals from each population
         best_solution = self._select_multiplier_anchor()
@@ -517,14 +715,14 @@ class CoevolutionaryLagrangianSolver(Solver):
 
         # If the multipliers changed, tell the objective solver directly so it
         # re-scores its archive and personal bests under the new landscape.
-        # The sentinel can miss this on problems where the anchor point has
-        # zero penalty regardless of multiplier values (e.g. BNH).
+        # This is not an environment change, so the refresh policy is not
+        # applied (rescore always keeps the archive members).
         multipliers_changed = (
             self._prev_inequality_multipliers != inequality_multipliers
             or self._prev_equality_multipliers != equality_multipliers
         )
         if multipliers_changed and self.problem.is_multi_objective():
-            self.objective_solver.respond_to_change()
+            self.objective_solver.rescore()
         self._prev_inequality_multipliers = list(inequality_multipliers)
         self._prev_equality_multipliers = list(equality_multipliers)
 
