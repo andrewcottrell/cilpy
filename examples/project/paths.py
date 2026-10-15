@@ -26,6 +26,16 @@ DATA_DIR = os.path.join(PROJECT_DIR, "data")
 RAW_DIR = os.path.join(PROJECT_DIR, "raw")
 
 
+def campaign_tag(tau_t: int, n_t: int = 10) -> str:
+    """Tag naming a dynamic campaign's output files, e.g. ``taut25``.
+
+    The main campaign holds the change severity at n_t = 10, and its files
+    carry the change frequency only. Any other severity adds ``_nt<n_t>``
+    (``taut25_nt5``), so a severity sweep cannot overwrite the main tables.
+    """
+    return f"taut{tau_t}" + ("" if n_t == 10 else f"_nt{n_t}")
+
+
 def results_path(filename: str) -> str:
     """Returns the path of an aggregate table, creating ``results/`` if needed."""
     os.makedirs(RESULTS_DIR, exist_ok=True)

@@ -39,7 +39,7 @@ from scipy.stats import mannwhitneyu
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from paths import results_path
+from paths import campaign_tag, results_path
 from configs import CATEGORY, CONSTRAINED_DYNAMIC_NAMES
 
 csv.field_size_limit(10 ** 9)
@@ -95,6 +95,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--tau-t", type=int, required=True)
+    ap.add_argument("--n-t", type=int, default=10,
+                    help="change severity; names the output file only")
+    ap.add_argument("--problems", nargs="+", default=PROBLEMS)
     args = ap.parse_args()
 
     if not os.path.isdir(args.out_dir):
@@ -114,7 +117,7 @@ def main():
         print(f"--- {algo_a} vs {algo_b} ---")
         print(f"{'problem':7} {'cat':5} {'median A':>10} {'median B':>10} "
               f"{'improv':>8} {'p':>12} {'better':>15}")
-        for problem in PROBLEMS:
+        for problem in args.problems:
             res = compare(args.out_dir, args.tau_t, problem, algo_a, algo_b)
             if res is None:
                 print(f"{problem:7} {CATEGORY[problem]:5}  (files missing)")
@@ -131,7 +134,8 @@ def main():
             ])
         print()
 
-    out_path = results_path(f"significance_dynamic_taut{args.tau_t}.csv")
+    out_path = results_path(
+        f"significance_dynamic_{campaign_tag(args.tau_t, args.n_t)}.csv")
     with open(out_path, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["tau_t", "problem", "category", "algorithm_a",

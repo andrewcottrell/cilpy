@@ -49,7 +49,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from paths import results_path
+from paths import campaign_tag, results_path
 
 from cilpy.compare.metrics import p_red as compute_p_red
 from cilpy.runner import ExperimentRunner
@@ -118,9 +118,9 @@ def _per_run_series(path, column):
 
 
 def aggregate(problem_names, solver_names, tau_t, out_dir="out",
-              out_path=None):
+              out_path=None, n_t=10):
     out_path = out_path or results_path(
-        f"results_dynamic_taut{tau_t}.csv")
+        f"results_dynamic_{campaign_tag(tau_t, n_t)}.csv")
     rows = []
     for problem_name in problem_names:
         for solver_name in solver_names:
@@ -227,6 +227,9 @@ def main():
     parser.add_argument("--n-t", type=int, default=10,
                         help="change severity: steps discretising t")
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--problems", nargs="+", default=DYNAMIC_NAMES,
+                        choices=DYNAMIC_NAMES,
+                        help="subset of the dynamic problems to run")
     parser.add_argument("--quick", action="store_true")
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--out-dir", default="out",
@@ -239,9 +242,10 @@ def main():
 
     tasks = (
         [(f, mgpso_config("MGPSO"), num_runs, max_iterations, args.tau_t, args.n_t)
-         for f in BOX_DYNAMIC]
+         for f in BOX_DYNAMIC if f.__name__ in args.problems]
         + [(f, c, num_runs, max_iterations, args.tau_t, args.n_t)
-           for f in CONSTRAINED_DYNAMIC for c in constrained_configs()]
+           for f in CONSTRAINED_DYNAMIC if f.__name__ in args.problems
+           for c in constrained_configs()]
     )
 
     start = time.time()
@@ -250,10 +254,11 @@ def main():
         print(f"\nAll experiments done in {(time.time() - start) / 60:.1f} min")
 
     aggregate(
-        DYNAMIC_NAMES,
+        args.problems,
         CONSTRAINED_ALGORITHMS,
         args.tau_t,
         args.out_dir,
+        n_t=args.n_t,
     )
 
 

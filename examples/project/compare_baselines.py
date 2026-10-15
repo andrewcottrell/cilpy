@@ -50,7 +50,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from paths import PER_RUN_DIR, results_path
+from paths import campaign_tag, PER_RUN_DIR, results_path
 
 csv.field_size_limit(10 ** 9)
 
@@ -309,7 +309,7 @@ def compare_static(ccpso_path, baseline_path, ccpso_algorithm, out_dir,
 
 def compare_dynamic(tau_values, ccpso_template, baseline_template,
                     ccpso_algorithm, baseline_algorithm, out_dir_template,
-                    per_run_dir, out_csv):
+                    per_run_dir, out_csv, n_t=10):
     print(f"\n=== DYNAMIC: {ccpso_algorithm} vs {baseline_algorithm} ===")
     rows = []
     for tau_t in tau_values:
@@ -346,7 +346,8 @@ def compare_dynamic(tau_values, ccpso_template, baseline_template,
             variant = theirs_row.get("algorithm", "DNSGA2_A").split("_")[-1]
             theirs_samples = baseline_per_run(
                 per_run_dir,
-                f"perrun_dnsga2_{variant}_taut{tau_t}_{problem}.csv",
+                f"perrun_dnsga2_{variant}_{campaign_tag(tau_t, n_t)}_"
+                f"{problem}.csv",
                 "migd")
 
             p_value = test_difference(ours_samples, theirs_samples)
@@ -378,11 +379,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--static-ccpso", default=results_path("results_static_mo.csv"))
     ap.add_argument("--static-baseline", default=results_path("results_nsga2.csv"))
-    ap.add_argument("--dynamic-ccpso",
-                    default=results_path("results_dynamic_taut{tau}.csv"))
-    ap.add_argument("--dynamic-baseline",
-                    default=results_path("results_dnsga2_taut{tau}.csv"))
+    ap.add_argument("--dynamic-ccpso", default=None,
+                    help="default: results/results_dynamic_taut{tau}.csv, "
+                         "with _nt<n_t> appended when --n-t is not 10")
+    ap.add_argument("--dynamic-baseline", default=None,
+                    help="default: results/results_dnsga2_taut{tau}.csv, "
+                         "with _nt<n_t> appended when --n-t is not 10")
     ap.add_argument("--tau-t", type=int, nargs="+", default=[10, 25, 50])
+    ap.add_argument("--n-t", type=int, default=10,
+                    help="change severity of the dynamic campaign")
     ap.add_argument("--ccpso-algorithm", default="CCMGPSO_strict")
     ap.add_argument("--baseline-algorithm", default="DNSGA2_A")
     ap.add_argument("--ccpso-out-dir", default=None,
@@ -402,11 +407,17 @@ def main():
                        results_path("comparison_static.csv"))
 
     if not args.static_only:
-        compare_dynamic(args.tau_t, args.dynamic_ccpso,
-                        args.dynamic_baseline, args.ccpso_algorithm,
+        suffix = "" if args.n_t == 10 else f"_nt{args.n_t}"
+        compare_dynamic(args.tau_t,
+                        args.dynamic_ccpso or results_path(
+                            f"results_dynamic_taut{{tau}}{suffix}.csv"),
+                        args.dynamic_baseline or results_path(
+                            f"results_dnsga2_taut{{tau}}{suffix}.csv"),
+                        args.ccpso_algorithm,
                         args.baseline_algorithm, args.ccpso_out_dir,
                         args.per_run_dir,
-                        results_path("comparison_dynamic.csv"))
+                        results_path(f"comparison_dynamic{suffix}.csv"),
+                        n_t=args.n_t)
 
     print("\nMann--Whitney U, two-sided, alpha = 0.05. A '--' p-value means "
           "per-run\nvalues were unavailable for one side: pass "

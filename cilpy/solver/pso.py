@@ -9,6 +9,30 @@ from cilpy.solver import Solver
 from cilpy.solver.chm import ConstraintHandler
 
 
+def _as_list(value) -> List[float]:
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple)):
+        return [float(v) for v in value]
+    return [float(value)]
+
+
+def _evaluations_differ(fresh: Evaluation, old: Evaluation, tolerance: float) -> bool:
+    """True if the fitness or any constraint value moved by more than
+    *tolerance*."""
+    for new_v, old_v in (
+        (fresh.fitness, old.fitness),
+        (fresh.constraints_inequality, old.constraints_inequality),
+        (fresh.constraints_equality, old.constraints_equality),
+    ):
+        new_l, old_l = _as_list(new_v), _as_list(old_v)
+        if len(new_l) != len(old_l):
+            return True
+        if any(abs(a - b) > tolerance for a, b in zip(new_l, old_l)):
+            return True
+    return False
+
+
 class PSO(Solver[List[float], float]):
     """
     A canonical Particle Swarm Optimization (PSO) solver.
@@ -26,6 +50,7 @@ class PSO(Solver[List[float], float]):
         c1: float,
         c2: float,
         constraint_handler: Optional[ConstraintHandler[float]] = None,
+        detect_changes: bool = False,
         **kwargs,
     ):
         """
@@ -40,6 +65,11 @@ class PSO(Solver[List[float], float]):
                particle's personal best.
             c2: The social coefficient, scaling the influence of the swarm's
                global best.
+            detect_changes: If True and the problem is dynamic, a sentry (the
+               global best position) is evaluated again at the start of every
+               iteration; when its objective or constraint values have moved,
+               the personal bests are re-evaluated (`respond_to_change`).
+               Off by default, so a PSO used as a penalty swarm is unchanged.
             **kwargs: Additional keyword arguments (not used in this canonical
                PSO).
         """
@@ -48,6 +78,19 @@ class PSO(Solver[List[float], float]):
         self.w = w
         self.c1 = c1
         self.c2 = c2
+
+        # Change detection with a sentry. The sentry is evaluated on the
+        # original problem when the PSO solves a proxy (the co-evolutionary
+        # Lagrangian), so a change of the multipliers is not taken for a
+        # change of the environment.
+        self._detect_changes = bool(detect_changes) and any(
+            self.problem.is_dynamic()
+        )
+        self._sentry_problem = getattr(self.problem, "original_problem", self.problem)
+        self._sentry_x: Optional[List[float]] = None
+        self._sentry_eval: Optional[Evaluation] = None
+        self._environment_checked = False
+        self.n_changes_detected = 0
 
         lower_bounds, upper_bounds = self.problem.bounds
 
@@ -94,8 +137,33 @@ class PSO(Solver[List[float], float]):
             positions.append(pos)
         return positions
 
+    def check_environment(self, tolerance: float = 1e-12) -> None:
+        """Detects an environment change with the sentry and responds to it,
+        at most once per iteration. Called by `step`, or earlier by a wrapping
+        solver (the co-evolutionary solver calls it before it updates the
+        multipliers)."""
+        if self._environment_checked or not self._detect_changes:
+            return
+        self._environment_checked = True
+
+        fresh = None
+        if self._sentry_x is not None:
+            fresh = self._sentry_problem.evaluate(list(self._sentry_x))
+            if _evaluations_differ(fresh, self._sentry_eval, tolerance):
+                self.n_changes_detected += 1
+                self.respond_to_change()
+
+        # The sentry follows the global best position.
+        if fresh is not None and self._sentry_x == self.gbest_position:
+            self._sentry_eval = fresh
+        else:
+            self._sentry_x = copy.deepcopy(self.gbest_position)
+            self._sentry_eval = self._sentry_problem.evaluate(list(self._sentry_x))
+
     def step(self) -> None:
         """Performs one iteration of the PSO algorithm."""
+        self.check_environment()
+        self._environment_checked = False
         lower_bounds, upper_bounds = self.problem.bounds
 
         for i in range(self.swarm_size):

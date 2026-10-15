@@ -56,7 +56,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from paths import PER_RUN_DIR, results_path
+from paths import campaign_tag, PER_RUN_DIR, results_path
 
 from cilpy.problem.dynamic_multi_objective import (
     FDA1, FDA3, DTNK, DTNK4, DTNK5, DTNK6,
@@ -255,8 +255,8 @@ def main():
 
     num_runs = 3 if args.quick else args.runs
     n_gen = 100 if args.quick else args.n_gen
-    out_path = args.out or results_path(
-        f"results_dnsga2_taut{args.tau_t}.csv")
+    tag = campaign_tag(args.tau_t, args.n_t)
+    out_path = args.out or results_path(f"results_dnsga2_{tag}.csv")
 
     print(f"DNSGA-II ({args.variant}) baseline: {num_runs} runs, "
           f"pop {args.pop_size} x {n_gen} generations "
@@ -308,8 +308,7 @@ def main():
         os.makedirs(args.per_run_dir, exist_ok=True)
         per_run_path = os.path.join(
             args.per_run_dir,
-            f"perrun_dnsga2_{args.variant}_taut{args.tau_t}_"
-            f"{problem_name}.csv")
+            f"perrun_dnsga2_{args.variant}_{tag}_{problem_name}.csv")
         with open(per_run_path, "w", newline="") as pr:
             writer = csv.writer(pr)
             writer.writerow(["run_id", "migd", "migd_bc",
@@ -341,9 +340,9 @@ def main():
         writer.writerows(rows)
     print(f"\n-> {out_path}")
     print(f"-> {args.per_run_dir}/perrun_dnsga2_{args.variant}_"
-          f"taut{args.tau_t}_<problem>.csv (per-run values)")
-    print("Compare against results_dynamic_taut"
-          f"{args.tau_t}.csv (identical column meanings).")
+          f"{tag}_<problem>.csv (per-run values)")
+    print(f"Compare against results_dynamic_{tag}.csv "
+          "(identical column meanings).")
 
 
 if __name__ == "__main__":
